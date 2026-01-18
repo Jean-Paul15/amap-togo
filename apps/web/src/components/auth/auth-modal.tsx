@@ -66,9 +66,9 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
       {/* Modal centre sur tous les ecrans */}
       <motion.div
         key="auth-modal"
-        initial={{ opacity: 0, scale: 0.9 }}
+        initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.9 }}
+        exit={{ opacity: 0, scale: 0.95 }}
         transition={{ 
           type: 'spring',
           stiffness: 300,
@@ -77,8 +77,9 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
         className="
           fixed z-50
           left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
-          w-[calc(100%-2rem)] max-w-md
-          max-h-[90vh] overflow-y-auto
+          w-[90%] max-w-[340px] sm:max-w-md
+          max-h-[85vh]
+          overflow-y-auto
           bg-white dark:bg-gray-900
           border border-gray-200 dark:border-gray-700
           rounded-2xl shadow-2xl
