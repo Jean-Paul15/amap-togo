@@ -76,14 +76,12 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
         }}
         className="
           fixed z-50
-          inset-4 sm:inset-auto
-          sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2
-          w-auto sm:w-full sm:max-w-md
+          left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
+          w-[calc(100%-2rem)] max-w-md
           max-h-[90vh] overflow-y-auto
           bg-white dark:bg-gray-900
           border border-gray-200 dark:border-gray-700
           rounded-2xl shadow-2xl
-          m-auto flex flex-col justify-center
         "
       >
         {/* Decoration gradient superieur */}

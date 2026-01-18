@@ -65,9 +65,10 @@ function LoginFormContent({ onSuccess }: LoginFormProps) {
       }
 
       // Succes - fermer le modal
+      // Le onAuthStateChange du AuthProvider va gerer la mise a jour de l'etat
       onSuccess()
 
-      // Redirection selon le contexte
+      // Redirection uniquement si necessaire (admin ou URL specifique)
       if (redirectUrl) {
         const finalUrl = redirectUrl.startsWith('http')
           ? redirectUrl
@@ -75,9 +76,8 @@ function LoginFormContent({ onSuccess }: LoginFormProps) {
         window.location.href = finalUrl
       } else if (isAdminRedirect) {
         window.location.href = '/dashboard'
-      } else {
-        window.location.reload()
       }
+      // Pas de reload - le AuthProvider gere l'etat via onAuthStateChange
     } catch {
       setError('Une erreur est survenue. Veuillez réessayer.')
     } finally {

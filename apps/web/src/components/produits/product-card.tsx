@@ -103,7 +103,7 @@ export function ProductCard({ produit, onAddToCart }: ProductCardProps) {
           </h3>
 
           {/* Stock disponible */}
-          {produit.stock > 0 && produit.stock <= 10 && (
+          {produit.stock > 0 && (
             <p className="text-[10px] sm:text-xs text-muted-foreground mt-1 sm:mt-1.5">
               {produit.stock} {produit.unite}{produit.stock > 1 ? 's' : ''} disponible{produit.stock > 1 ? 's' : ''}
             </p>

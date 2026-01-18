@@ -1,5 +1,5 @@
 // Provider global d'authentification avec hydratation SSR
-// Les donnees auth sont chargees cote serveur
+// Gere l'etat de connexion de maniere fiable
 
 'use client'
 
@@ -48,6 +48,7 @@ async function fetchProfile(
       .single()
 
     if (error || !data) {
+      console.error('Erreur fetch profil:', error?.message)
       return null
     }
 
@@ -75,7 +76,8 @@ async function fetchProfile(
       role_id: profil.role_id,
       role_nom: roleName || null,
     }
-  } catch {
+  } catch (err) {
+    console.error('Exception fetch profil:', err)
     return null
   }
 }
@@ -88,22 +90,17 @@ interface AuthProviderProps {
 
 /**
  * Provider d'authentification avec hydratation SSR
- * Si des donnees SSR sont fournies, loading est false immediatement
  */
 export function AuthProvider({ 
   children, 
   initialUser, 
   initialProfile 
 }: AuthProviderProps) {
-  // Si on a des donnees SSR, on demarre avec loading=false
-  const hasSSRData = initialUser !== undefined
-  const [user, setUser] = useState<User | null>(
-    initialUser ? { id: initialUser.id, email: initialUser.email } as User : null
-  )
-  const [profile, setProfile] = useState<UserProfile | null>(initialProfile || null)
-  const [loading, setLoading] = useState(!hasSSRData)
-  const initialLoadDone = useRef(hasSSRData)
+  const [user, setUser] = useState<User | null>(null)
+  const [profile, setProfile] = useState<UserProfile | null>(null)
+  const [loading, setLoading] = useState(true)
   const supabaseRef = useRef<ReturnType<typeof createClientBrowser> | null>(null)
+  const hasHydrated = useRef(false)
 
   const getSupabase = () => {
     if (!supabaseRef.current) {
@@ -116,10 +113,14 @@ export function AuthProvider({
     const supabase = getSupabase()
     const { data: { user: authUser } } = await supabase.auth.getUser()
     if (authUser) {
+      setUser(authUser)
       const userProfile = await fetchProfile(supabase, authUser.id)
       if (userProfile) {
         setProfile(userProfile)
       }
+    } else {
+      setUser(null)
+      setProfile(null)
     }
   }
 
@@ -131,61 +132,45 @@ export function AuthProvider({
     window.location.href = '/'
   }
 
+  // Hydratation initiale avec donnees SSR puis verification
   useEffect(() => {
+    if (hasHydrated.current) return
+    hasHydrated.current = true
+
     const supabase = getSupabase()
 
-    // Revalidation au focus de la fenetre
-    const handleFocus = () => {
-      if (initialLoadDone.current) {
-        refreshProfile()
-      }
-    }
-    window.addEventListener('focus', handleFocus)
-
-    // Si pas de donnees SSR, charger cote client
-    const initUser = async () => {
-      if (hasSSRData) {
-        initialLoadDone.current = true
-        // Revalidation silencieuse en arriere-plan
-        const { data: { user: authUser } } = await supabase.auth.getUser()
-        if (authUser) {
-          setUser(authUser)
-          const userProfile = await fetchProfile(supabase, authUser.id)
-          if (userProfile) {
-            setProfile(userProfile)
-          }
-        } else if (initialUser) {
-          // Session expiree cote serveur mais SSR avait un user
-          setUser(null)
-          setProfile(null)
-        }
-        return
-      }
-
-      try {
-        const { data: { user: authUser } } = await supabase.auth.getUser()
-        setUser(authUser)
-
-        if (authUser) {
-          const userProfile = await fetchProfile(supabase, authUser.id)
-          if (userProfile) {
-            setProfile(userProfile)
-          }
-        }
-      } catch {
-        // Silencieux
-      } finally {
+    const init = async () => {
+      // Si on a des donnees SSR, les utiliser immediatement
+      if (initialUser && initialProfile) {
+        setUser({ id: initialUser.id, email: initialUser.email } as User)
+        setProfile(initialProfile)
         setLoading(false)
-        initialLoadDone.current = true
       }
+
+      // Toujours verifier l'etat reel cote client
+      const { data: { user: authUser } } = await supabase.auth.getUser()
+      
+      if (authUser) {
+        setUser(authUser)
+        const userProfile = await fetchProfile(supabase, authUser.id)
+        if (userProfile) {
+          setProfile(userProfile)
+        }
+      } else {
+        // Pas d'utilisateur authentifie
+        setUser(null)
+        setProfile(null)
+      }
+      
+      setLoading(false)
     }
 
-    initUser()
+    init()
 
-    // Ecouter les changements d'auth
+    // Ecouter les changements d'auth en temps reel
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        if (!initialLoadDone.current) return
+        console.log('Auth event:', event, session?.user?.email)
 
         if (event === 'SIGNED_OUT') {
           setUser(null)
@@ -193,9 +178,10 @@ export function AuthProvider({
           return
         }
 
-        if (event === 'SIGNED_IN' && session?.user) {
+        if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session?.user) {
           setUser(session.user)
-          await new Promise(resolve => setTimeout(resolve, 500))
+          // Attendre un peu pour le trigger qui cree le profil
+          await new Promise(resolve => setTimeout(resolve, 300))
           const userProfile = await fetchProfile(supabase, session.user.id)
           if (userProfile) {
             setProfile(userProfile)
@@ -205,10 +191,9 @@ export function AuthProvider({
     )
 
     return () => {
-      window.removeEventListener('focus', handleFocus)
       subscription.unsubscribe()
     }
-  }, [hasSSRData, initialUser])
+  }, [initialUser, initialProfile])
 
   const roleName = profile?.role_nom
   const isAdmin = roleName === 'admin'
