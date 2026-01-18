@@ -5,7 +5,7 @@
 
 import { useRef } from 'react'
 import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Sparkles } from 'lucide-react'
 import { motion, useInView } from 'framer-motion'
 import type { Produit } from '@amap-togo/database'
 import { ProductCard } from '@/components/produits/product-card'
@@ -73,9 +73,10 @@ export function ProduitsSection({ produits }: ProduitsSectionProps) {
             initial={{ scale: 0 }}
             animate={isInView ? { scale: 1 } : { scale: 0 }}
             transition={{ duration: 0.5, type: 'spring', stiffness: 200 }}
-            className="inline-block px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-medium mb-4"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-medium mb-4"
           >
-            ✨ Fraîcheur garantie
+            <Sparkles className="w-4 h-4" strokeWidth={2.5} />
+            <span>Fraîcheur garantie</span>
           </motion.div>
 
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">

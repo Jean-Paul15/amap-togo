@@ -20,50 +20,50 @@ export function BasketCard({ panier, onCommander }: BasketCardProps) {
   const typePanier = panier.panier_type
 
   return (
-    <div className="bg-background border border-border rounded-xl overflow-hidden">
-      {/* En-tete */}
-      <div className="p-6 border-b border-border">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="w-12 h-12 bg-accent rounded-xl flex items-center justify-center">
-            <ShoppingBag className="w-6 h-6 text-primary" strokeWidth={1.5} />
+    <div className="bg-background border border-border rounded-xl overflow-hidden h-full flex flex-col">
+      {/* En-tete compact */}
+      <div className="p-3 border-b border-border">
+        <div className="flex items-center gap-2 mb-1.5">
+          <div className="w-9 h-9 bg-accent rounded-lg flex items-center justify-center flex-shrink-0">
+            <ShoppingBag className="w-4 h-4 text-primary" strokeWidth={2} />
           </div>
-          <div>
-            <h3 className="text-lg font-semibold text-foreground">
+          <div className="flex-1 min-w-0">
+            <h3 className="text-sm font-semibold text-foreground truncate">
               {typePanier.nom}
             </h3>
-            <p className="text-2xl font-bold text-primary">
+            <p className="text-lg font-bold text-primary">
               {formatPrice(typePanier.prix)}
             </p>
           </div>
         </div>
 
         {typePanier.description && (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs text-muted-foreground line-clamp-2">
             {typePanier.description}
           </p>
         )}
       </div>
 
       {/* Contenu du panier */}
-      <div className="p-6">
-        <h4 className="text-sm font-medium text-foreground mb-3">
+      <div className="p-3 flex-1">
+        <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1.5">
           Contenu de la semaine
         </h4>
         <BasketContent contenu={panier.contenu} />
       </div>
 
-      {/* Bouton commander */}
-      <div className="px-6 pb-6">
+      {/* Bouton POS */}
+      <div className="px-3 pb-3">
         <button
           onClick={() => onCommander(panier)}
           className="
-            w-full py-3 px-4 rounded-lg
+            w-full py-2 px-3 rounded-lg
             bg-primary text-primary-foreground
-            font-medium
+            font-medium text-sm
             hover:bg-primary/90 transition-colors
           "
         >
-          Commander ce panier
+          Ajouter au POS
         </button>
       </div>
     </div>

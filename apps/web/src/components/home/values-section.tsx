@@ -4,7 +4,7 @@
 'use client'
 
 import { useRef } from 'react'
-import { Leaf, MapPin, Users } from 'lucide-react'
+import { Leaf, MapPin, Users, Heart } from 'lucide-react'
 import { motion, useInView } from 'framer-motion'
 
 /** Valeur avec icône et description */
@@ -91,9 +91,10 @@ export function ValuesSection() {
             initial={{ scale: 0 }}
             animate={isInView ? { scale: 1 } : { scale: 0 }}
             transition={{ duration: 0.5, type: 'spring', stiffness: 200 }}
-            className="inline-block px-4 py-2 bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 rounded-full text-sm font-medium mb-4"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 rounded-full text-sm font-medium mb-4"
           >
-            💚 Nos valeurs
+            <Heart className="w-4 h-4" strokeWidth={2.5} fill="currentColor" />
+            <span>Nos valeurs</span>
           </motion.div>
 
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">

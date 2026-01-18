@@ -8,6 +8,7 @@ import Link from 'next/link'
 import { ArrowRight, ShoppingBag, Check } from 'lucide-react'
 import { motion, useInView } from 'framer-motion'
 import { formatPrice } from '@amap-togo/utils'
+import { useCartStore } from '@/stores/cart-store'
 
 /** Définition d'un type de panier */
 interface PanierInfo {
@@ -93,9 +94,10 @@ export function PaniersSection() {
             initial={{ scale: 0 }}
             animate={isInView ? { scale: 1 } : { scale: 0 }}
             transition={{ duration: 0.5, type: 'spring', stiffness: 200 }}
-            className="inline-block px-4 py-2 bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 rounded-full text-sm font-medium mb-4"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 rounded-full text-sm font-medium mb-4"
           >
-            🌾 Paniers hebdomadaires
+            <ShoppingBag className="w-4 h-4" strokeWidth={2.5} />
+            <span>Paniers hebdomadaires</span>
           </motion.div>
 
           <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">
@@ -149,13 +151,15 @@ export function PaniersSection() {
 
 /** Carte d'un type de panier avec animations */
 function PanierCard({ nom, prix, description, contenuExemple, populaire }: PanierInfo) {
+  const openModal = useCartStore((state) => state.openModal)
+
   return (
     <motion.div
       whileHover={{ y: -8, scale: 1.02 }}
       transition={{ duration: 0.3 }}
       className={`
-        relative bg-white rounded-2xl p-6 sm:p-7
-        border-2 transition-all duration-300
+        relative bg-white rounded-2xl p-4
+        border-2 transition-all duration-300 h-full flex flex-col
         ${populaire
           ? 'border-green-500 shadow-xl shadow-green-500/20'
           : 'border-gray-200 hover:border-green-300 shadow-lg hover:shadow-xl'
@@ -168,7 +172,7 @@ function PanierCard({ nom, prix, description, contenuExemple, populaire }: Panie
           initial={{ scale: 0, rotate: -12 }}
           animate={{ scale: 1, rotate: -12 }}
           transition={{ duration: 0.5, delay: 0.3, type: 'spring', stiffness: 200 }}
-          className="absolute -top-3 -right-3 bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg"
+          className="absolute -top-3 -right-3 bg-gradient-to-r from-orange-500 to-red-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg"
         >
           ⭐ Populaire
         </motion.div>
@@ -179,7 +183,7 @@ function PanierCard({ nom, prix, description, contenuExemple, populaire }: Panie
         whileHover={{ rotate: 360 }}
         transition={{ duration: 0.6 }}
         className={`
-          w-14 h-14 rounded-2xl flex items-center justify-center mb-5
+          w-10 h-10 rounded-xl flex items-center justify-center mb-3
           ${populaire
             ? 'bg-gradient-to-br from-green-500 to-emerald-600'
             : 'bg-gradient-to-br from-green-100 to-emerald-100'
@@ -187,63 +191,64 @@ function PanierCard({ nom, prix, description, contenuExemple, populaire }: Panie
         `}
       >
         <ShoppingBag
-          className={`w-7 h-7 ${populaire ? 'text-white' : 'text-green-600'}`}
+          className={`w-5 h-5 ${populaire ? 'text-white' : 'text-green-600'}`}
           strokeWidth={2}
         />
       </motion.div>
 
       {/* Nom */}
-      <h3 className="text-xl font-bold text-foreground mb-2">
+      <h3 className="text-base font-bold text-foreground mb-1.5">
         {nom}
       </h3>
 
       {/* Description */}
-      <p className="text-sm text-muted-foreground mb-5 leading-relaxed">
+      <p className="text-xs text-muted-foreground mb-3 leading-relaxed line-clamp-2">
         {description}
       </p>
 
       {/* Exemple de contenu */}
-      <div className="mb-6">
-        <p className="text-xs font-semibold text-muted-foreground mb-3 uppercase tracking-wide">
+      <div className="mb-3 flex-1">
+        <p className="text-xs font-semibold text-muted-foreground mb-1.5 uppercase tracking-wide">
           Exemple de contenu :
         </p>
-        <div className="space-y-2">
+        <div className="space-y-1">
           {contenuExemple.map((item) => (
-            <div key={item} className="flex items-center gap-2">
-              <div className="flex-shrink-0 w-5 h-5 bg-green-100 rounded-full flex items-center justify-center">
-                <Check className="w-3 h-3 text-green-600" strokeWidth={3} />
+            <div key={item} className="flex items-center gap-1.5">
+              <div className="flex-shrink-0 w-4 h-4 bg-green-100 rounded-full flex items-center justify-center">
+                <Check className="w-2.5 h-2.5 text-green-600" strokeWidth={3} />
               </div>
-              <span className="text-sm text-foreground">{item}</span>
+              <span className="text-xs text-foreground">{item}</span>
             </div>
           ))}
         </div>
       </div>
 
       {/* Prix et CTA */}
-      <div className="pt-5 border-t-2 border-gray-100">
-        <div className="flex items-center justify-between mb-4">
+      <div className="pt-3 border-t border-gray-100">
+        <div className="flex items-center justify-between mb-2.5">
           <div>
-            <div className="text-sm text-muted-foreground mb-1">À partir de</div>
-            <div className="text-3xl font-bold text-green-600">
+            <div className="text-xs text-muted-foreground mb-0.5">À partir de</div>
+            <div className="text-xl font-bold text-green-600">
               {formatPrice(prix)}
             </div>
           </div>
         </div>
 
-        <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
-          <Link
-            href="/paniers"
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <button
+            type="button"
+            onClick={openModal}
             className={`
-              block w-full text-center py-3.5 rounded-xl font-semibold text-sm
+              block w-full text-center py-2.5 rounded-full font-bold text-sm
               transition-all duration-300
               ${populaire
-                ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 shadow-md shadow-green-500/30'
-                : 'bg-green-50 text-green-700 hover:bg-green-100'
+                ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 shadow-lg shadow-green-500/40 border-2 border-white/20'
+                : 'bg-green-50 text-green-700 hover:bg-green-100 border-2 border-green-200'
               }
             `}
           >
-            Commander
-          </Link>
+            Ouvrir le POS
+          </button>
         </motion.div>
       </div>
     </motion.div>

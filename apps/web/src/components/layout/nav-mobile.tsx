@@ -39,37 +39,50 @@ export function NavMobile() {
       {/* Overlay menu */}
       {isOpen && (
         <>
-          {/* Fond sombre - opacité augmentée pour meilleure lisibilité */}
+          {/* Fond sombre avec blur */}
           <div
-            className="fixed inset-0 bg-black/70 backdrop-blur-md z-40"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100]"
             onClick={closeMenu}
             aria-hidden="true"
           />
 
-          {/* Menu panel - fond complètement opaque blanc */}
+          {/* Menu panel moderne - détaché avec coins arrondis */}
           <nav
             className="
-              fixed top-0 right-0 bottom-0 w-72
-              bg-white border-l-2 border-green-500
+              fixed top-4 right-4 bottom-4
+              w-80 max-w-[calc(100vw-2rem)]
+              bg-white
+              rounded-2xl
               shadow-2xl
-              z-50 p-6
-              animate-in slide-in-from-right duration-200
+              z-[101]
+              flex flex-col
+              animate-in slide-in-from-right duration-300
+              border border-gray-200
             "
             aria-label="Menu principal"
           >
             {/* Header du menu avec bouton fermer */}
-            <div className="flex items-center justify-between mb-8 pb-4 border-b-2 border-gray-100">
-              <h2 className="text-xl font-bold text-gray-900">Menu</h2>
+            <div className="flex items-center justify-between p-6 pb-4 border-b border-gray-200">
+              <h2 className="text-xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                Menu
+              </h2>
               <button
                 type="button"
                 onClick={closeMenu}
-                className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                className="
+                  p-2 rounded-full
+                  hover:bg-red-50 hover:text-red-600
+                  transition-all duration-200
+                  group
+                "
                 aria-label="Fermer le menu"
               >
-                <X className="w-6 h-6 text-gray-700" strokeWidth={2.5} />
+                <X className="w-6 h-6 text-gray-700 group-hover:text-red-600 transition-colors" strokeWidth={2.5} />
               </button>
             </div>
-            <ul className="space-y-4">
+
+            {/* Liste de liens avec scroll */}
+            <ul className="flex-1 overflow-y-auto p-6 space-y-2">
               {navigationLinks.map((link) => {
                 const isActive = pathname === link.href
 
@@ -79,10 +92,13 @@ export function NavMobile() {
                       href={link.href}
                       onClick={closeMenu}
                       className={`
-                        block py-2 text-lg font-medium
-                        transition-colors duration-150
-                        hover:text-primary
-                        ${isActive ? 'text-primary' : 'text-foreground'}
+                        block py-3 px-4 text-base font-medium
+                        rounded-xl
+                        transition-all duration-200
+                        ${isActive
+                          ? 'bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 shadow-sm'
+                          : 'text-gray-700 hover:bg-gray-50 hover:text-green-600'
+                        }
                       `}
                     >
                       {link.label}
@@ -93,15 +109,19 @@ export function NavMobile() {
             </ul>
 
             {/* Lien connexion */}
-            <div className="mt-8 pt-8 border-t border-border">
+            <div className="p-6 pt-4 border-t border-gray-200">
               <Link
                 href="/connexion"
                 onClick={closeMenu}
                 className="
-                  block w-full py-3 px-4
-                  bg-primary text-primary-foreground
-                  rounded-lg text-center font-medium
-                  hover:bg-primary/90 transition-colors
+                  block w-full py-3.5 px-4
+                  bg-gradient-to-r from-green-500 to-emerald-600
+                  text-white
+                  rounded-full text-center font-bold text-sm
+                  hover:from-green-600 hover:to-emerald-700
+                  transition-all duration-300
+                  shadow-lg shadow-green-500/30
+                  hover:shadow-green-500/50
                 "
               >
                 Se connecter

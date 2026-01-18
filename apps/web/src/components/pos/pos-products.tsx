@@ -3,57 +3,23 @@
 
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Search } from 'lucide-react'
-import { createClientBrowser } from '@amap-togo/database/browser'
-import type { Produit, Categorie } from '@amap-togo/database'
+import type { Produit } from '@amap-togo/database'
 import { ProductCard } from '@/components/produits/product-card'
 import { POSCategoryFilter } from './pos-category-filter'
 import { useCartStore } from '@/stores/cart-store'
+import { useProductsStore } from '@/stores/products-store'
 
 /**
  * Section Produits du modal POS
+ * Utilise le store pre-charge pour affichage instantane
  */
 export function POSProducts() {
-  const [produits, setProduits] = useState<Produit[]>([])
-  const [categories, setCategories] = useState<Categorie[]>([])
+  const { produits, categories, isLoaded } = useProductsStore()
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
-  const [loading, setLoading] = useState(true)
   const addItem = useCartStore((state) => state.addItem)
-
-  // Charger les donnees au montage
-  useEffect(() => {
-    const supabase = createClientBrowser()
-
-    async function loadData() {
-      try {
-        // Charger categories et produits en parallele
-        const [catResult, prodResult] = await Promise.all([
-          supabase
-            .from('categories')
-            .select('*')
-            .eq('actif', true)
-            .order('ordre'),
-          supabase
-            .from('produits')
-            .select('*')
-            .eq('actif', true)
-            .gt('stock', 0)
-            .order('nom')
-        ])
-
-        if (catResult.data) setCategories(catResult.data)
-        if (prodResult.data) setProduits(prodResult.data)
-      } catch (err) {
-        console.error('Erreur chargement POS:', err)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    loadData()
-  }, [])
 
   // Filtrer les produits
   const filteredProducts = produits.filter((p) => {
@@ -112,22 +78,22 @@ export function POSProducts() {
       </div>
 
       {/* Grille produits */}
-      <div className="flex-1 overflow-y-auto p-4">
-        {loading ? (
-          <div className="grid grid-cols-2 gap-3">
+      <div className="flex-1 overflow-y-auto p-3 sm:p-4">
+        {!isLoaded ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             {[...Array(6)].map((_, i) => (
               <div key={i} className="aspect-square bg-muted rounded-lg animate-pulse" />
             ))}
           </div>
         ) : filteredProducts.length === 0 ? (
           <p className="text-center text-muted-foreground py-8">
-            Aucun produit trouve
+            Aucun produit trouvé
           </p>
         ) : (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             {filteredProducts.map((produit) => (
-              <ProductCard 
-                key={produit.id} 
+              <ProductCard
+                key={produit.id}
                 produit={produit}
                 onAddToCart={handleAddToCart}
               />

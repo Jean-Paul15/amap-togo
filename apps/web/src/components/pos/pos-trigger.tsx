@@ -1,33 +1,40 @@
-// Bouton POS dans le header
-// Ouvre le modal POS
+// Bouton POS minimaliste
+// Ouvre le modal POS avec animations subtiles
 
 'use client'
 
 import { ShoppingBag } from 'lucide-react'
+import { motion } from 'framer-motion'
 import { useCartStore } from '@/stores/cart-store'
 
 /**
- * Bouton POS qui ouvre le modal
- * Adapte pour mobile avec icone seule
+ * Bouton POS minimaliste et discret
  */
 export function POSTrigger() {
   const openModal = useCartStore((state) => state.openModal)
 
   return (
-    <button
+    <motion.button
       onClick={openModal}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
+      transition={{ type: 'spring', stiffness: 400, damping: 10 }}
       className="
-        flex items-center justify-center gap-2 
-        px-3 sm:px-4 py-2
-        bg-primary text-primary-foreground
-        rounded-lg font-medium text-sm
-        hover:bg-primary/90 transition-colors
-        min-w-[40px] sm:min-w-0
+        relative
+        flex items-center justify-center gap-1.5
+        px-3 py-2
+        text-primary hover:text-primary/80
+        bg-primary/5 hover:bg-primary/10
+        rounded-lg
+        font-medium text-sm
+        transition-colors duration-200
+        border border-primary/10
       "
       aria-label="Ouvrir le point de vente"
+      title="Point de vente"
     >
       <ShoppingBag className="w-4 h-4" strokeWidth={2} />
-      <span className="hidden sm:inline">Commander</span>
-    </button>
+      <span className="hidden sm:inline text-xs">POS</span>
+    </motion.button>
   )
 }

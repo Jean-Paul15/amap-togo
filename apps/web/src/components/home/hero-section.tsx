@@ -31,11 +31,11 @@ export function HeroSection() {
         {/* Fallback : fond gradient si pas de vidéo */}
         <div className="absolute inset-0 bg-gradient-to-br from-green-600 via-emerald-600 to-green-700 opacity-90" />
 
-        {/* Filtre vert transparent clair pour le thème AMAP */}
-        <div className="absolute inset-0 bg-green-500/20 mix-blend-overlay" />
+        {/* Filtre vert transparent très clair pour le thème AMAP */}
+        <div className="absolute inset-0 bg-primary/5 mix-blend-overlay" />
 
         {/* Overlay gradient pour lisibilité du texte */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/60" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/50" />
       </div>
 
       {/* Particules flottantes décoratives */}
