@@ -48,8 +48,16 @@ async function fetchProfile(
       return null
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const profil = data as any
+    interface ProfilData {
+      id: string
+      nom: string
+      prenom: string
+      email: string
+      telephone: string | null
+      role_id: string | null
+      roles: { nom: string } | { nom: string }[] | null
+    }
+    const profil = data as ProfilData
     const rolesData = profil.roles
     const roleName = Array.isArray(rolesData) 
       ? rolesData[0]?.nom 

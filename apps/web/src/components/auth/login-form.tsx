@@ -69,10 +69,15 @@ function LoginFormContent({ onSuccess }: LoginFormProps) {
       // Redirection selon le contexte
       if (redirectUrl) {
         // Venant de l'admin : retourner a l'URL demandee
-        window.location.href = redirectUrl
+        // S'assurer que c'est une URL complete (commence par http:// ou https://)
+        const finalUrl = redirectUrl.startsWith('http')
+          ? redirectUrl
+          : `https://${redirectUrl}`
+        window.location.href = finalUrl
       } else if (isAdminRedirect) {
         // Demande admin : aller a l'admin
-        window.location.href = process.env.NEXT_PUBLIC_ADMIN_URL || 'http://localhost:3001'
+        const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL || 'http://localhost:3001'
+        window.location.href = adminUrl
       } else {
         // Connexion normale : rafraichir
         window.location.reload()

@@ -5,7 +5,18 @@
 
 import { z } from 'zod'
 import { createClientServer } from '@amap-togo/database/server'
-import type { PaymentMethod } from '@amap-togo/database'
+
+// Type pour contourner le typage strict Supabase sur les tables non generees
+interface SupabaseTable {
+  insert: (data: Record<string, unknown> | Record<string, unknown>[]) => {
+    select: (cols: string) => { single: () => Promise<{ data: unknown; error: unknown }> }
+  } & Promise<{ error: unknown }>
+}
+
+interface SupabaseClientDynamic {
+  auth: { getUser: () => Promise<{ data: { user: { id: string } | null }; error: unknown }> }
+  from: (table: string) => SupabaseTable
+}
 
 // Schema de validation pour les items du panier
 const cartItemSchema = z.object({
@@ -44,10 +55,13 @@ export async function createOrder(
     // Validation des donnees
     const data = createOrderSchema.parse(input)
     
-    const supabase = await createClientServer()
+    const supabaseTyped = await createClientServer()
+    // Cast pour contourner les types generes incomplets
+    const supabase = supabaseTyped as unknown as SupabaseClientDynamic
     
     // Verifier l'authentification
-    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    const { data: authData, error: authError } = await supabase.auth.getUser()
+    const user = authData?.user
     
     if (authError || !user) {
       return { success: false, error: 'Vous devez etre connecte' }
@@ -64,9 +78,9 @@ export async function createOrder(
     const paniers = data.items.filter((i) => i.type === 'panier')
 
     // Creer la commande (le numero sera genere par le trigger)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: commande, error: cmdError } = await (supabase
-      .from('commandes') as any)
+    interface CommandeRow { id: string; numero: string }
+    const { data: commandeData, error: cmdError } = await supabase
+      .from('commandes')
       .insert({
         client_id: user.id,
         montant_total: montantTotal,
@@ -79,6 +93,8 @@ export async function createOrder(
       })
       .select('id, numero')
       .single()
+
+    const commande = commandeData as CommandeRow | null
 
     if (cmdError || !commande) {
       console.error('Erreur creation commande:', cmdError)
@@ -95,9 +111,8 @@ export async function createOrder(
         prix_total: p.prix * p.quantite,
       }))
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { error: lignesError } = await (supabase
-        .from('commandes_lignes') as any)
+      const { error: lignesError } = await supabase
+        .from('commandes_lignes')
         .insert(lignes)
 
       if (lignesError) {
@@ -114,9 +129,8 @@ export async function createOrder(
         prix_unitaire: p.prix,
       }))
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { error: paniersError } = await (supabase
-        .from('commandes_paniers') as any)
+      const { error: paniersError } = await supabase
+        .from('commandes_paniers')
         .insert(paniersData)
 
       if (paniersError) {
@@ -125,13 +139,12 @@ export async function createOrder(
     }
 
     // Creer le paiement en attente
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error: paiementError } = await (supabase
-      .from('paiements') as any)
+    const { error: paiementError } = await supabase
+      .from('paiements')
       .insert({
         commande_id: commande.id,
         montant: montantTotal,
-        methode: data.methode_paiement as PaymentMethod,
+        methode: data.methode_paiement,
         statut: 'en_attente',
       })
 

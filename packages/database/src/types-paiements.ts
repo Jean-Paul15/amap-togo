@@ -3,6 +3,15 @@
 
 import type { PaymentMethod, PaymentStatus } from './types'
 
+// Type JSON local pour eviter import circulaire
+type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[]
+
 // === PAIEMENTS ===
 
 /** Paiement associe a une commande */
@@ -95,7 +104,22 @@ export interface Database {
       }
     }
     Views: Record<string, never>
-    Functions: Record<string, never>
+    Functions: {
+      /** RPC pour creer une commande anonyme (sans authentification) */
+      create_anonymous_order: {
+        Args: {
+          p_nom: string
+          p_prenom: string
+          p_telephone: string
+          p_quartier: string
+          p_adresse?: string | null
+          p_notes?: string | null
+          p_methode_paiement?: string
+          p_items?: Json
+        }
+        Returns: Json
+      }
+    }
     Enums: {
       basket_type: import('./types').BasketType
       order_status: import('./types').OrderStatus

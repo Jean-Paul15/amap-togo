@@ -66,7 +66,7 @@ export function POSCheckout() {
     try {
       const supabase = createClientBrowser()
       
-      // Preparer les items pour le RPC
+      // Preparer les items pour le RPC (JSONB)
       const orderItems = items.map((item) => ({
         id: item.id,
         type: item.type,
@@ -74,18 +74,37 @@ export function POSCheckout() {
         prix: item.prix,
       }))
 
-      // Appeler le RPC pour commande anonyme (utilisation de any car RPC non type)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data, error: rpcError } = await (supabase.rpc as any)('create_anonymous_order', {
-        p_nom: deliveryInfo.nom,
-        p_prenom: deliveryInfo.prenom,
-        p_telephone: deliveryInfo.telephone,
-        p_quartier: deliveryInfo.quartier,
-        p_adresse: deliveryInfo.adresse || null,
-        p_notes: deliveryInfo.notes || null,
-        p_methode_paiement: paymentMethod,
-        p_items: orderItems,
-      })
+      // Appeler le RPC pour commande anonyme
+      // Le RPC retourne JSONB, on cast le resultat
+      interface RpcResult { 
+        success: boolean
+        numero?: string
+        error?: string 
+      }
+      
+      // Cast explicite pour contourner les types generes
+      type RpcClient = {
+        rpc: (
+          fn: string,
+          params: Record<string, unknown>
+        ) => Promise<{ data: unknown; error: { message: string } | null }>
+      }
+      
+      const { data, error: rpcError } = await (supabase as unknown as RpcClient).rpc(
+        'create_anonymous_order',
+        {
+          p_nom: deliveryInfo.nom,
+          p_prenom: deliveryInfo.prenom,
+          p_telephone: deliveryInfo.telephone,
+          p_quartier: deliveryInfo.quartier,
+          p_adresse: deliveryInfo.adresse || null,
+          p_notes: deliveryInfo.notes || null,
+          p_methode_paiement: paymentMethod,
+          p_items: orderItems,
+        }
+      )
+
+      const result = data as RpcResult | null
 
       if (rpcError) {
         console.error('Erreur RPC:', rpcError)
@@ -93,9 +112,7 @@ export function POSCheckout() {
         return
       }
 
-      const result = data as { success: boolean; numero?: string; error?: string }
-
-      if (result.success && result.numero) {
+      if (result?.success && result?.numero) {
         // Sauvegarder les items avant de vider le panier
         savedItemsRef.current = items.map((item) => ({
           nom: item.nom,
@@ -124,7 +141,7 @@ export function POSCheckout() {
         setStep('confirm')
         clearCart()
       } else {
-        setError(result.error || 'Erreur lors de la commande')
+        setError(result?.error || 'Erreur lors de la commande')
       }
     } catch (err) {
       console.error('Erreur commande:', err)

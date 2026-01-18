@@ -1,9 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import { Header, Footer } from '@/components/layout'
 import { QueryProvider } from '@/providers'
-import { POSModal } from '@/components/pos'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -59,6 +57,9 @@ export const metadata: Metadata = {
   },
 }
 
+// Forcer le rendu dynamique pour l'authentification
+export const dynamic = 'force-dynamic'
+
 export default function RootLayout({
   children,
 }: {
@@ -68,15 +69,7 @@ export default function RootLayout({
     <html lang="fr" className={inter.variable}>
       <body className={`${inter.className} antialiased`}>
         <QueryProvider>
-          <div className="min-h-screen flex flex-col">
-            <Header />
-            {/* Spacer pour compenser le header fixed */}
-            <div className="h-16 lg:h-20" aria-hidden="true" />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </div>
-          {/* Modal POS global */}
-          <POSModal />
+          {children}
         </QueryProvider>
       </body>
     </html>
