@@ -145,7 +145,8 @@ export function useProduitForm(options: UseProduitFormOptions = {}) {
         if (error) throw error
       }
 
-      router.push('/produits')
+      router.push('/produits-admin')
+      router.refresh()
       return true
     } catch (error) {
       console.error('Erreur:', error)

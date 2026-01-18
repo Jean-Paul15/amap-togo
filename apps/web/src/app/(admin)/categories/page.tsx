@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react'
 import { supabaseClient } from '@/lib/supabase'
 import { Plus, Trash2, GripVertical, Layers, Check, X, Edit } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useToast } from '@/components/ui/toast'
 
 interface Categorie {
   id: string
@@ -20,6 +21,7 @@ interface Categorie {
 }
 
 export default function CategoriesListPage() {
+  const toast = useToast()
   const [categories, setCategories] = useState<Categorie[]>([])
   const [loading, setLoading] = useState(true)
   const [isCreating, setIsCreating] = useState(false)
@@ -67,9 +69,11 @@ export default function CategoriesListPage() {
       if (error) throw error
       setNewName('')
       setIsCreating(false)
+      toast.success('Catégorie créée')
       fetchCategories()
     } catch (error) {
       console.error('Erreur:', error)
+      toast.error('Erreur lors de la création')
     }
   }
 
@@ -78,9 +82,10 @@ export default function CategoriesListPage() {
     try {
       const { error } = await supabaseClient.from('categories').delete().eq('id', id)
       if (error) throw error
+      toast.success('Catégorie supprimée')
       fetchCategories()
     } catch {
-      alert('Impossible de supprimer (produits associes)')
+      toast.error('Impossible de supprimer (produits associés)')
     }
   }
 

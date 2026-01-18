@@ -9,7 +9,8 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabaseClient } from '@/lib/supabase'
-import { ArrowLeft, Save, User } from 'lucide-react'
+import { ArrowLeft, Save, User, Loader2 } from 'lucide-react'
+import { useToast } from '@/components/ui/toast'
 
 interface Client {
   id: string
@@ -32,6 +33,7 @@ interface Role {
 export default function EditClientPage() {
   const params = useParams()
   const router = useRouter()
+  const toast = useToast()
   const clientId = params.id as string
 
   const [client, setClient] = useState<Client | null>(null)
@@ -126,10 +128,12 @@ export default function EditClientPage() {
         .eq('id', clientId)
 
       if (error) throw error
+      toast.success('Client modifié avec succès')
       router.push('/clients')
+      router.refresh()
     } catch (error) {
       console.error('Erreur:', error)
-      alert('Erreur lors de la modification')
+      toast.error('Erreur lors de la modification')
     } finally {
       setSaving(false)
     }
@@ -308,10 +312,19 @@ export default function EditClientPage() {
             <button
               type="submit"
               disabled={saving}
-              className="flex items-center gap-2 px-5 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 disabled:opacity-50 transition-colors"
+              className="flex items-center gap-2 px-5 py-2.5 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 disabled:opacity-50 transition-colors shadow-sm"
             >
-              <Save className="w-4 h-4" />
-              {saving ? 'Enregistrement...' : 'Enregistrer'}
+              {saving ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Enregistrement...
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4" />
+                  Enregistrer
+                </>
+              )}
             </button>
             <Link
               href="/clients"

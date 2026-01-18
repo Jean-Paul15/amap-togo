@@ -10,6 +10,7 @@ import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { supabaseClient } from '@/lib/supabase'
 import { formatStatutPaiement } from '@amap-togo/utils'
+import { useToast } from '@/components/ui/toast'
 import { 
   ArrowLeft, 
   User,
@@ -51,6 +52,7 @@ const statutActions = [
 
 export default function CommandeDetailPage() {
   const params = useParams()
+  const toast = useToast()
   const [commande, setCommande] = useState<CommandeDetail | null>(null)
   const [loading, setLoading] = useState(true)
   const [updating, setUpdating] = useState(false)
@@ -111,9 +113,10 @@ export default function CommandeDetailPage() {
 
       if (error) throw error
       setCommande({ ...commande, statut: newStatus })
+      toast.success('Statut mis à jour')
     } catch (error) {
       console.error('Erreur:', error)
-      alert('Erreur lors de la mise a jour')
+      toast.error('Erreur lors de la mise à jour')
     } finally {
       setUpdating(false)
     }

@@ -7,6 +7,7 @@ import { useState } from 'react'
 import { Search } from 'lucide-react'
 import type { Produit } from '@amap-togo/database'
 import { ProductCard } from '@/components/produits/product-card'
+import { POSProductCard } from './pos-product-card'
 import { POSCategoryFilter } from './pos-category-filter'
 import { useCartStore } from '@/stores/cart-store'
 import { useProductsStore } from '@/stores/products-store'
@@ -77,12 +78,12 @@ export function POSProducts() {
         />
       </div>
 
-      {/* Grille produits */}
+      {/* Grille produits - Liste compacte mobile, grille desktop */}
       <div className="flex-1 overflow-y-auto p-3 sm:p-4">
         {!isLoaded ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+          <div className="space-y-2 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="aspect-square bg-muted rounded-lg animate-pulse" />
+              <div key={i} className="h-16 lg:aspect-square bg-muted rounded-lg animate-pulse" />
             ))}
           </div>
         ) : filteredProducts.length === 0 ? (
@@ -90,15 +91,29 @@ export function POSProducts() {
             Aucun produit trouvé
           </p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-            {filteredProducts.map((produit) => (
-              <ProductCard
-                key={produit.id}
-                produit={produit}
-                onAddToCart={handleAddToCart}
-              />
-            ))}
-          </div>
+          <>
+            {/* Mobile: Liste compacte verticale */}
+            <div className="lg:hidden space-y-2">
+              {filteredProducts.map((produit) => (
+                <POSProductCard
+                  key={produit.id}
+                  produit={produit}
+                  onAddToCart={handleAddToCart}
+                />
+              ))}
+            </div>
+
+            {/* Desktop: Grille avec cartes completes */}
+            <div className="hidden lg:grid lg:grid-cols-2 gap-4">
+              {filteredProducts.map((produit) => (
+                <ProductCard
+                  key={produit.id}
+                  produit={produit}
+                  onAddToCart={handleAddToCart}
+                />
+              ))}
+            </div>
+          </>
         )}
       </div>
     </div>

@@ -9,6 +9,7 @@ import { RoleForm } from '@/components/admin/rbac'
 import { supabaseClient } from '@/lib/supabase'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
+import { useToast } from '@/components/ui/toast'
 import type { Ressource, PermissionInsert, RoleAvecPermissions } from '@amap-togo/database'
 
 interface PageProps {
@@ -18,6 +19,7 @@ interface PageProps {
 export default function EditRolePage({ params }: PageProps) {
   const { id } = params
   const router = useRouter()
+  const toast = useToast()
   const [role, setRole] = useState<RoleAvecPermissions | null>(null)
   const [ressources, setRessources] = useState<Ressource[]>([])
   const [loading, setLoading] = useState(false)
@@ -101,9 +103,10 @@ export default function EditRolePage({ params }: PageProps) {
       }
 
       router.push('/roles')
+      router.refresh()
     } catch (error) {
       console.error('Erreur:', error)
-      alert('Erreur lors de la mise a jour')
+      toast.error('Erreur lors de la mise à jour')
     } finally {
       setLoading(false)
     }

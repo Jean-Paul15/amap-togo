@@ -9,10 +9,12 @@ import { RoleForm } from '@/components/admin/rbac'
 import { supabaseClient } from '@/lib/supabase'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
+import { useToast } from '@/components/ui/toast'
 import type { Ressource, PermissionInsert } from '@amap-togo/database'
 
 export default function CreateRolePage() {
   const router = useRouter()
+  const toast = useToast()
   const [ressources, setRessources] = useState<Ressource[]>([])
   const [loading, setLoading] = useState(false)
   const [loadingData, setLoadingData] = useState(true)
@@ -63,9 +65,10 @@ export default function CreateRolePage() {
       }
 
       router.push('/roles')
+      router.refresh()
     } catch (error) {
       console.error('Erreur:', error)
-      alert('Erreur lors de la creation du role')
+      toast.error('Erreur lors de la création du rôle')
     } finally {
       setLoading(false)
     }

@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabaseClient } from '@/lib/supabase'
 import { ArrowLeft, Calendar, Save, Package } from 'lucide-react'
+import { useToast } from '@/components/ui/toast'
 
 interface PanierType {
   id: string
@@ -27,6 +28,7 @@ interface Produit {
 
 export default function CreatePanierPage() {
   const router = useRouter()
+  const toast = useToast()
 
   const [panierTypes, setPanierTypes] = useState<PanierType[]>([])
   const [produits, setProduits] = useState<Produit[]>([])
@@ -100,7 +102,7 @@ export default function CreatePanierPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!panierTypeId || !semaineDebut || !semaineFin) {
-      alert('Veuillez remplir tous les champs obligatoires')
+      toast.error('Veuillez remplir tous les champs obligatoires')
       return
     }
 
@@ -135,10 +137,12 @@ export default function CreatePanierPage() {
         if (contenuError) throw contenuError
       }
 
-      router.push('/paniers')
+      toast.success('Panier créé avec succès')
+      router.push('/paniers-admin')
+      router.refresh()
     } catch (error) {
       console.error('Erreur:', error)
-      alert('Erreur lors de la creation du panier')
+      toast.error('Erreur lors de la création du panier')
     } finally {
       setSaving(false)
     }

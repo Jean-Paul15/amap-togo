@@ -10,9 +10,11 @@ import Link from 'next/link'
 import { supabaseClient } from '@/lib/supabase'
 import { Shield, Plus, Edit, Trash2, Users, Lock } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useToast } from '@/components/ui/toast'
 import type { Role } from '@amap-togo/database'
 
 export default function RolesListPage() {
+  const toast = useToast()
   const [roles, setRoles] = useState<(Role & { users_count: number })[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -66,8 +68,9 @@ export default function RolesListPage() {
 
       if (error) throw error
       setRoles((prev) => prev.filter((r) => r.id !== id))
+      toast.success('Rôle supprimé')
     } catch (error) {
-      alert('Erreur lors de la suppression')
+      toast.error('Erreur lors de la suppression')
     }
   }
 

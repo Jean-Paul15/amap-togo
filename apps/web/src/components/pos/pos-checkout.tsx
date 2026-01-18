@@ -49,11 +49,11 @@ export function POSCheckout() {
 
   const totalPrice = getTotalPrice()
 
-  // Validation du formulaire
+  // Validation du formulaire - telephone doit avoir 8 chiffres
   const isFormValid = 
     deliveryInfo.nom.trim() !== '' &&
     deliveryInfo.prenom.trim() !== '' &&
-    deliveryInfo.telephone.trim() !== '' &&
+    deliveryInfo.telephone.trim().length === 8 &&
     deliveryInfo.quartier.trim() !== ''
 
   // Soumettre la commande (sans authentification requise)

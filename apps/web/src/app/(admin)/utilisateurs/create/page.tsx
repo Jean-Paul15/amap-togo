@@ -9,10 +9,12 @@ import { UserForm } from '@/components/admin/rbac'
 import { supabaseClient } from '@/lib/supabase'
 import { ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
+import { useToast } from '@/components/ui/toast'
 import type { Role } from '@amap-togo/database'
 
 export default function CreateUtilisateurPage() {
   const router = useRouter()
+  const toast = useToast()
   const [roles, setRoles] = useState<Role[]>([])
   const [loading, setLoading] = useState(false)
   const [loadingData, setLoadingData] = useState(true)
@@ -56,7 +58,7 @@ export default function CreateUtilisateurPage() {
       router.push('/utilisateurs')
     } catch (error) {
       console.error('Erreur:', error)
-      alert(error instanceof Error ? error.message : 'Erreur lors de la creation')
+      toast.error(error instanceof Error ? error.message : 'Erreur lors de la création')
     } finally {
       setLoading(false)
     }

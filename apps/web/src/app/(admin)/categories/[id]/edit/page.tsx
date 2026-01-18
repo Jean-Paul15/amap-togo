@@ -10,6 +10,7 @@ import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabaseClient } from '@/lib/supabase'
 import { ArrowLeft, Save, Trash2 } from 'lucide-react'
+import { useToast } from '@/components/ui/toast'
 
 interface Categorie {
   id: string
@@ -23,6 +24,7 @@ interface Categorie {
 export default function EditCategoriePage() {
   const params = useParams()
   const router = useRouter()
+  const toast = useToast()
   const categorieId = params.id as string
 
   const [categorie, setCategorie] = useState<Categorie | null>(null)
@@ -86,10 +88,12 @@ export default function EditCategoriePage() {
         .eq('id', categorieId)
 
       if (error) throw error
+      toast.success('Catégorie modifiée')
       router.push('/categories')
+      router.refresh()
     } catch (error) {
       console.error('Erreur:', error)
-      alert('Erreur lors de la modification')
+      toast.error('Erreur lors de la modification')
     } finally {
       setSaving(false)
     }
@@ -105,10 +109,12 @@ export default function EditCategoriePage() {
         .eq('id', categorieId)
 
       if (error) throw error
+      toast.success('Catégorie supprimée')
       router.push('/categories')
+      router.refresh()
     } catch (error) {
       console.error('Erreur:', error)
-      alert('Impossible de supprimer (produits associes)')
+      toast.error('Impossible de supprimer (produits associés)')
     }
   }
 

@@ -11,7 +11,9 @@ import { supabaseClient } from '@/lib/supabase'
 import { Plus, Search, Edit, AlertTriangle, Package, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { InlineEditCell } from '@/components/admin/produits/inline-edit-cell'
+import { InlineImageEdit } from '@/components/admin/produits/inline-image-edit'
 import { StatusToggle } from '@/components/admin/produits/status-toggle'
+import { useToast } from '@/components/ui/toast'
 
 interface Categorie {
   id: string
@@ -33,6 +35,7 @@ interface Produit {
 }
 
 export default function ProduitsListPage() {
+  const toast = useToast()
   const [produits, setProduits] = useState<Produit[]>([])
   const [categories, setCategories] = useState<Categorie[]>([])
   const [loading, setLoading] = useState(true)
@@ -97,11 +100,21 @@ export default function ProduitsListPage() {
           return updated
         })
       )
+      toast.success('Produit modifié')
       return true
     } catch (error) {
       console.error('Erreur mise a jour:', error)
+      toast.error('Erreur lors de la mise à jour')
       return false
     }
+  }
+
+  /** Met a jour l'image d'un produit localement */
+  const updateImage = (id: string, newUrl: string) => {
+    setProduits((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, image_url: newUrl } : p))
+    )
+    toast.success('Image modifiée')
   }
 
   const handleDelete = async (id: string, nom: string) => {
@@ -110,8 +123,9 @@ export default function ProduitsListPage() {
       const { error } = await supabaseClient.from('produits').delete().eq('id', id)
       if (error) throw error
       setProduits((prev) => prev.filter((p) => p.id !== id))
+      toast.success('Produit supprimé')
     } catch {
-      alert('Impossible de supprimer (produit utilise dans des commandes)')
+      toast.error('Impossible de supprimer (produit utilisé dans des commandes)')
     }
   }
 
@@ -134,7 +148,7 @@ export default function ProduitsListPage() {
             </p>
           </div>
           <Link
-            href="/produits/create"
+            href="/produits-admin/create"
             className="inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-green-600 text-white text-sm font-semibold rounded-lg sm:rounded-xl hover:bg-green-700 transition-all shadow-sm w-full sm:w-auto"
           >
             <Plus className="w-4 h-4" />
@@ -197,22 +211,16 @@ export default function ProduitsListPage() {
               ) : (
                 filteredProduits.map((produit) => (
                   <tr key={produit.id} className="group hover:bg-gray-50/50">
-                    {/* Nom */}
+                    {/* Nom avec image editable */}
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
-                          {produit.image_url ? (
-                            <img
-                              src={produit.image_url}
-                              alt={produit.nom}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center">
-                              <Package className="w-4 h-4 text-gray-300" />
-                            </div>
-                          )}
-                        </div>
+                        <InlineImageEdit
+                          imageUrl={produit.image_url}
+                          productName={produit.nom}
+                          productId={produit.id}
+                          onUpdate={(url) => updateImage(produit.id, url)}
+                          size="sm"
+                        />
                         <InlineEditCell
                           value={produit.nom}
                           onSave={(v) => updateProduit(produit.id, 'nom', v)}
@@ -319,20 +327,14 @@ export default function ProduitsListPage() {
               filteredProduits.map((produit) => (
                 <div key={produit.id} className="p-4">
                   <div className="flex items-start gap-3">
-                    {/* Image */}
-                    <div className="w-14 h-14 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
-                      {produit.image_url ? (
-                        <img
-                          src={produit.image_url}
-                          alt={produit.nom}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <Package className="w-6 h-6 text-gray-300" />
-                        </div>
-                      )}
-                    </div>
+                    {/* Image editable */}
+                    <InlineImageEdit
+                      imageUrl={produit.image_url}
+                      productName={produit.nom}
+                      productId={produit.id}
+                      onUpdate={(url) => updateImage(produit.id, url)}
+                      size="md"
+                    />
                     {/* Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-2">

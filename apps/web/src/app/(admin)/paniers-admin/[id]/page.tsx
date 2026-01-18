@@ -11,6 +11,7 @@ import Link from 'next/link'
 import { supabaseClient } from '@/lib/supabase'
 import { ArrowLeft, Calendar, Package, Edit, Trash2, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useToast } from '@/components/ui/toast'
 
 interface Contenu {
   id: string
@@ -35,6 +36,7 @@ interface PageProps {
 export default function PanierDetailPage({ params }: PageProps) {
   const { id } = params
   const router = useRouter()
+  const toast = useToast()
   const [panier, setPanier] = useState<PanierDetail | null>(null)
   const [loading, setLoading] = useState(true)
   const [deleting, setDeleting] = useState(false)
@@ -73,10 +75,11 @@ export default function PanierDetailPage({ params }: PageProps) {
       await supabaseClient.from('paniers_contenu').delete().eq('panier_semaine_id', id)
       // Puis le panier
       await supabaseClient.from('paniers_semaine').delete().eq('id', id)
-      router.push('/paniers')
+      router.push('/paniers-admin')
+      router.refresh()
     } catch (error) {
       console.error('Erreur:', error)
-      alert('Impossible de supprimer ce panier')
+      toast.error('Impossible de supprimer ce panier')
     } finally {
       setDeleting(false)
     }

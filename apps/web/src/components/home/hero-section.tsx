@@ -28,14 +28,11 @@ export function HeroSection() {
           <source src="/videos/amap-hero-background.mp4" type="video/mp4" />
         </video>
 
-        {/* Fallback : fond gradient si pas de vidéo */}
-        <div className="absolute inset-0 bg-gradient-to-br from-green-600 via-emerald-600 to-green-700 opacity-90" />
+        {/* Fallback : fond gradient si pas de video */}
+        <div className="absolute inset-0 bg-gradient-to-br from-green-600 via-emerald-600 to-green-700 opacity-50" />
 
-        {/* Filtre vert transparent très clair pour le thème AMAP */}
-        <div className="absolute inset-0 bg-primary/5 mix-blend-overlay" />
-
-        {/* Overlay gradient pour lisibilité du texte */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/50" />
+        {/* Overlay gradient subtil pour lisibilite du texte */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/30" />
       </div>
 
       {/* Particules flottantes décoratives */}

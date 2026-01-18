@@ -8,7 +8,6 @@ import Link from 'next/link'
 import { ArrowRight, ShoppingBag, Check } from 'lucide-react'
 import { motion, useInView } from 'framer-motion'
 import { formatPrice } from '@amap-togo/utils'
-import { useCartStore } from '@/stores/cart-store'
 
 /** Définition d'un type de panier */
 interface PanierInfo {
@@ -151,8 +150,6 @@ export function PaniersSection() {
 
 /** Carte d'un type de panier avec animations */
 function PanierCard({ nom, prix, description, contenuExemple, populaire }: PanierInfo) {
-  const openModal = useCartStore((state) => state.openModal)
-
   return (
     <motion.div
       whileHover={{ y: -8, scale: 1.02 }}
@@ -235,9 +232,8 @@ function PanierCard({ nom, prix, description, contenuExemple, populaire }: Panie
         </div>
 
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <button
-            type="button"
-            onClick={openModal}
+          <Link
+            href="/paniers"
             className={`
               block w-full text-center py-2.5 rounded-full font-bold text-sm
               transition-all duration-300
@@ -247,8 +243,8 @@ function PanierCard({ nom, prix, description, contenuExemple, populaire }: Panie
               }
             `}
           >
-            Ouvrir le POS
-          </button>
+            Voir les paniers
+          </Link>
         </motion.div>
       </div>
     </motion.div>

@@ -55,7 +55,7 @@ export function POSDeliveryForm({ values, onChange }: POSDeliveryFormProps) {
         {/* Prenom */}
         <div>
           <label className="block text-sm text-muted-foreground mb-1">
-            Prenom *
+            Prénom *
           </label>
           <input
             type="text"
@@ -75,13 +75,19 @@ export function POSDeliveryForm({ values, onChange }: POSDeliveryFormProps) {
       {/* Telephone */}
       <div>
         <label className="block text-sm text-muted-foreground mb-1">
-          Telephone *
+          Téléphone * (8 chiffres)
         </label>
         <input
           type="tel"
           value={values.telephone}
-          onChange={(e) => handleChange('telephone', e.target.value)}
-          placeholder="90 XX XX XX"
+          onChange={(e) => {
+            // Autoriser uniquement les chiffres, max 8
+            const val = e.target.value.replace(/\D/g, '').slice(0, 8)
+            handleChange('telephone', val)
+          }}
+          placeholder="90XXXXXX"
+          maxLength={8}
+          pattern="[0-9]{8}"
           className="
             w-full px-3 py-2
             bg-background border border-border rounded-lg
@@ -89,6 +95,11 @@ export function POSDeliveryForm({ values, onChange }: POSDeliveryFormProps) {
             focus:outline-none focus:ring-2 focus:ring-primary/20
           "
         />
+        {values.telephone.length > 0 && values.telephone.length < 8 && (
+          <p className="text-xs text-orange-500 mt-1">
+            Le numéro doit contenir 8 chiffres ({values.telephone.length}/8)
+          </p>
+        )}
       </div>
 
       {/* Quartier */}
@@ -113,13 +124,13 @@ export function POSDeliveryForm({ values, onChange }: POSDeliveryFormProps) {
       {/* Adresse */}
       <div>
         <label className="block text-sm text-muted-foreground mb-1">
-          Adresse complete
+          Adresse complète
         </label>
         <input
           type="text"
           value={values.adresse}
           onChange={(e) => handleChange('adresse', e.target.value)}
-          placeholder="Repere, rue, numero..."
+          placeholder="Repère, rue, numéro..."
           className="
             w-full px-3 py-2
             bg-background border border-border rounded-lg
@@ -137,7 +148,7 @@ export function POSDeliveryForm({ values, onChange }: POSDeliveryFormProps) {
         <textarea
           value={values.notes}
           onChange={(e) => handleChange('notes', e.target.value)}
-          placeholder="Instructions speciales..."
+          placeholder="Instructions spéciales..."
           rows={2}
           className="
             w-full px-3 py-2

@@ -1,5 +1,5 @@
 // Page gestion des types de paniers
-// CRUD complet pour paniers_types
+// CRUD complet pour paniers_types avec toasts
 
 'use client'
 
@@ -7,8 +7,9 @@ export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
 import { supabaseClient } from '@/lib/supabase'
-import { Plus, Edit, Trash2, ShoppingBag, Save, X } from 'lucide-react'
+import { Plus, Edit, Trash2, ShoppingBag, Save, X, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useToast } from '@/components/ui/toast'
 
 interface PanierType {
   id: string
@@ -26,8 +27,10 @@ const TYPES_PANIER = [
 ]
 
 export default function PaniersTypesPage() {
+  const toast = useToast()
   const [types, setTypes] = useState<PanierType[]>([])
   const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [isCreating, setIsCreating] = useState(false)
 
@@ -82,6 +85,7 @@ export default function PaniersTypesPage() {
     e.preventDefault()
     if (!formData.nom || !formData.prix) return
 
+    setSaving(true)
     try {
       const data = {
         type: formData.type,
@@ -92,26 +96,35 @@ export default function PaniersTypesPage() {
       }
 
       if (editingId) {
-        await supabaseClient.from('paniers_types').update(data).eq('id', editingId)
+        const { error } = await supabaseClient.from('paniers_types').update(data).eq('id', editingId)
+        if (error) throw error
+        toast.success('Type de panier modifié')
       } else {
-        await supabaseClient.from('paniers_types').insert(data)
+        const { error } = await supabaseClient.from('paniers_types').insert(data)
+        if (error) throw error
+        toast.success('Type de panier créé')
       }
 
       resetForm()
       fetchTypes()
     } catch (error) {
       console.error('Erreur:', error)
+      toast.error('Erreur lors de l\'enregistrement')
+    } finally {
+      setSaving(false)
     }
   }
 
   const handleDelete = async (id: string) => {
     if (!confirm('Supprimer ce type de panier ?')) return
     try {
-      await supabaseClient.from('paniers_types').delete().eq('id', id)
+      const { error } = await supabaseClient.from('paniers_types').delete().eq('id', id)
+      if (error) throw error
+      toast.success('Type de panier supprimé')
       fetchTypes()
     } catch (error) {
       console.error('Erreur:', error)
-      alert('Impossible de supprimer (paniers associes)')
+      toast.error('Impossible de supprimer (paniers associés)')
     }
   }
 
@@ -198,8 +211,12 @@ export default function PaniersTypesPage() {
                 <button type="button" onClick={resetForm} className="px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-lg">
                   <X className="w-4 h-4" />
                 </button>
-                <button type="submit" className="flex items-center gap-1 px-4 py-1.5 bg-gray-900 text-white text-sm rounded-lg">
-                  <Save className="w-4 h-4" />
+                <button 
+                  type="submit" 
+                  disabled={saving}
+                  className="flex items-center gap-1 px-4 py-1.5 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 disabled:opacity-50"
+                >
+                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                   {editingId ? 'Modifier' : 'Créer'}
                 </button>
               </div>
