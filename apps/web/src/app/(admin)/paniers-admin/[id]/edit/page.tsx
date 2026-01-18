@@ -5,7 +5,7 @@
 
 export const dynamic = 'force-dynamic'
 
-import { useEffect, useState, use } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabaseClient } from '@/lib/supabase'
@@ -25,11 +25,11 @@ interface Produit {
 }
 
 interface PageProps {
-  params: Promise<{ id: string }>
+  params: { id: string }
 }
 
 export default function EditPanierPage({ params }: PageProps) {
-  const { id } = use(params)
+  const { id } = params
   const router = useRouter()
 
   const [panierTypes, setPanierTypes] = useState<PanierType[]>([])

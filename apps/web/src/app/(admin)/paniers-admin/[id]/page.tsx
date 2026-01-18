@@ -5,7 +5,7 @@
 
 export const dynamic = 'force-dynamic'
 
-import { useEffect, useState, use } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabaseClient } from '@/lib/supabase'
@@ -29,11 +29,11 @@ interface PanierDetail {
 }
 
 interface PageProps {
-  params: Promise<{ id: string }>
+  params: { id: string }
 }
 
 export default function PanierDetailPage({ params }: PageProps) {
-  const { id } = use(params)
+  const { id } = params
   const router = useRouter()
   const [panier, setPanier] = useState<PanierDetail | null>(null)
   const [loading, setLoading] = useState(true)

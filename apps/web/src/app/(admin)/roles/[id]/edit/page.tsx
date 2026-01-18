@@ -3,7 +3,7 @@
 
 'use client'
 
-import { useState, useEffect, use } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { RoleForm } from '@/components/admin/rbac'
 import { supabaseClient } from '@/lib/supabase'
@@ -12,11 +12,11 @@ import Link from 'next/link'
 import type { Ressource, PermissionInsert, RoleAvecPermissions } from '@amap-togo/database'
 
 interface PageProps {
-  params: Promise<{ id: string }>
+  params: { id: string }
 }
 
 export default function EditRolePage({ params }: PageProps) {
-  const { id } = use(params)
+  const { id } = params
   const router = useRouter()
   const [role, setRole] = useState<RoleAvecPermissions | null>(null)
   const [ressources, setRessources] = useState<Ressource[]>([])
