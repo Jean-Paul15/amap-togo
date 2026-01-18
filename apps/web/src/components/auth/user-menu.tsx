@@ -32,7 +32,6 @@ export function UserMenu() {
   if (!profile) return null
 
   const initials = `${profile.prenom.charAt(0)}${profile.nom.charAt(0)}`.toUpperCase()
-  const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL || 'http://localhost:3001'
 
   return (
     <div ref={menuRef} className="relative">
@@ -75,7 +74,7 @@ export function UserMenu() {
           <div className="py-1">
             {/* Lien Dashboard pour tous */}
             <a
-              href={adminUrl}
+              href="/dashboard"
               className="flex items-center gap-3 px-4 py-2 text-sm text-primary font-medium hover:bg-primary/10 transition-colors"
             >
               <LayoutDashboard className="w-4 h-4" />

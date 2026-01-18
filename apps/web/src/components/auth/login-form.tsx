@@ -75,9 +75,8 @@ function LoginFormContent({ onSuccess }: LoginFormProps) {
           : `https://${redirectUrl}`
         window.location.href = finalUrl
       } else if (isAdminRedirect) {
-        // Demande admin : aller a l'admin
-        const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL || 'http://localhost:3001'
-        window.location.href = adminUrl
+        // Demande admin : aller au dashboard (meme site)
+        window.location.href = '/dashboard'
       } else {
         // Connexion normale : rafraichir
         window.location.reload()
