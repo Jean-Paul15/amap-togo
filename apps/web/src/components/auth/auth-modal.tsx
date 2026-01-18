@@ -53,17 +53,17 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
   const modalContent = (
     <AnimatePresence>
-      {/* Backdrop avec blur */}
+      {/* Backdrop */}
       <motion.div
         key="auth-backdrop"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
-        className="fixed inset-0 z-50 bg-black/50 backdrop-blur-md"
+        className="fixed inset-0 z-50 bg-black/90 lg:bg-black/50 lg:backdrop-blur-md"
       />
 
-      {/* Modal centre sur tous les ecrans */}
+      {/* Modal - Style hamburger mobile, haut sur desktop */}
       <motion.div
         key="auth-modal"
         initial={{ opacity: 0, scale: 0.95 }}
@@ -76,9 +76,10 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
         }}
         className="
           fixed z-50
-          left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
-          w-[90%] max-w-[340px] sm:max-w-md
-          max-h-[85vh]
+          left-4 right-4 top-24 mx-auto
+          max-w-xs
+          lg:left-1/2 lg:-translate-x-1/2 lg:top-20 lg:max-w-md
+          max-h-[calc(100vh-8rem)]
           overflow-y-auto
           bg-white dark:bg-gray-900
           border border-gray-200 dark:border-gray-700
