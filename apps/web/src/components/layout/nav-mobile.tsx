@@ -39,18 +39,19 @@ export function NavMobile() {
       {/* Overlay menu */}
       {isOpen && (
         <>
-          {/* Fond sombre */}
+          {/* Fond sombre - opacité augmentée pour meilleure lisibilité */}
           <div
-            className="fixed inset-0 bg-black/20 z-40"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
             onClick={closeMenu}
             aria-hidden="true"
           />
 
-          {/* Menu panel */}
+          {/* Menu panel - fond opaque blanc */}
           <nav
             className="
               fixed top-16 right-0 bottom-0 w-64
-              bg-background border-l border-border
+              bg-background/95 backdrop-blur-md border-l border-border
+              shadow-2xl
               z-50 p-6
               animate-in slide-in-from-right duration-200
             "
