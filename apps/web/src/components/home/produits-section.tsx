@@ -1,10 +1,12 @@
 // Section produits de la semaine
-// Affiche les produits disponibles cette semaine (SSR)
+// Affiche les produits disponibles cette semaine (SSR) avec animations
 
 'use client'
 
+import { useRef } from 'react'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
+import { motion, useInView } from 'framer-motion'
 import type { Produit } from '@amap-togo/database'
 import { ProductCard } from '@/components/produits/product-card'
 import { useCartStore } from '@/stores/cart-store'
@@ -15,10 +17,13 @@ interface ProduitsSectionProps {
 
 /**
  * Section des produits de la semaine
- * Recoit les produits pre-charges cote serveur
+ * Reçoit les produits pré-chargés côté serveur
+ * Animations au scroll pour engagement visuel
  */
 export function ProduitsSection({ produits }: ProduitsSectionProps) {
   const addItem = useCartStore((state) => state.addItem)
+  const ref = useRef(null)
+  const isInView = useInView(ref, { once: true, margin: '-100px' })
 
   const handleAddToCart = (produit: Produit) => {
     addItem({
@@ -31,52 +36,115 @@ export function ProduitsSection({ produits }: ProduitsSectionProps) {
     })
   }
 
-  const sectionContent = (
-    <section className="py-12 sm:py-16 lg:py-24 bg-accent/20">
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2
+      }
+    }
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: 'easeOut'
+      }
+    }
+  }
+
+  return (
+    <section ref={ref} className="py-16 sm:py-20 lg:py-28 bg-gradient-to-b from-white via-green-50/30 to-white">
       <div className="container mx-auto px-4 sm:px-6 lg:px-12">
-        <div className="text-center mb-8 sm:mb-12">
-          <h2 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-foreground">
+        {/* En-tête avec animation */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-10 sm:mb-14"
+        >
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={isInView ? { scale: 1 } : { scale: 0 }}
+            transition={{ duration: 0.5, type: 'spring', stiffness: 200 }}
+            className="inline-block px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-medium mb-4"
+          >
+            ✨ Fraîcheur garantie
+          </motion.div>
+
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
             Produits de la semaine
           </h2>
-          <p className="mt-3 sm:mt-4 text-sm sm:text-base text-muted-foreground max-w-xl mx-auto">
+          <p className="mt-4 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
             Découvrez notre sélection de produits frais disponibles cette semaine.
           </p>
-        </div>
+        </motion.div>
 
+        {/* Grille de produits avec animations */}
         {produits.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate={isInView ? 'visible' : 'hidden'}
+            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 lg:gap-6"
+          >
             {produits.slice(0, 8).map((produit) => (
-              <ProductCard 
-                key={produit.id} 
-                produit={produit}
-                onAddToCart={handleAddToCart}
-              />
+              <motion.div
+                key={produit.id}
+                variants={itemVariants}
+                whileHover={{ y: -5 }}
+                transition={{ duration: 0.2 }}
+              >
+                <ProductCard
+                  produit={produit}
+                  onAddToCart={handleAddToCart}
+                />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         ) : (
-          <p className="text-center text-muted-foreground">
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+            className="text-center text-muted-foreground py-12"
+          >
             Aucun produit disponible pour le moment.
-          </p>
+          </motion.p>
         )}
 
-        <div className="mt-8 sm:mt-12 text-center">
-          <Link
-            href="/produits"
-            className="
-              inline-flex items-center gap-2
-              px-5 sm:px-6 py-3 rounded-lg
-              bg-primary text-primary-foreground
-              font-medium text-sm sm:text-base
-              hover:bg-primary/90 transition-colors
-            "
-          >
-            Voir tous les produits
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
+        {/* Bouton CTA avec animation */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="mt-10 sm:mt-14 text-center"
+        >
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Link
+              href="/produits"
+              className="
+                inline-flex items-center gap-2
+                px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl
+                bg-gradient-to-r from-green-500 to-emerald-600
+                text-white
+                font-semibold text-sm sm:text-base
+                hover:from-green-600 hover:to-emerald-700
+                transition-all duration-300
+                shadow-lg shadow-green-500/30
+              "
+            >
+              Voir tous les produits
+              <ArrowRight className="w-5 h-5" />
+            </Link>
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   )
-
-  return sectionContent
 }

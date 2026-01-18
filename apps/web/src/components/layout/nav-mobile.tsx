@@ -41,22 +41,34 @@ export function NavMobile() {
         <>
           {/* Fond sombre - opacité augmentée pour meilleure lisibilité */}
           <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+            className="fixed inset-0 bg-black/70 backdrop-blur-md z-40"
             onClick={closeMenu}
             aria-hidden="true"
           />
 
-          {/* Menu panel - fond opaque blanc */}
+          {/* Menu panel - fond complètement opaque blanc */}
           <nav
             className="
-              fixed top-16 right-0 bottom-0 w-64
-              bg-background/95 backdrop-blur-md border-l border-border
+              fixed top-0 right-0 bottom-0 w-72
+              bg-white border-l-2 border-green-500
               shadow-2xl
               z-50 p-6
               animate-in slide-in-from-right duration-200
             "
             aria-label="Menu principal"
           >
+            {/* Header du menu avec bouton fermer */}
+            <div className="flex items-center justify-between mb-8 pb-4 border-b-2 border-gray-100">
+              <h2 className="text-xl font-bold text-gray-900">Menu</h2>
+              <button
+                type="button"
+                onClick={closeMenu}
+                className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                aria-label="Fermer le menu"
+              >
+                <X className="w-6 h-6 text-gray-700" strokeWidth={2.5} />
+              </button>
+            </div>
             <ul className="space-y-4">
               {navigationLinks.map((link) => {
                 const isActive = pathname === link.href
