@@ -13,14 +13,20 @@ import type { Database } from './types'
  * - Session automatiquement synchronisee
  */
 export function createClientBrowser() {
+  // Extraire le domaine principal en production pour partager les cookies entre sous-domaines
+  const cookieDomain = process.env.NODE_ENV === 'production' && process.env.NEXT_PUBLIC_COOKIE_DOMAIN
+    ? process.env.NEXT_PUBLIC_COOKIE_DOMAIN
+    : undefined
+
   return createBrowserClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookieOptions: {
-        // Important : pas de domain specifique en local
-        // En production sur Vercel, les sous-domaines partagent automatiquement
         name: 'sb-auth-token',
+        // En production : .amap-togo.com (avec le point) pour partager entre sous-domaines
+        // En local : undefined pour utiliser localhost
+        domain: cookieDomain || undefined,
         sameSite: 'lax',
         secure: process.env.NODE_ENV === 'production',
       },
