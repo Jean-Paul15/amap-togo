@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   description: 'Gestion des produits, commandes et clients AMAP TOGO',
 }
 
+// Forcer le rendu dynamique (pas de static export)
+export const dynamic = 'force-dynamic'
+
 export default function RootLayout({
   children,
 }: {

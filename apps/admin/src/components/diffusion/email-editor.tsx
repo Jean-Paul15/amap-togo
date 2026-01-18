@@ -51,7 +51,7 @@ export function EmailEditor({ value, onChange }: EmailEditorProps) {
     <div className="email-editor-wrapper">
       <DefaultEditor
         value={value}
-        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => onChange(e.target.value)}
+        onChange={(e) => onChange(e.target.value)}
         placeholder="Rédigez votre message ici..."
         containerProps={{
           style: {

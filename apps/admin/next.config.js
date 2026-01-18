@@ -12,6 +12,8 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ['lucide-react'],
   },
+  // Désactiver le static export car Refine nécessite SSR
+  output: 'standalone',
 }
 
 module.exports = nextConfig
