@@ -5,7 +5,6 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
 import { Plus, Check } from 'lucide-react'
 import { formatPrice } from '@amap-togo/utils'
 import type { Produit } from '@amap-togo/database'
@@ -47,8 +46,8 @@ export function ProductCard({ produit, onAddToCart }: ProductCardProps) {
 
   return (
     <div className="group relative bg-background rounded-xl overflow-hidden border border-border hover:border-primary/30 transition-all duration-300 hover:shadow-lg h-full flex flex-col">
-      {/* Image avec lien */}
-      <Link href={`/produits/${produit.slug}`} className="block">
+      {/* Image sans lien */}
+      <div className="block">
         <div className="aspect-square relative bg-gradient-to-br from-accent/30 to-accent/10 overflow-hidden">
           {produit.image_url ? (
             <Image
@@ -93,17 +92,15 @@ export function ProductCard({ produit, onAddToCart }: ProductCardProps) {
             </span>
           </div>
         </div>
-      </Link>
+      </div>
 
       {/* Infos - flex-1 pour pousser le bouton en bas */}
       <div className="p-4 flex flex-col flex-1">
         {/* Contenu texte */}
         <div className="flex-1">
-          <Link href={`/produits/${produit.slug}`}>
-            <h3 className="font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors">
-              {produit.nom}
-            </h3>
-          </Link>
+          <h3 className="font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors">
+            {produit.nom}
+          </h3>
 
           {/* Stock disponible */}
           {produit.stock > 0 && produit.stock <= 10 && (
@@ -116,6 +113,7 @@ export function ProductCard({ produit, onAddToCart }: ProductCardProps) {
         {/* Bouton ajouter - toujours en bas */}
         {onAddToCart && (
           <button
+            type="button"
             onClick={handleAddClick}
             disabled={isDisabled || isAdding || justAdded}
             className={`
