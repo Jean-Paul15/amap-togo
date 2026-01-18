@@ -1,5 +1,6 @@
 // Bouton d'authentification adaptatif
 // Affiche Connexion ou UserMenu selon l'etat
+// Chargement silencieux sans flash visible
 
 'use client'
 
@@ -11,11 +12,22 @@ import { AuthModal } from './auth-modal'
 import { UserMenu } from './user-menu'
 
 /**
+ * Placeholder invisible pendant le chargement initial
+ * Reserve l'espace sans montrer de skeleton visible
+ */
+function AuthButtonPlaceholder() {
+  return (
+    <div className="w-10 h-10 sm:w-24" aria-hidden="true" />
+  )
+}
+
+/**
  * Bouton qui affiche Connexion ou le menu utilisateur
+ * Chargement silencieux : invisible jusqu'a ce que l'etat soit pret
  */
 export function AuthButton() {
   return (
-    <Suspense fallback={<AuthButtonSkeleton />}>
+    <Suspense fallback={<AuthButtonPlaceholder />}>
       <AuthButtonContent />
     </Suspense>
   )
@@ -34,9 +46,9 @@ function AuthButtonContent() {
     }
   }, [searchParams])
 
-  // Chargement
+  // Chargement silencieux : espace reserve mais invisible
   if (loading) {
-    return <AuthButtonSkeleton />
+    return <AuthButtonPlaceholder />
   }
 
   // Utilisateur connecte
@@ -65,8 +77,4 @@ function AuthButtonContent() {
       />
     </>
   )
-}
-
-function AuthButtonSkeleton() {
-  return <div className="w-24 h-10 bg-muted rounded-lg animate-pulse" />
 }

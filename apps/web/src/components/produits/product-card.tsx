@@ -45,7 +45,7 @@ export function ProductCard({ produit, onAddToCart }: ProductCardProps) {
   const isDisabled = produit.stock === 0 || !onAddToCart
 
   return (
-    <div className="group relative bg-background rounded-xl overflow-hidden border border-border hover:border-primary/30 transition-all duration-300 hover:shadow-lg h-full flex flex-col">
+    <div className="group relative bg-background rounded-xl overflow-hidden border border-border hover:border-primary/30 transition-all duration-300 hover:shadow-lg flex flex-col">
       {/* Image sans lien */}
       <div className="block">
         <div className="aspect-square relative bg-gradient-to-br from-accent/30 to-accent/10 overflow-hidden">

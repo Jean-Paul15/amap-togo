@@ -30,14 +30,13 @@ interface RefineProviderProps {
 
 // Cache permissions en memoire
 let permissionsCache: Record<string, { create: boolean; read: boolean; update: boolean; delete: boolean }> | null = null
-let isAdminCache: boolean | null = null
 
 async function loadPermissions() {
-  if (permissionsCache !== null) return { permissions: permissionsCache, isAdmin: isAdminCache }
+  if (permissionsCache !== null) return permissionsCache
 
   try {
     const { data: { user } } = await supabaseClient.auth.getUser()
-    if (!user) return { permissions: {}, isAdmin: false }
+    if (!user) return {}
 
     const { data: profil } = await supabaseClient
       .from('profils')
@@ -86,20 +85,16 @@ async function loadPermissions() {
     }
 
     permissionsCache = permMap
-    isAdminCache = roleData?.nom === 'admin'
-    return { permissions: permMap, isAdmin: isAdminCache }
+    return permMap
   } catch {
-    return { permissions: {}, isAdmin: false }
+    return {}
   }
 }
 
 // AccessControlProvider pour Refine
 const accessControlProvider: AccessControlProvider = {
   can: async ({ resource, action }) => {
-    const { permissions, isAdmin } = await loadPermissions()
-
-    // Admin a tous les droits
-    if (isAdmin) return { can: true }
+    const permissions = await loadPermissions()
 
     // Mapper ressource Refine vers code ressource
     const ressourceCode = resource ? (REFINE_RESOURCE_MAP[resource] || resource) : null
@@ -222,5 +217,4 @@ export function RefineProvider({ children }: RefineProviderProps) {
 // Reset cache (appeler lors de la deconnexion)
 export function resetPermissionsCache() {
   permissionsCache = null
-  isAdminCache = null
 }

@@ -157,11 +157,6 @@ export async function middleware(request: NextRequest) {
       if (routeKey) {
         const resourceCode = ROUTE_RESOURCE_MAP[routeKey]
 
-        // Admin a toujours acces a tout
-        if (roleData?.nom === 'admin') {
-          return response
-        }
-
         // Verifier si le role a la permission de lire cette ressource
         const permissions = roleData?.permissions || []
         const hasAccess = permissions.some(

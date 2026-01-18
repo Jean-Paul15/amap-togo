@@ -3,7 +3,8 @@
 
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Sparkles } from 'lucide-react'
 import { LoginForm } from './login-form'
@@ -14,9 +15,15 @@ interface AuthModalProps {
 }
 
 /**
- * Modal d'authentification glassmorphism avec animations
+ * Modal d'authentification centre avec Portal
  */
 export function AuthModal({ isOpen, onClose }: AuthModalProps) {
+  const [mounted, setMounted] = useState(false)
+
+  // Monter cote client
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Fermer avec Escape
   useEffect(() => {
@@ -56,26 +63,27 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
         className="fixed inset-0 z-50 bg-black/50 backdrop-blur-md"
       />
 
-      {/* Modal moderne et responsive */}
+      {/* Modal centre sur tous les ecrans */}
       <motion.div
         key="auth-modal"
-        initial={{ opacity: 0, scale: 0.9, y: 40 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.9, y: 40 }}
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.9 }}
         transition={{ 
           type: 'spring',
           stiffness: 300,
           damping: 25
         }}
         className="
-          fixed z-50 
-          inset-x-3 bottom-0 top-auto sm:inset-auto
+          fixed z-50
+          inset-4 sm:inset-auto
           sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2
           w-auto sm:w-full sm:max-w-md
+          max-h-[90vh] overflow-y-auto
           bg-white dark:bg-gray-900
           border border-gray-200 dark:border-gray-700
-          rounded-t-2xl sm:rounded-2xl shadow-2xl
-          overflow-hidden
+          rounded-2xl shadow-2xl
+          m-auto flex flex-col justify-center
         "
       >
         {/* Decoration gradient superieur */}
@@ -134,10 +142,12 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
         </motion.div>
 
         {/* Safe area pour iPhone */}
-        <div className="h-safe-area-inset-bottom sm:hidden" />
+        <div className="h-2 sm:hidden" />
       </motion.div>
     </AnimatePresence>
   )
 
-  return modalContent
+  // Utiliser Portal pour z-index correct
+  if (!mounted) return null
+  return createPortal(modalContent, document.body)
 }

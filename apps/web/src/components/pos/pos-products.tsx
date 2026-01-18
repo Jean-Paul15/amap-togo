@@ -69,8 +69,8 @@ export function POSProducts() {
         </div>
       </div>
 
-      {/* Categories */}
-      <div className="border-b">
+      {/* Categories - affichees sur tablette et desktop, cachees sur mobile */}
+      <div className="hidden md:block border-b">
         <POSCategoryFilter
           categories={categories}
           selected={selectedCategory}
@@ -78,14 +78,11 @@ export function POSProducts() {
         />
       </div>
 
-      {/* Grille produits - Liste compacte mobile, grille desktop */}
+      {/* Grille produits - Liste compacte mobile, grille tablette/desktop */}
       <div className="flex-1 overflow-y-auto p-3 sm:p-4">
         {!isLoaded ? (
-          <div className="space-y-2 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-16 lg:aspect-square bg-muted rounded-lg animate-pulse" />
-            ))}
-          </div>
+          /* Espace reserve invisible pendant chargement */
+          <div className="h-full" />
         ) : filteredProducts.length === 0 ? (
           <p className="text-center text-muted-foreground py-8">
             Aucun produit trouvé
@@ -93,7 +90,7 @@ export function POSProducts() {
         ) : (
           <>
             {/* Mobile: Liste compacte verticale */}
-            <div className="lg:hidden space-y-2">
+            <div className="md:hidden space-y-2">
               {filteredProducts.map((produit) => (
                 <POSProductCard
                   key={produit.id}
@@ -103,8 +100,8 @@ export function POSProducts() {
               ))}
             </div>
 
-            {/* Desktop: Grille avec cartes completes */}
-            <div className="hidden lg:grid lg:grid-cols-2 gap-4">
+            {/* Tablette/Desktop: Grille avec cartes completes */}
+            <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-2 gap-4">
               {filteredProducts.map((produit) => (
                 <ProductCard
                   key={produit.id}

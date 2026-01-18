@@ -11,7 +11,6 @@ interface UsePermissionsReturn {
   permissions: PermissionsMap
   loading: boolean
   error: Error | null
-  isAdmin: boolean
   canAccess: (ressource: RessourceCode, action: CrudAction) => boolean
   refetch: () => Promise<void>
 }
@@ -20,7 +19,6 @@ export function usePermissions(): UsePermissionsReturn {
   const [permissions, setPermissions] = useState<PermissionsMap>({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
-  const [isAdmin, setIsAdmin] = useState(false)
 
   const fetchPermissions = useCallback(async () => {
     try {
@@ -78,7 +76,6 @@ export function usePermissions(): UsePermissionsReturn {
             }
           }
         }
-        setIsAdmin(role.nom === 'admin')
       }
 
       setPermissions(permMap)
@@ -96,7 +93,6 @@ export function usePermissions(): UsePermissionsReturn {
 
   const canAccess = useCallback(
     (ressource: RessourceCode, action: CrudAction): boolean => {
-      if (isAdmin) return true
       const perm = permissions[ressource]
       if (!perm) return false
 
@@ -108,15 +104,14 @@ export function usePermissions(): UsePermissionsReturn {
         default: return false
       }
     },
-    [permissions, isAdmin]
+    [permissions]
   )
 
   return useMemo(() => ({
     permissions,
     loading,
     error,
-    isAdmin,
     canAccess,
     refetch: fetchPermissions,
-  }), [permissions, loading, error, isAdmin, canAccess, fetchPermissions])
+  }), [permissions, loading, error, canAccess, fetchPermissions])
 }

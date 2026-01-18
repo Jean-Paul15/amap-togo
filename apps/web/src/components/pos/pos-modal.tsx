@@ -7,6 +7,7 @@ import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react'
 import { useCartStore } from '@/stores/cart-store'
+import { useProductsStore } from '@/stores/products-store'
 import { POSNavigation } from './pos-navigation'
 import { POSProducts } from './pos-products'
 import { POSCart } from './pos-cart'
@@ -19,6 +20,14 @@ import { POSCheckout } from './pos-checkout'
  */
 export function POSModal() {
   const { isModalOpen, closeModal, activeSection } = useCartStore()
+  const revalidate = useProductsStore((state) => state.revalidate)
+
+  // Revalider les produits a l'ouverture du POS (en arriere-plan)
+  useEffect(() => {
+    if (isModalOpen) {
+      revalidate()
+    }
+  }, [isModalOpen, revalidate])
 
   // Fermer avec Escape
   useEffect(() => {

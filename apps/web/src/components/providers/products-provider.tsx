@@ -1,51 +1,39 @@
-// Provider qui pre-charge les produits au montage
-// Evite les chargements repetitifs dans le POS
+// Provider qui hydrate le store avec les donnees SSR
+// Les produits sont charges cote serveur et passes ici
 
 'use client'
 
-import { useEffect } from 'react'
-import { createClientBrowser } from '@amap-togo/database/browser'
+import { useRef } from 'react'
 import { useProductsStore } from '@/stores/products-store'
+import type { Produit, Categorie } from '@amap-togo/database'
+
+interface ProductsProviderProps {
+  children: React.ReactNode
+  initialProducts?: Produit[]
+  initialCategories?: Categorie[]
+}
 
 /**
- * Provider qui charge les produits une seule fois au montage
- * Les produits sont ensuite disponibles instantanement dans le POS
+ * Provider qui hydrate le store Zustand avec les donnees SSR
+ * Hydratation synchrone pour affichage instantane
  */
-export function ProductsProvider({ children }: { children: React.ReactNode }) {
-  const { isLoaded, setProducts } = useProductsStore()
+export function ProductsProvider({
+  children,
+  initialProducts,
+  initialCategories,
+}: ProductsProviderProps) {
+  const hasHydrated = useRef(false)
 
-  useEffect(() => {
-    // Ne charger qu'une fois
-    if (isLoaded) return
-
-    const supabase = createClientBrowser()
-
-    async function loadProducts() {
-      try {
-        const [produitsResult, categoriesResult] = await Promise.all([
-          supabase
-            .from('produits')
-            .select('*')
-            .eq('actif', true)
-            .gt('stock', 0)
-            .order('nom'),
-          supabase
-            .from('categories')
-            .select('*')
-            .eq('actif', true)
-            .order('ordre'),
-        ])
-
-        if (produitsResult.data && categoriesResult.data) {
-          setProducts(produitsResult.data, categoriesResult.data)
-        }
-      } catch (err) {
-        console.error('Erreur chargement produits:', err)
-      }
-    }
-
-    loadProducts()
-  }, [isLoaded, setProducts])
+  // Hydratation synchrone (avant le premier rendu)
+  if (!hasHydrated.current && initialProducts && initialCategories) {
+    hasHydrated.current = true
+    // Hydrater le store directement (synchrone)
+    useProductsStore.setState({
+      produits: initialProducts,
+      categories: initialCategories,
+      isLoaded: true,
+    })
+  }
 
   return <>{children}</>
 }

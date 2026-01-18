@@ -34,11 +34,11 @@ export function Logo({ className = '', showText = true }: LogoProps) {
       </div>
       
       {showText && (
-        <div className="flex flex-col">
-          <span className="text-lg font-semibold text-primary leading-tight">
+        <div className="flex flex-col min-w-0">
+          <span className="text-lg font-semibold text-primary leading-tight whitespace-nowrap">
             AMAP TOGO
           </span>
-          <span className="text-xs text-muted-foreground leading-tight">
+          <span className="text-xs text-muted-foreground leading-tight whitespace-nowrap">
             Bio et Local
           </span>
         </div>
