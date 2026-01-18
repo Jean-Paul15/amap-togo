@@ -1,0 +1,4 @@
+{
+  "buildCommand": "cd ../.. && turbo run build --filter=@amap-togo/admin",
+  "outputDirectory": ".next"
+}
