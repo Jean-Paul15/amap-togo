@@ -1,0 +1,721 @@
+[
+  {
+    "schema_json": {
+      "project": "AMAP TOGO",
+      "version": "1.0.0",
+      "generated_at": "2026-01-17T09:31:44.903233+00:00",
+      "database": "PostgreSQL via Supabase",
+      "tables": [
+        {
+          "name": "categories",
+          "columns": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "nullable": false,
+              "default": "uuid_generate_v4()"
+            },
+            {
+              "name": "nom",
+              "type": "character varying",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "slug",
+              "type": "character varying",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "description",
+              "type": "text",
+              "nullable": true,
+              "default": null
+            },
+            {
+              "name": "ordre",
+              "type": "integer",
+              "nullable": true,
+              "default": "0"
+            },
+            {
+              "name": "actif",
+              "type": "boolean",
+              "nullable": true,
+              "default": "true"
+            },
+            {
+              "name": "created_at",
+              "type": "timestamp with time zone",
+              "nullable": true,
+              "default": "now()"
+            },
+            {
+              "name": "updated_at",
+              "type": "timestamp with time zone",
+              "nullable": true,
+              "default": "now()"
+            }
+          ]
+        },
+        {
+          "name": "commandes",
+          "columns": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "nullable": false,
+              "default": "uuid_generate_v4()"
+            },
+            {
+              "name": "numero",
+              "type": "character varying",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "client_id",
+              "type": "uuid",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "statut",
+              "type": "USER-DEFINED",
+              "nullable": false,
+              "default": "'en_attente'::order_status"
+            },
+            {
+              "name": "statut_paiement",
+              "type": "USER-DEFINED",
+              "nullable": false,
+              "default": "'en_attente'::payment_status"
+            },
+            {
+              "name": "montant_total",
+              "type": "integer",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "montant_paye",
+              "type": "integer",
+              "nullable": true,
+              "default": "0"
+            },
+            {
+              "name": "adresse_livraison",
+              "type": "text",
+              "nullable": true,
+              "default": null
+            },
+            {
+              "name": "quartier_livraison",
+              "type": "character varying",
+              "nullable": true,
+              "default": null
+            },
+            {
+              "name": "telephone_livraison",
+              "type": "character varying",
+              "nullable": true,
+              "default": null
+            },
+            {
+              "name": "notes",
+              "type": "text",
+              "nullable": true,
+              "default": null
+            },
+            {
+              "name": "date_livraison_souhaitee",
+              "type": "date",
+              "nullable": true,
+              "default": null
+            },
+            {
+              "name": "created_at",
+              "type": "timestamp with time zone",
+              "nullable": true,
+              "default": "now()"
+            },
+            {
+              "name": "updated_at",
+              "type": "timestamp with time zone",
+              "nullable": true,
+              "default": "now()"
+            },
+            {
+              "name": "validated_by",
+              "type": "uuid",
+              "nullable": true,
+              "default": null
+            },
+            {
+              "name": "validated_at",
+              "type": "timestamp with time zone",
+              "nullable": true,
+              "default": null
+            }
+          ]
+        },
+        {
+          "name": "commandes_lignes",
+          "columns": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "nullable": false,
+              "default": "uuid_generate_v4()"
+            },
+            {
+              "name": "commande_id",
+              "type": "uuid",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "produit_id",
+              "type": "uuid",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "quantite",
+              "type": "integer",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "prix_unitaire",
+              "type": "integer",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "prix_total",
+              "type": "integer",
+              "nullable": false,
+              "default": null
+            }
+          ]
+        },
+        {
+          "name": "commandes_paniers",
+          "columns": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "nullable": false,
+              "default": "uuid_generate_v4()"
+            },
+            {
+              "name": "commande_id",
+              "type": "uuid",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "panier_semaine_id",
+              "type": "uuid",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "quantite",
+              "type": "integer",
+              "nullable": false,
+              "default": "1"
+            },
+            {
+              "name": "prix_unitaire",
+              "type": "integer",
+              "nullable": false,
+              "default": null
+            }
+          ]
+        },
+        {
+          "name": "mouvements_credit",
+          "columns": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "nullable": false,
+              "default": "uuid_generate_v4()"
+            },
+            {
+              "name": "profil_id",
+              "type": "uuid",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "montant",
+              "type": "integer",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "type",
+              "type": "character varying",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "motif",
+              "type": "text",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "commande_id",
+              "type": "uuid",
+              "nullable": true,
+              "default": null
+            },
+            {
+              "name": "solde_apres",
+              "type": "integer",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "created_at",
+              "type": "timestamp with time zone",
+              "nullable": true,
+              "default": "now()"
+            },
+            {
+              "name": "created_by",
+              "type": "uuid",
+              "nullable": true,
+              "default": null
+            }
+          ]
+        },
+        {
+          "name": "paiements",
+          "columns": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "nullable": false,
+              "default": "uuid_generate_v4()"
+            },
+            {
+              "name": "commande_id",
+              "type": "uuid",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "montant",
+              "type": "integer",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "methode",
+              "type": "USER-DEFINED",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "reference_externe",
+              "type": "character varying",
+              "nullable": true,
+              "default": null
+            },
+            {
+              "name": "statut",
+              "type": "USER-DEFINED",
+              "nullable": false,
+              "default": "'en_attente'::payment_status"
+            },
+            {
+              "name": "notes",
+              "type": "text",
+              "nullable": true,
+              "default": null
+            },
+            {
+              "name": "created_at",
+              "type": "timestamp with time zone",
+              "nullable": true,
+              "default": "now()"
+            },
+            {
+              "name": "processed_by",
+              "type": "uuid",
+              "nullable": true,
+              "default": null
+            }
+          ]
+        },
+        {
+          "name": "paniers_contenu",
+          "columns": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "nullable": false,
+              "default": "uuid_generate_v4()"
+            },
+            {
+              "name": "panier_semaine_id",
+              "type": "uuid",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "produit_id",
+              "type": "uuid",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "quantite",
+              "type": "integer",
+              "nullable": false,
+              "default": "1"
+            }
+          ]
+        },
+        {
+          "name": "paniers_semaine",
+          "columns": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "nullable": false,
+              "default": "uuid_generate_v4()"
+            },
+            {
+              "name": "panier_type_id",
+              "type": "uuid",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "semaine_debut",
+              "type": "date",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "semaine_fin",
+              "type": "date",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "actif",
+              "type": "boolean",
+              "nullable": true,
+              "default": "true"
+            },
+            {
+              "name": "created_at",
+              "type": "timestamp with time zone",
+              "nullable": true,
+              "default": "now()"
+            },
+            {
+              "name": "created_by",
+              "type": "uuid",
+              "nullable": true,
+              "default": null
+            }
+          ]
+        },
+        {
+          "name": "paniers_types",
+          "columns": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "nullable": false,
+              "default": "uuid_generate_v4()"
+            },
+            {
+              "name": "type",
+              "type": "USER-DEFINED",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "nom",
+              "type": "character varying",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "prix",
+              "type": "integer",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "description",
+              "type": "text",
+              "nullable": true,
+              "default": null
+            },
+            {
+              "name": "actif",
+              "type": "boolean",
+              "nullable": true,
+              "default": "true"
+            },
+            {
+              "name": "created_at",
+              "type": "timestamp with time zone",
+              "nullable": true,
+              "default": "now()"
+            }
+          ]
+        },
+        {
+          "name": "produits",
+          "columns": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "nullable": false,
+              "default": "uuid_generate_v4()"
+            },
+            {
+              "name": "categorie_id",
+              "type": "uuid",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "nom",
+              "type": "character varying",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "slug",
+              "type": "character varying",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "description",
+              "type": "text",
+              "nullable": true,
+              "default": null
+            },
+            {
+              "name": "prix",
+              "type": "integer",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "unite",
+              "type": "USER-DEFINED",
+              "nullable": false,
+              "default": "'kg'::product_unit"
+            },
+            {
+              "name": "stock",
+              "type": "integer",
+              "nullable": true,
+              "default": "0"
+            },
+            {
+              "name": "seuil_alerte",
+              "type": "integer",
+              "nullable": true,
+              "default": "5"
+            },
+            {
+              "name": "image_url",
+              "type": "text",
+              "nullable": true,
+              "default": null
+            },
+            {
+              "name": "actif",
+              "type": "boolean",
+              "nullable": true,
+              "default": "true"
+            },
+            {
+              "name": "disponible_semaine",
+              "type": "boolean",
+              "nullable": true,
+              "default": "true"
+            },
+            {
+              "name": "ordre",
+              "type": "integer",
+              "nullable": true,
+              "default": "0"
+            },
+            {
+              "name": "created_at",
+              "type": "timestamp with time zone",
+              "nullable": true,
+              "default": "now()"
+            },
+            {
+              "name": "updated_at",
+              "type": "timestamp with time zone",
+              "nullable": true,
+              "default": "now()"
+            }
+          ]
+        },
+        {
+          "name": "profils",
+          "columns": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "email",
+              "type": "character varying",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "nom",
+              "type": "character varying",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "prenom",
+              "type": "character varying",
+              "nullable": false,
+              "default": null
+            },
+            {
+              "name": "telephone",
+              "type": "character varying",
+              "nullable": true,
+              "default": null
+            },
+            {
+              "name": "adresse",
+              "type": "text",
+              "nullable": true,
+              "default": null
+            },
+            {
+              "name": "quartier",
+              "type": "character varying",
+              "nullable": true,
+              "default": null
+            },
+            {
+              "name": "role",
+              "type": "USER-DEFINED",
+              "nullable": false,
+              "default": "'client'::user_role"
+            },
+            {
+              "name": "solde_credit",
+              "type": "integer",
+              "nullable": true,
+              "default": "0"
+            },
+            {
+              "name": "actif",
+              "type": "boolean",
+              "nullable": true,
+              "default": "true"
+            },
+            {
+              "name": "email_verified",
+              "type": "boolean",
+              "nullable": true,
+              "default": "false"
+            },
+            {
+              "name": "created_at",
+              "type": "timestamp with time zone",
+              "nullable": true,
+              "default": "now()"
+            },
+            {
+              "name": "updated_at",
+              "type": "timestamp with time zone",
+              "nullable": true,
+              "default": "now()"
+            }
+          ]
+        }
+      ],
+      "enums": [
+        {
+          "name": "basket_type",
+          "values": [
+            "petit",
+            "grand",
+            "local"
+          ]
+        },
+        {
+          "name": "order_status",
+          "values": [
+            "en_attente",
+            "confirmee",
+            "preparee",
+            "livree",
+            "annulee"
+          ]
+        },
+        {
+          "name": "payment_method",
+          "values": [
+            "especes",
+            "tmoney",
+            "flooz",
+            "credit"
+          ]
+        },
+        {
+          "name": "payment_status",
+          "values": [
+            "en_attente",
+            "partiel",
+            "paye",
+            "rembourse"
+          ]
+        },
+        {
+          "name": "product_unit",
+          "values": [
+            "kg",
+            "botte",
+            "piece",
+            "litre",
+            "pot",
+            "main",
+            "plateau"
+          ]
+        },
+        {
+          "name": "user_role",
+          "values": [
+            "admin",
+            "vendeur",
+            "producteur",
+            "adherent",
+            "client"
+          ]
+        }
+      ]
+    }
+  }
+]

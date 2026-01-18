@@ -1,0 +1,13 @@
+// Exports des composants shadcn/ui
+export * from './button'
+export * from './card'
+export * from './input'
+export * from './label'
+export * from './badge'
+export * from './skeleton'
+export * from './separator'
+export * from './table'
+export * from './tabs'
+export * from './progress'
+export * from './select'
+export * from './utils'
