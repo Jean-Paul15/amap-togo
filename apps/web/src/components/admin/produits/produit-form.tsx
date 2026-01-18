@@ -1,5 +1,5 @@
 // Formulaire produit
-// Composant presentation du formulaire
+// Composant presentation du formulaire avec animations
 
 'use client'
 
@@ -13,13 +13,14 @@ import {
   Checkbox,
   ImageUpload,
 } from '@/components/admin/forms'
-import { Save } from 'lucide-react'
+import { Loader2, Sparkles } from 'lucide-react'
 import Link from 'next/link'
+import { motion } from 'framer-motion'
 
 const UNITES = [
   { value: 'kg', label: 'Kilogramme (kg)' },
   { value: 'botte', label: 'Botte' },
-  { value: 'piece', label: 'Piece' },
+  { value: 'piece', label: 'Pièce' },
   { value: 'litre', label: 'Litre' },
   { value: 'pot', label: 'Pot' },
   { value: 'main', label: 'Main' },
@@ -31,7 +32,7 @@ interface ProduitFormProps {
 }
 
 /**
- * Formulaire de creation / edition produit
+ * Formulaire de creation / edition produit avec animations
  */
 export function ProduitForm({ produitId }: ProduitFormProps) {
   const { formData, categories, loading, initialLoading, isEdit, updateField, handleSubmit } =
@@ -47,12 +48,35 @@ export function ProduitForm({ produitId }: ProduitFormProps) {
     label: c.nom,
   }))
 
+  // Animations
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.08 }
+    }
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { type: 'spring', stiffness: 300, damping: 24 }
+    }
+  }
+
   if (initialLoading) {
     return (
-      <div className="max-w-2xl bg-white rounded-xl border border-gray-200 p-6">
+      <div className="bg-white rounded-xl sm:rounded-2xl border border-gray-200 p-4 sm:p-6">
         <div className="space-y-4">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-12 bg-gray-100 rounded animate-pulse" />
+            <motion.div 
+              key={i} 
+              className="h-12 bg-gradient-to-r from-gray-100 to-gray-50 rounded-lg"
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+            />
           ))}
         </div>
       </div>
@@ -60,52 +84,69 @@ export function ProduitForm({ produitId }: ProduitFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-2xl">
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-6">
+    <motion.form 
+      onSubmit={handleSubmit} 
+      className="w-full"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
+      <motion.div 
+        className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6 space-y-5 sm:space-y-6"
+        variants={itemVariants}
+      >
         {/* Nom */}
-        <FormField label="Nom du produit" required>
-          <TextInput
-            type="text"
-            required
-            value={formData.nom}
-            onChange={(e) => updateField('nom', e.target.value)}
-            placeholder="Ex: Tomates bio"
-          />
-        </FormField>
+        <motion.div variants={itemVariants}>
+          <FormField label="Nom du produit" required>
+            <TextInput
+              type="text"
+              required
+              value={formData.nom}
+              onChange={(e) => updateField('nom', e.target.value)}
+              placeholder="Ex: Tomates bio"
+            />
+          </FormField>
+        </motion.div>
 
         {/* Description */}
-        <FormField label="Description">
-          <Textarea
-            value={formData.description}
-            onChange={(e) => updateField('description', e.target.value)}
-            rows={3}
-            placeholder="Description du produit..."
-          />
-        </FormField>
+        <motion.div variants={itemVariants}>
+          <FormField label="Description">
+            <Textarea
+              value={formData.description}
+              onChange={(e) => updateField('description', e.target.value)}
+              rows={3}
+              placeholder="Description du produit..."
+            />
+          </FormField>
+        </motion.div>
 
         {/* Image */}
-        <FormField label="Image du produit">
-          <ImageUpload
-            value={formData.image_url || null}
-            onChange={(url) => updateField('image_url', url)}
-            onUpload={uploadImage}
-            uploading={uploading}
-          />
-        </FormField>
+        <motion.div variants={itemVariants}>
+          <FormField label="Image du produit">
+            <ImageUpload
+              value={formData.image_url || null}
+              onChange={(url) => updateField('image_url', url)}
+              onUpload={uploadImage}
+              uploading={uploading}
+            />
+          </FormField>
+        </motion.div>
 
         {/* Categorie */}
-        <FormField label="Categorie" htmlFor="categorie">
-          <SelectInput
-            id="categorie"
-            value={formData.categorie_id}
-            onChange={(e) => updateField('categorie_id', e.target.value)}
-            options={categorieOptions}
-            placeholder="Selectionner une categorie"
-          />
-        </FormField>
+        <motion.div variants={itemVariants}>
+          <FormField label="Catégorie" htmlFor="categorie">
+            <SelectInput
+              id="categorie"
+              value={formData.categorie_id}
+              onChange={(e) => updateField('categorie_id', e.target.value)}
+              options={categorieOptions}
+              placeholder="Sélectionner une catégorie"
+            />
+          </FormField>
+        </motion.div>
 
-        {/* Prix et Unite */}
-        <div className="grid grid-cols-2 gap-4">
+        {/* Prix et Unite - responsive */}
+        <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <FormField label="Prix (FCFA)" required>
             <TextInput
               type="number"
@@ -116,7 +157,7 @@ export function ProduitForm({ produitId }: ProduitFormProps) {
               placeholder="1500"
             />
           </FormField>
-          <FormField label="Unite" required htmlFor="unite">
+          <FormField label="Unité" required htmlFor="unite">
             <SelectInput
               id="unite"
               value={formData.unite}
@@ -124,10 +165,10 @@ export function ProduitForm({ produitId }: ProduitFormProps) {
               options={UNITES}
             />
           </FormField>
-        </div>
+        </motion.div>
 
-        {/* Stock et Seuil */}
-        <div className="grid grid-cols-2 gap-4">
+        {/* Stock et Seuil - responsive */}
+        <motion.div variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <FormField label="Stock initial" required>
             <TextInput
               type="number"
@@ -147,10 +188,13 @@ export function ProduitForm({ produitId }: ProduitFormProps) {
               placeholder="5"
             />
           </FormField>
-        </div>
+        </motion.div>
 
-        {/* Toggles */}
-        <div className="flex items-center gap-6">
+        {/* Toggles - responsive */}
+        <motion.div 
+          variants={itemVariants}
+          className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 p-4 bg-gray-50/50 rounded-xl"
+        >
           <Checkbox
             label="Produit actif"
             checked={formData.actif}
@@ -163,26 +207,40 @@ export function ProduitForm({ produitId }: ProduitFormProps) {
               updateField('disponible_semaine', e.target.checked)
             }
           />
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
-      {/* Actions */}
-      <div className="mt-6 flex items-center gap-4">
-        <button
-          type="submit"
-          disabled={loading}
-          className="flex items-center gap-2 px-5 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50"
-        >
-          <Save className="w-4 h-4" />
-          {loading ? 'Enregistrement...' : isEdit ? 'Modifier' : 'Creer'}
-        </button>
+      {/* Actions avec animation */}
+      <motion.div 
+        variants={itemVariants}
+        className="mt-4 sm:mt-6 flex flex-col-reverse sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4"
+      >
         <Link
-          href="/produits"
-          className="px-5 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+          href="/produits-admin"
+          className="px-5 py-2.5 text-sm text-center text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
         >
           Annuler
         </Link>
-      </div>
-    </form>
+        <motion.button
+          type="submit"
+          disabled={loading}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 bg-green-600 text-white text-sm font-semibold rounded-xl hover:bg-green-700 transition-colors disabled:opacity-50 shadow-lg shadow-green-200"
+        >
+          {loading ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Enregistrement...
+            </>
+          ) : (
+            <>
+              <Sparkles className="w-4 h-4" />
+              {isEdit ? 'Modifier le produit' : 'Créer le produit'}
+            </>
+          )}
+        </motion.button>
+      </motion.div>
+    </motion.form>
   )
 }

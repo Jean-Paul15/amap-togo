@@ -83,7 +83,7 @@ export function UserMenu() {
             {/* Mon compte et Mes commandes - masques pour l'instant */}
           </div>
 
-          {/* Deconnexion */}
+          {/* Déconnexion */}
           <div className="border-t border-border py-1">
             <button
               onClick={() => {
@@ -93,7 +93,7 @@ export function UserMenu() {
               className="flex items-center gap-3 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
             >
               <LogOut className="w-4 h-4" />
-              Deconnexion
+              Déconnexion
             </button>
           </div>
         </div>

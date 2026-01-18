@@ -1,7 +1,7 @@
 // Page des credits du client
 
 import { createClientServer } from '@amap-togo/database/server'
-import { formatPrice } from '@amap-togo/utils'
+import { formatPrice, formatStatutPaiement } from '@amap-togo/utils'
 import { CreditCard, Plus, Minus } from 'lucide-react'
 
 export const metadata = {
@@ -118,7 +118,7 @@ export default async function CreditsPage() {
                   ${paiement.statut === 'paye' ? 'bg-green-100 text-green-700' : ''}
                   ${paiement.statut === 'en_attente' ? 'bg-yellow-100 text-yellow-700' : ''}
                 `}>
-                  {paiement.statut.replace('_', ' ')}
+                  {formatStatutPaiement(paiement.statut)}
                 </span>
               </div>
             </div>

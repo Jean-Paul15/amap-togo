@@ -47,11 +47,9 @@ export function Header() {
           <NavLinks className="hidden md:flex absolute left-1/2 -translate-x-1/2" />
 
           {/* Actions - Droite */}
-          <div className="flex items-center gap-2">
-            {/* Bouton POS */}
-            <div className="hidden sm:block">
-              <POSTrigger />
-            </div>
+          <div className="flex items-center gap-1 sm:gap-2">
+            {/* Bouton POS - visible sur tous les ecrans */}
+            <POSTrigger />
             
             {/* Badge panier */}
             <CartBadge />

@@ -69,25 +69,25 @@ export function ProductCard({ produit, onAddToCart }: ProductCardProps) {
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
           {/* Badges */}
-          <div className="absolute top-3 left-3 flex flex-col gap-2">
+          <div className="absolute top-2 left-2 sm:top-3 sm:left-3 flex flex-col gap-1.5 sm:gap-2">
             {produit.stock <= produit.seuil_alerte && produit.stock > 0 && (
-              <span className="px-2.5 py-1 bg-orange-500 text-white text-xs font-medium rounded-full shadow-sm">
+              <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 bg-orange-500 text-white text-[10px] sm:text-xs font-medium rounded-full shadow-sm">
                 Stock faible
               </span>
             )}
             {produit.stock === 0 && (
-              <span className="px-2.5 py-1 bg-red-500 text-white text-xs font-medium rounded-full shadow-sm">
+              <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 bg-red-500 text-white text-[10px] sm:text-xs font-medium rounded-full shadow-sm">
                 Rupture
               </span>
             )}
           </div>
 
           {/* Prix badge */}
-          <div className="absolute bottom-3 right-3 px-3 py-1.5 bg-white/95 backdrop-blur-sm rounded-full shadow-md">
-            <span className="text-sm font-bold text-primary">
+          <div className="absolute bottom-2 right-2 sm:bottom-3 sm:right-3 px-2 py-1 sm:px-3 sm:py-1.5 bg-white/95 backdrop-blur-sm rounded-full shadow-md">
+            <span className="text-xs sm:text-sm font-bold text-primary">
               {formatPrice(produit.prix)}
             </span>
-            <span className="text-xs text-muted-foreground ml-1">
+            <span className="text-[10px] sm:text-xs text-muted-foreground ml-0.5 sm:ml-1">
               /{produit.unite}
             </span>
           </div>
@@ -95,16 +95,16 @@ export function ProductCard({ produit, onAddToCart }: ProductCardProps) {
       </div>
 
       {/* Infos - flex-1 pour pousser le bouton en bas */}
-      <div className="p-4 flex flex-col flex-1">
+      <div className="p-2.5 sm:p-4 flex flex-col flex-1">
         {/* Contenu texte */}
         <div className="flex-1">
-          <h3 className="font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors">
+          <h3 className="text-sm sm:text-base font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors">
             {produit.nom}
           </h3>
 
           {/* Stock disponible */}
           {produit.stock > 0 && produit.stock <= 10 && (
-            <p className="text-xs text-muted-foreground mt-1.5">
+            <p className="text-[10px] sm:text-xs text-muted-foreground mt-1 sm:mt-1.5">
               {produit.stock} {produit.unite}{produit.stock > 1 ? 's' : ''} disponible{produit.stock > 1 ? 's' : ''}
             </p>
           )}
@@ -117,9 +117,9 @@ export function ProductCard({ produit, onAddToCart }: ProductCardProps) {
             onClick={handleAddClick}
             disabled={isDisabled || isAdding || justAdded}
             className={`
-              mt-2.5 w-full flex items-center justify-center gap-2
-              py-2 px-4 rounded-lg
-              text-sm font-medium
+              mt-2 sm:mt-2.5 w-full flex items-center justify-center gap-1.5 sm:gap-2
+              py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg
+              text-xs sm:text-sm font-medium
               whitespace-nowrap
               transition-all duration-300
               ${justAdded
@@ -133,7 +133,7 @@ export function ProductCard({ produit, onAddToCart }: ProductCardProps) {
             {justAdded ? (
               <>
                 <Check className="w-4 h-4 flex-shrink-0" />
-                <span>Ajoute</span>
+                <span>Ajouté</span>
               </>
             ) : isAdding ? (
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />

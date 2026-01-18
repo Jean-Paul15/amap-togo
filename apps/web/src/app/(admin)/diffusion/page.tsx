@@ -30,7 +30,7 @@ export default function DiffusionPage() {
 
   const handleSend = async () => {
     if (selectedEmails.length === 0) {
-      setSendResult({ success: false, message: 'Selectionnez au moins un destinataire' })
+      setSendResult({ success: false, message: 'Sélectionnez au moins un destinataire' })
       return
     }
     if (!subject.trim()) {

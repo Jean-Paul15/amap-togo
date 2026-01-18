@@ -28,31 +28,38 @@ interface NavItem {
   icon: React.ElementType
 }
 
+interface SidebarProps {
+  onNavigate?: () => void
+}
+
 // Navigation complete - routes du groupe (admin)
 const navItems: NavItem[] = [
   { name: 'Tableau de bord', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Produits', href: '/produits-admin', icon: Package },
-  { name: 'Categories', href: '/categories', icon: Layers },
+  { name: 'Catégories', href: '/categories', icon: Layers },
   { name: 'Paniers', href: '/paniers-admin', icon: ShoppingBag },
   { name: 'Types paniers', href: '/paniers-types', icon: ShoppingBag },
   { name: 'Commandes', href: '/commandes', icon: ShoppingCart },
   { name: 'Clients', href: '/clients', icon: Users },
   { name: 'Emails', href: '/diffusion', icon: Mail },
-  { name: 'Roles', href: '/roles', icon: Shield },
+  { name: 'Rôles', href: '/roles', icon: Shield },
   { name: 'Utilisateurs', href: '/utilisateurs', icon: UserCog },
 ]
 
 /**
- * Sidebar moderne bleu fonce
+ * Sidebar moderne bleu fonce avec support mobile
  */
-export function Sidebar() {
+export function Sidebar({ onNavigate }: SidebarProps) {
   const pathname = usePathname()
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
 
   const handleLogout = async () => {
     await supabaseClient.auth.signOut()
-    // Rediriger vers le site principal apres deconnexion
     window.location.href = siteUrl
+  }
+
+  const handleLinkClick = () => {
+    onNavigate?.()
   }
 
   const isActive = (href: string) => {
@@ -61,10 +68,10 @@ export function Sidebar() {
   }
 
   return (
-    <aside className="fixed left-0 top-0 w-56 h-screen bg-slate-900 flex flex-col z-50">
+    <aside className="w-56 h-screen bg-slate-900 flex flex-col">
       {/* Logo */}
       <div className="h-16 flex items-center px-5 border-b border-slate-800">
-        <Link href="/dashboard" className="flex items-center gap-3">
+        <Link href="/dashboard" className="flex items-center gap-3" onClick={handleLinkClick}>
           <div className="w-9 h-9 bg-emerald-500 rounded-xl flex items-center justify-center">
             <Leaf className="w-5 h-5 text-white" />
           </div>
@@ -84,6 +91,7 @@ export function Sidebar() {
               <Link
                 key={item.name}
                 href={item.href}
+                onClick={handleLinkClick}
                 className={cn(
                   'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all',
                   active
@@ -115,7 +123,7 @@ export function Sidebar() {
           className="flex items-center gap-3 px-3 py-2 w-full rounded-lg text-sm font-medium text-slate-400 hover:bg-red-500/20 hover:text-red-400 transition-colors"
         >
           <LogOut className="w-4 h-4" />
-          Deconnexion
+          Déconnexion
         </button>
       </div>
     </aside>

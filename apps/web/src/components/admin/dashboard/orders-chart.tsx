@@ -13,11 +13,11 @@ interface OrdersChartProps {
 
 const STATUT_LABELS: Record<string, string> = {
   en_attente: 'En attente',
-  confirmee: 'Confirmee',
-  en_preparation: 'Preparation',
-  prete: 'Prete',
-  livree: 'Livree',
-  annulee: 'Annulee',
+  confirmee: 'Confirmée',
+  en_preparation: 'Préparation',
+  prete: 'Prête',
+  livree: 'Livrée',
+  annulee: 'Annulée',
 }
 
 /**

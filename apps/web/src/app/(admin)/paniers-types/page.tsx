@@ -200,7 +200,7 @@ export default function PaniersTypesPage() {
                 </button>
                 <button type="submit" className="flex items-center gap-1 px-4 py-1.5 bg-gray-900 text-white text-sm rounded-lg">
                   <Save className="w-4 h-4" />
-                  {editingId ? 'Modifier' : 'Creer'}
+                  {editingId ? 'Modifier' : 'Créer'}
                 </button>
               </div>
             </div>

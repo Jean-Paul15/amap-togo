@@ -1,11 +1,11 @@
 // Modal d'authentification avec effet glassmorphism
-// Onglets Connexion / Inscription
+// Design moderne et animations fluides
 
 'use client'
 
 import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X } from 'lucide-react'
+import { X, Sparkles } from 'lucide-react'
 import { LoginForm } from './login-form'
 
 interface AuthModalProps {
@@ -14,7 +14,7 @@ interface AuthModalProps {
 }
 
 /**
- * Modal d'authentification glassmorphism
+ * Modal d'authentification glassmorphism avec animations
  */
 export function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
@@ -46,88 +46,95 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
   const modalContent = (
     <AnimatePresence>
-      {/* Backdrop */}
+      {/* Backdrop avec blur */}
       <motion.div
         key="auth-backdrop"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
-        className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"
+        className="fixed inset-0 z-50 bg-black/50 backdrop-blur-md"
       />
 
-      {/* Modal glassmorphism */}
+      {/* Modal moderne et responsive */}
       <motion.div
         key="auth-modal"
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+        initial={{ opacity: 0, scale: 0.9, y: 40 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        transition={{ duration: 0.2, ease: 'easeOut' }}
+        exit={{ opacity: 0, scale: 0.9, y: 40 }}
+        transition={{ 
+          type: 'spring',
+          stiffness: 300,
+          damping: 25
+        }}
         className="
-          fixed z-50 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
-          w-full max-w-md mx-4
+          fixed z-50 
+          inset-x-3 bottom-0 top-auto sm:inset-auto
+          sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2
+          w-auto sm:w-full sm:max-w-md
           bg-white dark:bg-gray-900
           border border-gray-200 dark:border-gray-700
-          rounded-xl shadow-2xl
+          rounded-t-2xl sm:rounded-2xl shadow-2xl
           overflow-hidden
         "
       >
+        {/* Decoration gradient superieur */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-400 via-green-500 to-emerald-500" />
+
         {/* Header */}
-        <div className="relative p-4 pb-3 text-center">
+        <div className="relative px-5 pt-5 pb-4 text-center">
           {/* Bouton fermer */}
-          <button
+          <motion.button
             type="button"
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 hover:bg-black/5 rounded-lg transition-colors"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            className="absolute top-4 right-4 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-colors"
             aria-label="Fermer"
           >
             <X className="w-5 h-5 text-gray-500" />
-          </button>
+          </motion.button>
 
-          {/* Logo */}
-          <div className="w-12 h-12 mx-auto mb-3 bg-primary rounded-xl flex items-center justify-center">
-            <span className="text-xl font-bold text-white">A</span>
-          </div>
+          {/* Logo anime */}
+          <motion.div 
+            className="w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-3 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg shadow-green-200"
+            initial={{ rotate: -10 }}
+            animate={{ rotate: 0 }}
+            transition={{ type: 'spring', stiffness: 200 }}
+          >
+            <Sparkles className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+          </motion.div>
 
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-            Connexion
-          </h2>
-          <p className="text-xs text-gray-500 mt-0.5">
-            Connectez-vous a votre compte
-          </p>
+          <motion.h2 
+            className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            Bienvenue
+          </motion.h2>
+          <motion.p 
+            className="text-sm text-gray-500 mt-1"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+          >
+            Connectez-vous à votre compte AMAP
+          </motion.p>
         </div>
 
-        {/* Onglets - DESACTIVES temporairement
-        <div className="flex mx-6 mb-4 bg-gray-100/50 dark:bg-gray-800/50 rounded-lg p-1">
-          <button
-            onClick={() => setActiveTab('login')}
-            className={`
-              flex-1 py-2 text-sm font-medium rounded-md transition-all
-              ${activeTab === 'login'
-                ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
-                : 'text-gray-500 hover:text-gray-700'}
-            `}
-          >
-            Connexion
-          </button>
-          <button
-            onClick={() => setActiveTab('register')}
-            className={`
-              flex-1 py-2 text-sm font-medium rounded-md transition-all
-              ${activeTab === 'register'
-                ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
-                : 'text-gray-500 hover:text-gray-700'}
-            `}
-          >
-            Inscription
-          </button>
-        </div>
-        */}
-
-        {/* Contenu - Connexion uniquement */}
-        <div className="px-5 pb-5">
+        {/* Contenu - Formulaire */}
+        <motion.div 
+          className="px-5 pb-6 sm:pb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+        >
           <LoginForm onSuccess={onClose} />
-        </div>
+        </motion.div>
+
+        {/* Safe area pour iPhone */}
+        <div className="h-safe-area-inset-bottom sm:hidden" />
       </motion.div>
     </AnimatePresence>
   )

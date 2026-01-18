@@ -21,17 +21,17 @@ export function POSOrderConfirmation({
 }: POSOrderConfirmationProps) {
   return (
     <div className="h-full flex flex-col items-center justify-center p-6 text-center">
-      {/* Icone succes */}
+      {/* Icone succès */}
       <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
         <CheckCircle className="w-10 h-10 text-green-600" />
       </div>
 
       {/* Message */}
       <h3 className="text-xl font-semibold text-foreground mb-2">
-        Commande confirmee !
+        Commande confirmée !
       </h3>
-      <p className="text-muted-foreground mb-4">
-        Votre commande a ete enregistree avec succes.
+      <p className="text-sm text-muted-foreground mb-6">
+        Votre commande a été enregistrée avec succès.
       </p>
 
       {/* Numero de commande */}
@@ -47,10 +47,10 @@ export function POSOrderConfirmation({
       {/* Info facture */}
       <div className="flex items-center gap-2 text-sm text-green-600 mb-4">
         <FileText className="w-4 h-4" />
-        <span>Votre facture a ete telechargee</span>
+        <span>Votre facture a été téléchargée</span>
       </div>
 
-      {/* Bouton re-telecharger facture */}
+      {/* Bouton re-télécharger facture */}
       {onDownloadFacture && (
         <button
           onClick={onDownloadFacture}
@@ -61,13 +61,13 @@ export function POSOrderConfirmation({
           "
         >
           <Download className="w-4 h-4" />
-          Telecharger la facture
+          Télécharger la facture
         </button>
       )}
 
       {/* Info livraison */}
       <p className="text-sm text-muted-foreground mb-8">
-        Notre equipe vous contactera bientot pour confirmer la livraison.
+        Notre équipe vous contactera bientôt pour confirmer la livraison.
       </p>
 
       {/* Bouton fermer */}

@@ -32,19 +32,19 @@ export function ProduitsSection({ produits }: ProduitsSectionProps) {
   }
 
   const sectionContent = (
-    <section className="py-16 lg:py-24 bg-accent/20">
-      <div className="container mx-auto px-6 lg:px-12">
-        <div className="text-center mb-12">
-          <h2 className="text-2xl lg:text-3xl font-semibold text-foreground">
+    <section className="py-12 sm:py-16 lg:py-24 bg-accent/20">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-12">
+        <div className="text-center mb-8 sm:mb-12">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-semibold text-foreground">
             Produits de la semaine
           </h2>
-          <p className="mt-4 text-muted-foreground max-w-xl mx-auto">
-            Decouvrez notre selection de produits frais disponibles cette semaine.
+          <p className="mt-3 sm:mt-4 text-sm sm:text-base text-muted-foreground max-w-xl mx-auto">
+            Découvrez notre sélection de produits frais disponibles cette semaine.
           </p>
         </div>
 
         {produits.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
             {produits.slice(0, 8).map((produit) => (
               <ProductCard 
                 key={produit.id} 
@@ -59,14 +59,14 @@ export function ProduitsSection({ produits }: ProduitsSectionProps) {
           </p>
         )}
 
-        <div className="mt-12 text-center">
+        <div className="mt-8 sm:mt-12 text-center">
           <Link
             href="/produits"
             className="
               inline-flex items-center gap-2
-              px-6 py-3 rounded-lg
+              px-5 sm:px-6 py-3 rounded-lg
               bg-primary text-primary-foreground
-              font-medium
+              font-medium text-sm sm:text-base
               hover:bg-primary/90 transition-colors
             "
           >

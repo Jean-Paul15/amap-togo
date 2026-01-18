@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { supabaseClient } from '@/lib/supabase'
+import { formatStatutPaiement } from '@amap-togo/utils'
 import { 
   ArrowLeft, 
   User,
@@ -44,8 +45,8 @@ interface CommandeDetail {
 
 const statutActions = [
   { from: 'en_attente', to: 'confirmee', label: 'Confirmer', color: 'bg-blue-600' },
-  { from: 'confirmee', to: 'preparee', label: 'Marquer preparee', color: 'bg-purple-600' },
-  { from: 'preparee', to: 'livree', label: 'Marquer livree', color: 'bg-green-600' },
+  { from: 'confirmee', to: 'preparee', label: 'Marquer préparée', color: 'bg-purple-600' },
+  { from: 'preparee', to: 'livree', label: 'Marquer livrée', color: 'bg-green-600' },
 ]
 
 export default function CommandeDetailPage() {
@@ -156,7 +157,7 @@ export default function CommandeDetailPage() {
 
   if (loading) {
     return (
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           <p className="text-gray-500">Chargement...</p>
         </div>
     )
@@ -164,7 +165,7 @@ export default function CommandeDetailPage() {
 
   if (!commande) {
     return (
-        <div className="p-6">
+        <div className="p-4 sm:p-6">
           <p className="text-gray-500">Commande introuvable</p>
         </div>
     )
@@ -174,34 +175,34 @@ export default function CommandeDetailPage() {
   const availableAction = statutActions.find((a) => a.from === commande.statut)
 
   return (
-      <div className="p-6">
+      <div className="p-4 sm:p-6">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 sm:mb-6">
+          <div className="flex items-center gap-3 sm:gap-4">
             <Link
               href="/commandes"
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg transition-colors"
             >
               <ArrowLeft className="w-5 h-5 text-gray-600" />
             </Link>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
                 {commande.numero}
               </h1>
-              <p className="text-sm text-gray-500">
+              <p className="text-xs sm:text-sm text-gray-500">
                 {formatDate(commande.created_at)}
               </p>
             </div>
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 ml-9 sm:ml-0">
             {availableAction && commande.statut !== 'annulee' && (
               <button
                 onClick={() => handleStatusChange(availableAction.to)}
                 disabled={updating}
                 className={cn(
-                  'px-4 py-2 text-white rounded-lg transition-colors disabled:opacity-50',
+                  'px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base text-white rounded-lg transition-colors disabled:opacity-50',
                   availableAction.color
                 )}
               >
@@ -212,7 +213,7 @@ export default function CommandeDetailPage() {
               <button
                 onClick={handleCancel}
                 disabled={updating}
-                className="px-4 py-2 text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-50"
+                className="px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-50"
               >
                 Annuler
               </button>
@@ -220,35 +221,35 @@ export default function CommandeDetailPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Colonne principale */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-4 sm:space-y-6">
             {/* Articles */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                Articles commandes
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
+              <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">
+                Articles commandés
               </h2>
               <div className="divide-y divide-gray-100">
                 {commande.lignes.map((ligne) => (
-                  <div key={ligne.id} className="py-3 flex items-center justify-between">
-                    <div>
-                      <p className="font-medium text-gray-900">
+                  <div key={ligne.id} className="py-2.5 sm:py-3 flex items-center justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <p className="font-medium text-gray-900 text-sm sm:text-base truncate">
                         {ligne.produit?.nom || 'Produit inconnu'}
                       </p>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-xs sm:text-sm text-gray-500">
                         {ligne.quantite} x {formatPrice(ligne.prix_unitaire)}
                         {ligne.produit?.unite && ` / ${ligne.produit.unite}`}
                       </p>
                     </div>
-                    <p className="font-medium text-gray-900">
+                    <p className="font-medium text-gray-900 text-sm sm:text-base flex-shrink-0">
                       {formatPrice(ligne.prix_total)}
                     </p>
                   </div>
                 ))}
               </div>
-              <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between">
-                <span className="font-semibold text-gray-900">Total</span>
-                <span className="font-bold text-lg text-gray-900">
+              <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-100 flex justify-between">
+                <span className="font-semibold text-gray-900 text-sm sm:text-base">Total</span>
+                <span className="font-bold text-base sm:text-lg text-gray-900">
                   {formatPrice(commande.montant_total)}
                 </span>
               </div>
@@ -256,41 +257,41 @@ export default function CommandeDetailPage() {
 
             {/* Notes */}
             {commande.notes && (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-2">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
+                <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">
                   Notes
                 </h2>
-                <p className="text-gray-600">{commande.notes}</p>
+                <p className="text-sm sm:text-base text-gray-600">{commande.notes}</p>
               </div>
             )}
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* Client */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <User className="w-5 h-5" />
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
+              <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4 flex items-center gap-2">
+                <User className="w-4 h-4 sm:w-5 sm:h-5" />
                 Client
               </h2>
               <div className="space-y-2">
-                <p className="font-medium text-gray-900">
+                <p className="font-medium text-gray-900 text-sm sm:text-base">
                   {commande.client?.prenom || commande.client_anonyme?.prenom || ''} {commande.client?.nom || commande.client_anonyme?.nom || 'Client anonyme'}
                 </p>
-                <p className="text-sm text-gray-500 flex items-center gap-2">
-                  <Phone className="w-4 h-4" />
+                <p className="text-xs sm:text-sm text-gray-500 flex items-center gap-2">
+                  <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   {commande.client?.telephone || commande.client_anonyme?.telephone || commande.telephone_livraison || '-'}
                 </p>
               </div>
             </div>
 
             {/* Livraison */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <MapPin className="w-5 h-5" />
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
+              <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4 flex items-center gap-2">
+                <MapPin className="w-4 h-4 sm:w-5 sm:h-5" />
                 Livraison
               </h2>
-              <div className="space-y-2 text-sm text-gray-600">
+              <div className="space-y-2 text-xs sm:text-sm text-gray-600">
                 <p>{commande.quartier_livraison}</p>
                 {commande.adresse_livraison && (
                   <p>{commande.adresse_livraison}</p>
@@ -299,30 +300,30 @@ export default function CommandeDetailPage() {
             </div>
 
             {/* Paiement */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                <CreditCard className="w-5 h-5" />
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
+              <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4 flex items-center gap-2">
+                <CreditCard className="w-4 h-4 sm:w-5 sm:h-5" />
                 Paiement
               </h2>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Statut</span>
+              <div className="space-y-2.5 sm:space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs sm:text-sm text-gray-500">Statut</span>
                   <span className={cn(
-                    'px-2 py-1 text-xs font-medium rounded-full',
+                    'px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs font-medium rounded-full',
                     commande.statut_paiement === 'paye'
                       ? 'bg-green-100 text-green-700'
                       : 'bg-yellow-100 text-yellow-700'
                   )}>
-                    {commande.statut_paiement.replace('_', ' ')}
+                    {formatStatutPaiement(commande.statut_paiement)}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Paye</span>
-                  <span className="font-medium">{formatPrice(commande.montant_paye)}</span>
+                  <span className="text-xs sm:text-sm text-gray-500">Payé</span>
+                  <span className="text-sm sm:text-base font-medium">{formatPrice(commande.montant_paye)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Reste</span>
-                  <span className="font-medium">
+                  <span className="text-xs sm:text-sm text-gray-500">Reste</span>
+                  <span className="text-sm sm:text-base font-medium">
                     {formatPrice(commande.montant_total - commande.montant_paye)}
                   </span>
                 </div>

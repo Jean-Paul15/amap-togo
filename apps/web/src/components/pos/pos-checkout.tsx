@@ -211,7 +211,7 @@ export function POSCheckout() {
 
         {/* Note livraison */}
         <p className="text-xs text-muted-foreground bg-accent/50 p-3 rounded-lg">
-          Les frais de livraison seront communiques par le livreur selon votre quartier.
+          Les frais de livraison seront communiqués par le livreur selon votre quartier.
         </p>
 
         {/* Methode de paiement */}

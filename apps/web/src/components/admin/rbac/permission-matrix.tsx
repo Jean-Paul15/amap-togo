@@ -14,7 +14,7 @@ interface PermissionMatrixProps {
 }
 
 const actions = [
-  { key: 'peut_creer', label: 'Creer' },
+  { key: 'peut_creer', label: 'Créer' },
   { key: 'peut_lire', label: 'Lire' },
   { key: 'peut_modifier', label: 'Modifier' },
   { key: 'peut_supprimer', label: 'Supprimer' },

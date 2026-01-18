@@ -29,7 +29,7 @@ const cartItemSchema = z.object({
 // Schema de validation pour la commande
 const createOrderSchema = z.object({
   nom: z.string().min(2, 'Nom requis'),
-  telephone: z.string().min(8, 'Telephone invalide'),
+  telephone: z.string().min(8, 'Téléphone invalide'),
   quartier: z.string().min(2, 'Quartier requis'),
   adresse: z.string().optional(),
   notes: z.string().optional(),
@@ -159,7 +159,7 @@ export async function createOrder(
   } catch (error) {
     if (error instanceof z.ZodError) {
       const firstError = error.errors[0]
-      return { success: false, error: firstError?.message || 'Donnees invalides' }
+      return { success: false, error: firstError?.message || 'Données invalides' }
     }
     console.error('Erreur commande:', error)
     return { success: false, error: 'Erreur serveur' }

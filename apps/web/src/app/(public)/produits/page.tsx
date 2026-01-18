@@ -19,14 +19,14 @@ export default async function ProduitsPage() {
   const { produits, categories } = await getProduitsData()
 
   return (
-    <div className="container mx-auto px-6 lg:px-12 py-8 lg:py-12">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-12 py-6 sm:py-8 lg:py-12">
       {/* En-tete */}
-      <div className="mb-8">
-        <h1 className="text-3xl lg:text-4xl font-semibold text-foreground">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-foreground">
           Nos produits
         </h1>
-        <p className="mt-2 text-muted-foreground">
-          Produits bio et locaux, du producteur a votre table.
+        <p className="mt-2 text-sm sm:text-base text-muted-foreground">
+          Produits bio et locaux, du producteur à votre table.
         </p>
       </div>
 

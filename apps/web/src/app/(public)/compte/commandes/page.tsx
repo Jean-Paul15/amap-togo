@@ -1,7 +1,7 @@
 // Page liste des commandes du client
 
 import { createClientServer } from '@amap-togo/database/server'
-import { formatPrice } from '@amap-togo/utils'
+import { formatPrice, formatStatut } from '@amap-togo/utils'
 
 export const metadata = {
   title: 'Mes commandes',
@@ -75,7 +75,7 @@ export default async function CommandesPage() {
                     ${commande.statut === 'confirmee' ? 'bg-blue-100 text-blue-700' : ''}
                     ${commande.statut === 'annulee' ? 'bg-red-100 text-red-700' : ''}
                   `}>
-                    {commande.statut.replace('_', ' ')}
+                    {formatStatut(commande.statut)}
                   </span>
                   <span className="text-lg font-bold text-foreground">
                     {formatPrice(commande.montant_total)}

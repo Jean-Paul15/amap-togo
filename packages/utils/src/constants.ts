@@ -31,6 +31,9 @@ export const UNITE_LABELS = {
 } as const
 
 export const STATUT_COMMANDE_LABELS = {
+  en_attente: 'En attente',
+  confirmee: 'Confirmée',
+  preparee: 'Préparée',
   brouillon: 'Brouillon',
   validee: 'Validée',
   en_preparation: 'En préparation',
@@ -38,6 +41,12 @@ export const STATUT_COMMANDE_LABELS = {
   en_livraison: 'En livraison',
   livree: 'Livrée',
   annulee: 'Annulée',
+} as const
+
+export const STATUT_PAIEMENT_LABELS = {
+  non_paye: 'Non payé',
+  partiel: 'Partiel',
+  paye: 'Payé',
 } as const
 
 export const METHODE_PAIEMENT_LABELS = {

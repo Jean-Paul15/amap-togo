@@ -66,20 +66,20 @@ export function POSModal() {
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
         transition={{ duration: 0.2, ease: 'easeOut' }}
         className="
-          fixed inset-4 z-50
-          md:inset-8 lg:inset-12
+          fixed inset-2 z-50
+          sm:inset-4 md:inset-8 lg:inset-12
           bg-background rounded-xl shadow-2xl
           flex flex-col overflow-hidden
         "
       >
         {/* Header du modal */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-          <h2 className="text-lg font-semibold text-foreground">
+        <div className="flex items-center justify-between px-3 sm:px-4 py-2.5 sm:py-3 border-b border-border">
+          <h2 className="text-base sm:text-lg font-semibold text-foreground">
             Point de Vente
           </h2>
           <button
             onClick={closeModal}
-            className="p-2 bg-muted hover:bg-red-100 hover:text-red-600 rounded-lg transition-colors"
+            className="p-1.5 sm:p-2 bg-muted hover:bg-red-100 hover:text-red-600 rounded-lg transition-colors"
             aria-label="Fermer"
           >
             <X className="w-5 h-5 text-foreground" />
