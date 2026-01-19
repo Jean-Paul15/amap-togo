@@ -125,11 +125,23 @@ export function AuthProvider({
   }
 
   const signOut = async () => {
-    const supabase = getSupabase()
-    await supabase.auth.signOut()
-    setUser(null)
-    setProfile(null)
-    window.location.href = '/'
+    try {
+      const supabase = getSupabase()
+      await supabase.auth.signOut({ scope: 'local' })
+      setUser(null)
+      setProfile(null)
+      
+      // Redirection robuste
+      if (typeof window !== 'undefined') {
+        window.location.href = '/'
+      }
+    } catch (error) {
+      console.error('Erreur déconnexion:', error)
+      // Forcer la redirection même en cas d'erreur
+      if (typeof window !== 'undefined') {
+        window.location.href = '/'
+      }
+    }
   }
 
   // Hydratation initiale avec donnees SSR puis verification

@@ -71,10 +71,17 @@ export function UserMenu() {
       </div>
       <div className="border-t border-border py-2">
         <button
-          onClick={async () => { 
+          onClick={async (e) => { 
+            e.preventDefault()
+            e.stopPropagation()
             setIsOpen(false)
-            await signOut()
-            window.location.reload()
+            try {
+              await signOut()
+            } catch (error) {
+              console.error('Erreur lors de la déconnexion:', error)
+              // Forcer le rechargement
+              window.location.href = '/'
+            }
           }}
           className="flex items-center gap-3 w-full px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors"
         >

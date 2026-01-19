@@ -53,9 +53,16 @@ export function Sidebar({ onNavigate }: SidebarProps) {
   const pathname = usePathname()
   const { signOut } = useAuth()
 
-  const handleLogout = async () => {
-    await signOut()
-    // signOut redirige deja vers l'accueil
+  const handleLogout = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    try {
+      await signOut()
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion:', error)
+      // Forcer la redirection en cas d'erreur
+      window.location.href = '/'
+    }
   }
 
   const handleLinkClick = () => {
