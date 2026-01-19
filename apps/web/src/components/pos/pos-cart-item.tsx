@@ -104,12 +104,12 @@ export function POSCartItem({ item }: POSCartItemProps) {
           {formatPrice(item.prix)} {item.unite && `/ ${item.unite}`}
         </p>
 
-        {/* Controles quantite */}
+        {/* Contrôles quantité */}
         <div className="flex items-center gap-2 mt-2">
           <button
             onClick={handleDecrement}
             className="w-7 h-7 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80 transition-colors"
-            aria-label="Reduire la quantite"
+            aria-label="Réduire la quantité"
           >
             <Minus className="w-3 h-3" />
           </button>
@@ -122,7 +122,7 @@ export function POSCartItem({ item }: POSCartItemProps) {
               onBlur={handleInputBlur}
               onKeyDown={handleInputKeyDown}
               autoFocus
-              aria-label="Modifier la quantite"
+              aria-label="Modifier la quantité"
               className="w-10 h-7 text-sm font-medium text-center bg-background border border-primary rounded px-1 focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           ) : (
@@ -137,7 +137,7 @@ export function POSCartItem({ item }: POSCartItemProps) {
           <button
             onClick={handleIncrement}
             className="w-7 h-7 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80 transition-colors"
-            aria-label="Augmenter la quantite"
+            aria-label="Augmenter la quantité"
           >
             <Plus className="w-3 h-3" />
           </button>

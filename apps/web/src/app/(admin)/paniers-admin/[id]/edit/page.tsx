@@ -170,9 +170,9 @@ export default function EditPanierPage({ params }: PageProps) {
   if (notFound) {
     return (
       <div className="text-center py-20">
-        <p className="text-gray-500 mb-4">Panier non trouve</p>
+        <p className="text-gray-500 mb-4">Panier non trouvé</p>
         <Link href="/paniers" className="text-green-600 hover:underline">
-          Retour a la liste
+          Retour à la liste
         </Link>
       </div>
     )
@@ -202,7 +202,7 @@ export default function EditPanierPage({ params }: PageProps) {
                 required
                 className="w-full px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-lg"
               >
-                <option value="">Selectionner un type</option>
+                <option value="">Sélectionner un type</option>
                 {panierTypes.map((type) => (
                   <option key={type.id} value={type.id}>{type.nom} - {formatPrice(type.prix)}</option>
                 ))}
@@ -211,7 +211,7 @@ export default function EditPanierPage({ params }: PageProps) {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Debut semaine *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Début semaine *</label>
                 <input
                   type="date"
                   value={semaineDebut}

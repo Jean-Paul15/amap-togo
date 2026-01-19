@@ -10,7 +10,7 @@ import { formatDateRange } from '@/lib/date-utils'
 export const metadata: Metadata = {
   title: 'Paniers AMAP',
   description:
-    'Decouvrez nos paniers AMAP hebdomadaires. ' +
+    'Découvrez nos paniers AMAP hebdomadaires. ' +
     'Petit panier, grand panier ou panier 100% local.',
 }
 
@@ -28,7 +28,7 @@ export default async function PaniersPage() {
           Paniers AMAP
         </h1>
         <p className="mt-2 text-muted-foreground">
-          Paniers composes cette semaine avec les meilleurs produits de saison.
+          Paniers composés cette semaine avec les meilleurs produits de saison.
         </p>
         {semaineDebut && semaineFin && (
           <p className="mt-4 text-sm font-medium text-primary">
@@ -46,9 +46,9 @@ export default async function PaniersPage() {
           Informations livraison
         </h2>
         <ul className="space-y-2 text-sm text-muted-foreground">
-          <li>Livraison le mercredi a partir de 11h30</li>
-          <li>Point de retrait : Ancien Centre Mytro Nunya, Adidogome</li>
-          <li>Livraison a domicile possible (frais selon quartier)</li>
+          <li>Livraison le mercredi à partir de 11h30</li>
+          <li>Point de retrait : Ancien Centre Mytro Nunya, Adidogomé</li>
+          <li>Livraison à domicile possible (frais selon quartier)</li>
         </ul>
       </div>
     </div>

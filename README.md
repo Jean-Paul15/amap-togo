@@ -1,64 +1,66 @@
-# AMAP TOGO - Monorepo
+# AMAP TOGO
 
-Plateforme e-commerce et gestion pour association agricole bio au Togo.
+Plateforme e-commerce pour l'Association pour le Maintien d'une Agriculture Paysanne au Togo.
 
-## Structure du projet
+## Fonctionnalites
+
+- Catalogue de produits bio et locaux
+- Paniers AMAP hebdomadaires
+- Point de vente (POS) pour les vendeurs
+- Back-office de gestion (commandes, stocks, clients)
+- Systeme RBAC (gestion des roles et permissions)
+
+## Structure
 
 ```
 amap-togo/
-├── apps/
-│   ├── web/              # Site client Next.js
-│   └── admin/            # Back-office Refine
+├── apps/web/          # Application Next.js
 ├── packages/
-│   ├── ui/               # Composants partagés
-│   ├── database/         # Types et client Supabase
-│   └── utils/            # Fonctions utilitaires
-├── docs/                 # Documentation complète
-├── features/             # Spécifications des fonctionnalités
-└── sql/                  # Scripts SQL Supabase
+│   ├── database/      # Types et client Supabase
+│   ├── ui/            # Composants partages
+│   └── utils/         # Fonctions utilitaires
+├── docs/              # Documentation technique
+└── sql/               # Scripts SQL
 ```
 
-## Démarrage rapide
+## Installation
 
 ```bash
-# Installer les dépendances
+# Prerequis: Node.js 18+, pnpm
+
 pnpm install
 
-# Lancer en développement
+# Configurer l'environnement
+cp apps/web/.env.example apps/web/.env.local
+# Remplir les variables Supabase
+
 pnpm dev
-
-# Site client: http://localhost:3000
-# Back-office: http://localhost:3001
+# -> http://localhost:3000
 ```
-
-## Documentation
-
-### Pour démarrer
-- [guides/START_HERE.md](guides/START_HERE.md) - **Commencez ici**
-- [guides/INSTALL.md](guides/INSTALL.md) - Installation complète
-- [guides/GUIDE_UTILISATEUR.md](guides/GUIDE_UTILISATEUR.md) - Travailler avec l'IA
-
-### Instructions pour l'IA
-- [CLAUDE.md](CLAUDE.md) - Instructions pour Claude Code
-- [AGENTS.md](AGENTS.md) - Instructions pour GitHub Copilot
-
-### Documentation technique
-- [docs/CONTEXT.md](docs/CONTEXT.md) - Le métier AMAP (OBLIGATOIRE)
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) - Structure du code
-- [docs/STYLE_GUIDE.md](docs/STYLE_GUIDE.md) - Design UI (couleur principale: VERT)
-- [DATABASE_SCHEMA.json](DATABASE_SCHEMA.json) - Schéma de la base
 
 ## Stack technique
 
-- **Frontend**: Next.js 14, React, Tailwind CSS, shadcn/ui
-- **Backend**: Supabase (PostgreSQL, Auth, Storage)
+- **Framework**: Next.js 14 (App Router)
+- **UI**: Tailwind CSS, Radix UI, Framer Motion
+- **Backend**: Supabase (PostgreSQL, Auth, Storage, RLS)
 - **State**: Zustand, TanStack Query
 - **Monorepo**: Turborepo, pnpm workspaces
 
-## Déploiement Vercel
+## Scripts
 
-Deux projets Vercel à créer :
-1. Site client → apps/web
-2. Back-office → apps/admin
+```bash
+pnpm dev       # Developpement
+pnpm build     # Build production
+pnpm lint      # Linting
+```
 
-Vercel détecte automatiquement le monorepo Turborepo.
+## Contact AMAP TOGO
+
+- **Telephone**: +228 92 71 95 96
+- **Email**: amap.togo@gmail.com
+- **Adresse**: Adidogome (pres de l'OTR), Lome, Togo
+- **Livraisons**: Mercredi a partir de 11h30
+
+---
+
+© 2026 AMAP TOGO. Tous droits réservés.

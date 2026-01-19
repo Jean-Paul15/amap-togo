@@ -85,7 +85,7 @@ export default function ProfilPage() {
 
       setSaved(true)
     } catch (err) {
-      setError('Erreur lors de la mise a jour')
+      setError('Erreur lors de la mise à jour')
       console.error(err)
     } finally {
       setSaving(false)
@@ -103,7 +103,7 @@ export default function ProfilPage() {
   return (
     <div>
       <h1 className="text-2xl font-semibold text-foreground mb-6">
-        Parametres du profil
+        Paramètres du profil
       </h1>
 
       <form onSubmit={handleSubmit} className="max-w-lg space-y-6">
@@ -118,7 +118,7 @@ export default function ProfilPage() {
         {saved && (
           <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-600 flex items-center gap-2">
             <Check className="w-4 h-4" />
-            Profil mis a jour avec succes
+            Profil mis à jour avec succès
           </div>
         )}
 
@@ -137,9 +137,9 @@ export default function ProfilPage() {
           </div>
         </div>
 
-        {/* Prenom */}
+        {/* Prénom */}
         <div>
-          <label htmlFor="prenom" className="block text-sm font-medium text-foreground mb-2">Prenom</label>
+          <label htmlFor="prenom" className="block text-sm font-medium text-foreground mb-2">Prénom</label>
           <input
             id="prenom"
             type="text"
@@ -163,13 +163,13 @@ export default function ProfilPage() {
             />
           </div>
           <p className="text-xs text-muted-foreground mt-1">
-            L'email ne peut pas etre modifie
+            L'email ne peut pas être modifié
           </p>
         </div>
 
-        {/* Telephone */}
+        {/* Téléphone */}
         <div>
-          <label htmlFor="telephone" className="block text-sm font-medium text-foreground mb-2">Telephone</label>
+          <label htmlFor="telephone" className="block text-sm font-medium text-foreground mb-2">Téléphone</label>
           <div className="relative">
             <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <input

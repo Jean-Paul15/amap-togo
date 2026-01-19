@@ -21,7 +21,7 @@ export function CategoryFilter({
 }: CategoryFilterProps) {
   return (
     <div className="space-y-2">
-      <h3 className="font-medium text-foreground mb-3">Categories</h3>
+      <h3 className="font-medium text-foreground mb-3">Catégories</h3>
       
       <button
         onClick={() => onSelect(null)}
@@ -34,7 +34,7 @@ export function CategoryFilter({
           }
         `}
       >
-        Toutes les categories
+        Toutes les catégories
       </button>
 
       {categories.map((category) => (

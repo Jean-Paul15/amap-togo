@@ -104,12 +104,12 @@ const accessControlProvider: AccessControlProvider = {
     const crudAction: CrudAction = REFINE_ACTION_MAP[action] || 'read'
 
     const perm = permissions[ressourceCode as RessourceCode]
-    if (!perm) return { can: false, reason: 'Ressource non configuree' }
+    if (!perm) return { can: false, reason: 'Ressource non configurée' }
 
     const canDo = perm[crudAction]
     return {
       can: canDo,
-      reason: canDo ? undefined : 'Permission refusee',
+      reason: canDo ? undefined : 'Permission refusée',
     }
   },
 }
@@ -142,7 +142,7 @@ export function RefineProvider({ children }: RefineProviderProps) {
           create: '/categories/create',
           edit: '/categories/:id/edit',
           meta: {
-            label: 'Categories',
+            label: 'Catégories',
             icon: <Layers className="w-4 h-4" />,
           },
         },
@@ -190,7 +190,7 @@ export function RefineProvider({ children }: RefineProviderProps) {
           create: '/roles/create',
           edit: '/roles/:id/edit',
           meta: {
-            label: 'Roles',
+            label: 'Rôles',
             icon: <Shield className="w-4 h-4" />,
           },
         },

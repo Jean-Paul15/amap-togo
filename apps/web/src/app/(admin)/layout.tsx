@@ -5,8 +5,10 @@
 
 'use client'
 
+import { Suspense } from 'react'
 import { RefineProvider } from '@/providers/refine-provider'
 import { AdminLayout } from '@/components/admin/layout/admin-layout'
+import { AccessDeniedToast } from '@/components/admin/access-denied-toast'
 
 export default function AdminGroupLayout({
   children,
@@ -16,6 +18,9 @@ export default function AdminGroupLayout({
   return (
     <RefineProvider>
       <AdminLayout>
+        <Suspense fallback={null}>
+          <AccessDeniedToast />
+        </Suspense>
         {children}
       </AdminLayout>
     </RefineProvider>

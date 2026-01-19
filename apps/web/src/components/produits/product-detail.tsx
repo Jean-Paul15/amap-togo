@@ -118,7 +118,7 @@ export function ProductDetail({ produit }: ProductDetailProps) {
             </p>
           )}
 
-          {/* Selection quantite et ajout - toujours visible si en stock */}
+          {/* Sélection quantité et ajout - toujours visible si en stock */}
           <div className="space-y-4 pt-4 border-t border-border">
             {isOutOfStock ? (
               <p className="text-center text-muted-foreground py-4">
@@ -126,14 +126,14 @@ export function ProductDetail({ produit }: ProductDetailProps) {
               </p>
             ) : (
               <>
-                {/* Selecteur quantite */}
+                {/* Sélecteur quantité */}
                 <div className="flex items-center gap-4">
-                  <span className="text-sm text-muted-foreground">Quantite</span>
+                  <span className="text-sm text-muted-foreground">Quantité</span>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={decrementQuantite}
                       disabled={quantite <= 1}
-                      aria-label="Diminuer la quantite"
+                      aria-label="Diminuer la quantité"
                       className="
                         p-2 rounded-lg border border-border
                         hover:bg-accent disabled:opacity-50
@@ -146,7 +146,7 @@ export function ProductDetail({ produit }: ProductDetailProps) {
                     <button
                       onClick={incrementQuantite}
                       disabled={quantite >= produit.stock}
-                      aria-label="Augmenter la quantite"
+                      aria-label="Augmenter la quantité"
                       className="
                         p-2 rounded-lg border border-border
                         hover:bg-accent disabled:opacity-50

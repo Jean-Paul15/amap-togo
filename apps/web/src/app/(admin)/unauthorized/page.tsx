@@ -3,8 +3,7 @@
 
 'use client'
 
-import Link from 'next/link'
-import { ShieldX, Home, ArrowLeft } from 'lucide-react'
+import { ShieldX, Home } from 'lucide-react'
 
 const FRONT_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
 
@@ -19,30 +18,18 @@ export default function UnauthorizedPage() {
 
         {/* Titre */}
         <h1 className="text-2xl font-bold text-gray-900 mb-2">
-          Acces non autorise
+          Accès non autorisé
         </h1>
 
         {/* Message */}
         <p className="text-gray-600 mb-8">
-          Vous n&apos;avez pas les permissions necessaires pour acceder 
-          a cette section. Contactez un administrateur si vous pensez 
+          Vous n&apos;avez pas les permissions nécessaires pour accéder 
+          à cette section. Contactez un administrateur si vous pensez 
           qu&apos;il s&apos;agit d&apos;une erreur.
         </p>
 
         {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link
-            href="/"
-            className="
-              inline-flex items-center justify-center gap-2
-              px-4 py-2.5 bg-gray-100 text-gray-700
-              rounded-lg font-medium hover:bg-gray-200
-              transition-colors
-            "
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Tableau de bord
-          </Link>
           <a
             href={FRONT_URL}
             className="

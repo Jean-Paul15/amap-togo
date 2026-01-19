@@ -34,10 +34,10 @@ export function POSOrderConfirmation({
         Votre commande a été enregistrée avec succès.
       </p>
 
-      {/* Numero de commande */}
+      {/* Numéro de commande */}
       <div className="bg-muted px-4 py-3 rounded-lg mb-4">
         <p className="text-xs text-muted-foreground mb-1">
-          Numero de commande
+          Numéro de commande
         </p>
         <p className="text-lg font-mono font-bold text-foreground">
           {orderNumber}

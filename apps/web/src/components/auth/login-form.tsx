@@ -65,10 +65,10 @@ function LoginFormContent({ onSuccess }: LoginFormProps) {
       }
 
       // Succes - fermer le modal
-      // Le onAuthStateChange du AuthProvider va gerer la mise a jour de l'etat
       onSuccess()
 
-      // Redirection uniquement si necessaire (admin ou URL specifique)
+      // Toujours recharger la page pour synchroniser l'etat SSR
+      // Le middleware et les composants serveur ont besoin du cookie a jour
       if (redirectUrl) {
         const finalUrl = redirectUrl.startsWith('http')
           ? redirectUrl
@@ -76,8 +76,10 @@ function LoginFormContent({ onSuccess }: LoginFormProps) {
         window.location.href = finalUrl
       } else if (isAdminRedirect) {
         window.location.href = '/dashboard'
+      } else {
+        // Recharger la page pour mettre a jour l'etat d'authentification
+        window.location.reload()
       }
-      // Pas de reload - le AuthProvider gere l'etat via onAuthStateChange
     } catch {
       setError('Une erreur est survenue. Veuillez réessayer.')
     } finally {

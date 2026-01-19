@@ -6,6 +6,7 @@
 interface DeliveryInfo {
   nom: string
   prenom: string
+  email: string
   telephone: string
   quartier: string
   adresse: string
@@ -52,7 +53,7 @@ export function POSDeliveryForm({ values, onChange }: POSDeliveryFormProps) {
           />
         </div>
 
-        {/* Prenom */}
+        {/* Prénom */}
         <div>
           <label className="block text-sm text-muted-foreground mb-1">
             Prénom *
@@ -72,7 +73,29 @@ export function POSDeliveryForm({ values, onChange }: POSDeliveryFormProps) {
         </div>
       </div>
 
-      {/* Telephone */}
+      {/* Email */}
+      <div>
+        <label className="block text-sm text-muted-foreground mb-1">
+          Adresse email (optionnel)
+        </label>
+        <input
+          type="email"
+          value={values.email}
+          onChange={(e) => handleChange('email', e.target.value)}
+          placeholder="votre@email.com"
+          className="
+            w-full px-3 py-2
+            bg-background border border-border rounded-lg
+            text-sm placeholder:text-muted-foreground
+            focus:outline-none focus:ring-2 focus:ring-primary/20
+          "
+        />
+        <p className="text-xs text-muted-foreground mt-1">
+          Pour recevoir les notifications de votre commande
+        </p>
+      </div>
+
+      {/* Téléphone */}
       <div>
         <label className="block text-sm text-muted-foreground mb-1">
           Téléphone * (8 chiffres)

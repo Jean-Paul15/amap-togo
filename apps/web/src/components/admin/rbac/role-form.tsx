@@ -76,7 +76,7 @@ export function RoleForm({
           />
           {isSystemRole && (
             <p className="text-xs text-amber-600 mt-1">
-              Les roles systeme ne peuvent pas etre renommes
+              Les rôles système ne peuvent pas être renommés
             </p>
           )}
         </div>
@@ -106,7 +106,7 @@ export function RoleForm({
         />
         {isSystemRole && role?.nom === 'admin' && (
           <p className="text-xs text-amber-600">
-            Les permissions admin ne peuvent pas etre modifiees
+            Les permissions admin ne peuvent pas être modifiées
           </p>
         )}
       </div>
@@ -124,7 +124,7 @@ export function RoleForm({
           disabled={loading || !nom.trim()}
           className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? 'Enregistrement...' : role ? 'Mettre a jour' : 'Creer le role'}
+          {loading ? 'Enregistrement...' : role ? 'Mettre à jour' : 'Créer le rôle'}
         </button>
       </div>
     </form>

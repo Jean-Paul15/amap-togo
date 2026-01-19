@@ -84,11 +84,11 @@ export function useDashboardData(): DashboardData {
 
       const commandesParStatut = calculerParStatut(statutsData || [])
 
-      // Calculer chiffre d'affaires total
+      // Calculer chiffre d'affaires total (commandes payees ou livrees)
       const { data: totalVentes } = await supabaseClient
         .from('commandes')
-        .select('montant_total')
-        .eq('statut', 'livree')
+        .select('montant_total, statut_paiement')
+        .in('statut_paiement', ['paye', 'partiel'])
 
       const chiffreAffaires = (totalVentes || []).reduce(
         (acc, c) => acc + (c.montant_total || 0),

@@ -18,10 +18,51 @@ export type PaymentMethodType = 'especes' | 'mixx' | 'flooz'
 interface DeliveryInfo {
   nom: string
   prenom: string
+  email: string
   telephone: string
   quartier: string
   adresse: string
   notes: string
+}
+
+// Cle localStorage pour sauvegarder les infos client
+const DELIVERY_INFO_KEY = 'amap-delivery-info'
+
+/**
+ * Recuperer les infos de livraison sauvegardees
+ */
+function getSavedDeliveryInfo(): Partial<DeliveryInfo> {
+  if (typeof window === 'undefined') return {}
+  try {
+    const saved = localStorage.getItem(DELIVERY_INFO_KEY)
+    if (saved) {
+      return JSON.parse(saved)
+    }
+  } catch {
+    // Ignorer les erreurs de parsing
+  }
+  return {}
+}
+
+/**
+ * Sauvegarder les infos de livraison
+ */
+function saveDeliveryInfo(info: DeliveryInfo): void {
+  if (typeof window === 'undefined') return
+  try {
+    // Ne pas sauvegarder les notes (specifiques a chaque commande)
+    const toSave = {
+      nom: info.nom,
+      prenom: info.prenom,
+      email: info.email,
+      telephone: info.telephone,
+      quartier: info.quartier,
+      adresse: info.adresse,
+    }
+    localStorage.setItem(DELIVERY_INFO_KEY, JSON.stringify(toSave))
+  } catch {
+    // Ignorer les erreurs
+  }
 }
 
 /**
@@ -32,13 +73,19 @@ export function POSCheckout() {
   const [step, setStep] = useState<'form' | 'confirm'>('form')
   const [orderNumber, setOrderNumber] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [deliveryInfo, setDeliveryInfo] = useState<DeliveryInfo>({
-    nom: '',
-    prenom: '',
-    telephone: '',
-    quartier: '',
-    adresse: '',
-    notes: '',
+  
+  // Initialiser avec les donnees sauvegardees
+  const [deliveryInfo, setDeliveryInfo] = useState<DeliveryInfo>(() => {
+    const saved = getSavedDeliveryInfo()
+    return {
+      nom: saved.nom || '',
+      prenom: saved.prenom || '',
+      email: saved.email || '',
+      telephone: saved.telephone || '',
+      quartier: saved.quartier || '',
+      adresse: saved.adresse || '',
+      notes: '',
+    }
   })
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethodType>('especes')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -95,6 +142,7 @@ export function POSCheckout() {
         {
           p_nom: deliveryInfo.nom,
           p_prenom: deliveryInfo.prenom,
+          p_email: deliveryInfo.email || null,
           p_telephone: deliveryInfo.telephone,
           p_quartier: deliveryInfo.quartier,
           p_adresse: deliveryInfo.adresse || null,
@@ -113,6 +161,8 @@ export function POSCheckout() {
       }
 
       if (result?.success && result?.numero) {
+        // Sauvegarder les infos de livraison pour la prochaine fois
+        saveDeliveryInfo(deliveryInfo)
         // Sauvegarder les items avant de vider le panier
         savedItemsRef.current = items.map((item) => ({
           nom: item.nom,
@@ -231,7 +281,7 @@ export function POSCheckout() {
       {/* Resume et bouton */}
       <div className="p-4 border-t bg-muted/30">
         <div className="flex justify-between items-center mb-4">
-          <span className="text-sm text-muted-foreground">Total a payer</span>
+          <span className="text-sm text-muted-foreground">Total à payer</span>
           <span className="text-xl font-bold text-foreground">
             {formatPrice(totalPrice)}
           </span>

@@ -26,16 +26,16 @@ export const metadata: Metadata = {
   },
   description: 
     'Association pour le Maintien d\'une Agriculture Paysanne au Togo. ' +
-    'Produits bio et locaux livres a Lome. Paniers hebdomadaires.',
+    'Produits bio et locaux livrés à Lomé. Paniers hebdomadaires.',
   keywords: [
     'AMAP',
     'bio',
     'agriculture',
     'Togo',
-    'Lome',
+    'Lomé',
     'produits locaux',
     'panier',
-    'legumes',
+    'légumes',
     'fruits',
   ],
   authors: [{ name: 'AMAP TOGO' }],
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     title: 'AMAP TOGO - Produits Bio et Locaux',
     description: 
       'Produits agricoles bio et locaux au Togo. ' +
-      'Paniers hebdomadaires livres a Lome.',
+      'Paniers hebdomadaires livrés à Lomé.',
   },
   twitter: {
     card: 'summary_large_image',

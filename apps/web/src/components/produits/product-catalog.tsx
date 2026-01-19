@@ -105,10 +105,10 @@ export function ProductCatalog({ produits, categories }: ProductCatalogProps) {
           </div>
         </div>
 
-        {/* Resultats */}
+        {/* Résultats */}
         <div className="mb-4">
           <p className="text-sm text-muted-foreground">
-            {filteredProduits.length} produit{filteredProduits.length > 1 ? 's' : ''} trouve{filteredProduits.length > 1 ? 's' : ''}
+            {filteredProduits.length} produit{filteredProduits.length > 1 ? 's' : ''} trouvé{filteredProduits.length > 1 ? 's' : ''}
           </p>
         </div>
 

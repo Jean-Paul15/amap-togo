@@ -33,7 +33,7 @@ interface CommandeDetail {
   notes: string | null
   created_at: string
   client_id: string | null
-  client_anonyme: { nom?: string; prenom?: string; telephone?: string } | null
+  client_anonyme: { nom?: string; prenom?: string; telephone?: string; email?: string } | null
   client: { nom: string; prenom: string; email: string; telephone: string } | null
   lignes: Array<{
     id: string
@@ -41,6 +41,15 @@ interface CommandeDetail {
     prix_unitaire: number
     prix_total: number
     produit: { nom: string; unite: string } | null
+  }>
+  paniers: Array<{
+    id: string
+    quantite: number
+    prix_unitaire: number
+    panier_semaine: { 
+      id: string
+      panier_type: { nom: string } | null 
+    } | null
   }>
 }
 
@@ -70,6 +79,13 @@ export default function CommandeDetailPage() {
             lignes:commandes_lignes(
               id, quantite, prix_unitaire, prix_total,
               produit:produit_id(nom, unite)
+            ),
+            paniers:commandes_paniers(
+              id, quantite, prix_unitaire,
+              panier_semaine:panier_semaine_id(
+                id,
+                panier_type:panier_type_id(nom)
+              )
             )
           `)
           .eq('id', commandeId)
@@ -84,6 +100,12 @@ export default function CommandeDetailPage() {
           lignes: (data.lignes || []).map((ligne: { produit: unknown[] | unknown }) => ({
             ...ligne,
             produit: Array.isArray(ligne.produit) ? ligne.produit[0] || null : ligne.produit,
+          })),
+          paniers: (data.paniers || []).map((panier: { panier_semaine: unknown[] | unknown }) => ({
+            ...panier,
+            panier_semaine: Array.isArray(panier.panier_semaine) 
+              ? panier.panier_semaine[0] || null 
+              : panier.panier_semaine,
           })),
         } as CommandeDetail
         
@@ -233,6 +255,7 @@ export default function CommandeDetailPage() {
                 Articles commandés
               </h2>
               <div className="divide-y divide-gray-100">
+                {/* Produits */}
                 {commande.lignes.map((ligne) => (
                   <div key={ligne.id} className="py-2.5 sm:py-3 flex items-center justify-between gap-3">
                     <div className="min-w-0 flex-1">
@@ -249,6 +272,37 @@ export default function CommandeDetailPage() {
                     </p>
                   </div>
                 ))}
+                
+                {/* Paniers AMAP */}
+                {commande.paniers && commande.paniers.length > 0 && (
+                  <>
+                    {commande.paniers.map((panier) => {
+                      const panierNom = panier.panier_semaine?.panier_type?.nom || 'Panier AMAP'
+                      const prixTotal = panier.prix_unitaire * panier.quantite
+                      
+                      return (
+                        <div key={panier.id} className="py-2.5 sm:py-3 flex items-center justify-between gap-3">
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="px-1.5 py-0.5 text-[10px] font-medium bg-green-100 text-green-700 rounded">
+                                PANIER
+                              </span>
+                              <p className="font-medium text-gray-900 text-sm sm:text-base truncate">
+                                {panierNom}
+                              </p>
+                            </div>
+                            <p className="text-xs sm:text-sm text-gray-500">
+                              {panier.quantite} x {formatPrice(panier.prix_unitaire)}
+                            </p>
+                          </div>
+                          <p className="font-medium text-gray-900 text-sm sm:text-base flex-shrink-0">
+                            {formatPrice(prixTotal)}
+                          </p>
+                        </div>
+                      )
+                    })}
+                  </>
+                )}
               </div>
               <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-100 flex justify-between">
                 <span className="font-semibold text-gray-900 text-sm sm:text-base">Total</span>

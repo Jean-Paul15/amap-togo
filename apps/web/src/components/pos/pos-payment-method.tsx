@@ -18,8 +18,8 @@ interface PaymentMethodConfig {
 const paymentMethods: PaymentMethodConfig[] = [
   {
     id: 'especes',
-    label: 'Especes',
-    description: 'Paiement a la livraison',
+    label: 'Espèces',
+    description: 'Paiement à la livraison',
     icon: Banknote,
   },
   {

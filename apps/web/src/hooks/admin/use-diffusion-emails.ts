@@ -23,7 +23,7 @@ export function useDiffusionEmails() {
     const emailMap = new Map<string, EmailEntry>()
 
     try {
-      // 1. Emails des profils
+      // 1. Emails des profils (utilisateurs connectes)
       const { data: profils } = await supabaseClient
         .from('profils')
         .select('email, nom, prenom')
@@ -58,7 +58,7 @@ export function useDiffusionEmails() {
 
           if (clientAnon?.email && isValidEmail(clientAnon.email)) {
             const email = clientAnon.email.toLowerCase().trim()
-            // Ne pas ecraser un profil existant
+            // Ne pas ecraser un profil existant (eviter doublons)
             if (!emailMap.has(email)) {
               emailMap.set(email, {
                 email,
@@ -96,8 +96,17 @@ export function useDiffusionEmails() {
     )
   }, [])
 
-  // Tout selectionner
+  // Tout selectionner (sauf profils utilisateurs connectes)
   const selectAll = useCallback(() => {
+    // Selectionner uniquement les emails provenant des commandes
+    const commandeEmails = emails
+      .filter(e => e.source === 'commande')
+      .map(e => e.email)
+    setSelectedEmails(commandeEmails)
+  }, [emails])
+
+  // Selectionner absolument tous les emails
+  const selectAllIncludingProfils = useCallback(() => {
     setSelectedEmails(emails.map(e => e.email))
   }, [emails])
 
@@ -106,12 +115,22 @@ export function useDiffusionEmails() {
     setSelectedEmails([])
   }, [])
 
+  // Selectionner par source
+  const selectBySource = useCallback((source: 'profil' | 'commande') => {
+    const filteredEmails = emails
+      .filter(e => e.source === source)
+      .map(e => e.email)
+    setSelectedEmails(filteredEmails)
+  }, [emails])
+
   return {
     emails,
     selectedEmails,
     isLoading,
     toggleEmail,
     selectAll,
+    selectAllIncludingProfils,
+    selectBySource,
     deselectAll,
     refresh: loadEmails
   }

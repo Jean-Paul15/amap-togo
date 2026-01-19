@@ -50,7 +50,7 @@ export default function DiffusionPage() {
     setIsSending(false)
     setSendResult({
       success: true,
-      message: `Email envoye a ${selectedEmails.length} destinataire(s)`
+      message: `Email envoyé à ${selectedEmails.length} destinataire(s)`
     })
   }
 
@@ -63,7 +63,7 @@ export default function DiffusionPage() {
               Diffusion Email
             </h1>
             <p className="text-sm text-gray-500">
-              Envoyez des emails a vos clients
+              Envoyez des emails à vos clients
             </p>
           </div>
           <button

@@ -20,7 +20,7 @@ import {
   UserCog
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { supabaseClient } from '@/lib/supabase'
+import { useAuth } from '@/hooks/use-auth'
 
 interface NavItem {
   name: string
@@ -51,11 +51,11 @@ const navItems: NavItem[] = [
  */
 export function Sidebar({ onNavigate }: SidebarProps) {
   const pathname = usePathname()
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+  const { signOut } = useAuth()
 
   const handleLogout = async () => {
-    await supabaseClient.auth.signOut()
-    window.location.href = siteUrl
+    await signOut()
+    // signOut redirige deja vers l'accueil
   }
 
   const handleLinkClick = () => {

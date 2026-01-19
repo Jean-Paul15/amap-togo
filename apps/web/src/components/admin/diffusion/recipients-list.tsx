@@ -101,17 +101,17 @@ export function RecipientsList({
           {allSelected ? (
             <>
               <Square className="w-3 h-3" />
-              Tout deselectionner
+              Tout désélectionner
             </>
           ) : (
             <>
               <CheckSquare className="w-3 h-3" />
-              Tout selectionner
+              Tout sélectionner
             </>
           )}
         </button>
         <span className="text-xs text-muted-foreground">
-          {selectedEmails.length} selectionne(s)
+          {selectedEmails.length} sélectionné(s)
         </span>
       </div>
 
@@ -125,7 +125,7 @@ export function RecipientsList({
         ) : filteredEmails.length === 0 ? (
           <div className="p-8 text-center text-muted-foreground">
             <Users className="w-8 h-8 mx-auto mb-2 opacity-50" />
-            <p className="text-sm">Aucun email trouve</p>
+            <p className="text-sm">Aucun email trouvé</p>
           </div>
         ) : (
           <ul className="divide-y divide-border">

@@ -49,8 +49,8 @@ export function TopProductsChart({ data, loading }: TopProductsChartProps) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
           </svg>
         </div>
-        <p className="text-sm font-medium">Aucune vente enregistree</p>
-        <p className="text-xs text-gray-300 mt-1">Les produits vendus apparaitront ici</p>
+        <p className="text-sm font-medium">Aucune vente enregistrée</p>
+        <p className="text-xs text-gray-300 mt-1">Les produits vendus apparaîtront ici</p>
       </div>
     )
   }

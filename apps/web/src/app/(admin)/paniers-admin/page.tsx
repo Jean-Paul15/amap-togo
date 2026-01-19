@@ -78,7 +78,7 @@ export default function PaniersListPage() {
             <p className="text-sm text-gray-500">{paniers.length} paniers</p>
           </div>
           <Link
-            href="/paniers/create"
+            href="/paniers-admin/create"
             className="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors"
           >
             <Plus className="w-4 h-4" />
@@ -154,13 +154,13 @@ export default function PaniersListPage() {
 
                   <div className="mt-4 pt-3 border-t border-gray-100 flex gap-2">
                     <Link
-                      href={`/paniers/${panier.id}`}
+                      href={`/paniers-admin/${panier.id}`}
                       className="flex-1 py-1.5 text-center text-xs font-medium text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"
                     >
                       Voir
                     </Link>
                     <Link
-                      href={`/paniers/${panier.id}/edit`}
+                      href={`/paniers-admin/${panier.id}/edit`}
                       className="flex-1 py-1.5 text-center text-xs font-medium text-green-600 hover:bg-green-50 rounded-lg transition-colors"
                     >
                       Modifier

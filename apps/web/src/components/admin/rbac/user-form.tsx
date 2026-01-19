@@ -159,14 +159,14 @@ export function UserForm({
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Role
+            Rôle
           </label>
           <SelectInput
             value={formData.role_id}
             onChange={handleChange('role_id')}
             required
             options={roleOptions}
-            placeholder="Selectionner un role"
+            placeholder="Sélectionner un rôle"
           />
         </div>
       </div>

@@ -173,9 +173,9 @@ export function HeroSection() {
             className="mt-12 sm:mt-16 grid grid-cols-3 gap-4 sm:gap-8 max-w-2xl mx-auto"
           >
             {[
-              { number: '100+', label: 'Produits bio' },
-              { number: '50+', label: 'Producteurs' },
-              { number: '1000+', label: 'Clients satisfaits' }
+              { number: '77', label: 'Producteurs bio' },
+              { number: '155', label: 'Consommateurs' },
+              { number: '15+', label: 'Années d\'expérience' }
             ].map((stat, i) => (
               <motion.div
                 key={stat.label}

@@ -18,7 +18,7 @@ export function ProductGrid({ produits, onAddToCart }: ProductGridProps) {
     return (
       <div className="text-center py-12">
         <p className="text-muted-foreground">
-          Aucun produit trouve.
+          Aucun produit trouvé.
         </p>
       </div>
     )

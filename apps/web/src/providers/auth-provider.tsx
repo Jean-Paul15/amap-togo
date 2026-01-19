@@ -223,7 +223,7 @@ export function AuthProvider({
 export function useAuthContext(): AuthContextValue {
   const context = useContext(AuthContext)
   if (!context) {
-    throw new Error('useAuthContext doit etre utilise dans un AuthProvider')
+    throw new Error('useAuthContext doit être utilisé dans un AuthProvider')
   }
   return context
 }

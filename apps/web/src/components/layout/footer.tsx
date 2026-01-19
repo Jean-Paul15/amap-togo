@@ -20,7 +20,7 @@ export function Footer() {
             <Logo />
             <p className="text-sm text-muted-foreground leading-relaxed">
               Association pour le Maintien d'une Agriculture Paysanne au Togo.
-              Des produits bio et locaux, du producteur a votre table.
+              Des produits bio et locaux, du producteur à votre table.
             </p>
           </div>
 
@@ -39,7 +39,7 @@ export function Footer() {
               </li>
               <li>
                 <FooterLink href="/mentions-legales">
-                  Mentions legales
+                  Mentions légales
                 </FooterLink>
               </li>
             </ul>
@@ -50,13 +50,13 @@ export function Footer() {
             <h3 className="font-semibold text-foreground">Contact</h3>
             <ul className="space-y-3">
               <ContactItem icon={MapPin}>
-                Adidogome, Lome - Togo
+                Adidogomé (près de l'OTR), Lomé - Togo
               </ContactItem>
               <ContactItem icon={Phone}>
-                +228 90 00 00 00
+                +228 92 71 95 96
               </ContactItem>
               <ContactItem icon={Mail}>
-                contact@amaptogo.org
+                amap.togo@gmail.com
               </ContactItem>
             </ul>
           </div>
@@ -66,10 +66,10 @@ export function Footer() {
             <h3 className="font-semibold text-foreground">Livraisons</h3>
             <ul className="space-y-3">
               <ContactItem icon={Clock}>
-                Mercredi a partir de 11h30
+                Mercredi à partir de 11h30
               </ContactItem>
               <li className="text-sm text-muted-foreground">
-                Point de retrait : Ancien Centre Mytro Nunya, Adidogome
+                Point de retrait : Ancien Centre Mytro Nunya, Adidogomé
               </li>
             </ul>
           </div>
@@ -78,7 +78,7 @@ export function Footer() {
         {/* Copyright */}
         <div className="mt-12 pt-8 border-t border-border">
           <p className="text-sm text-muted-foreground text-center">
-            {currentYear} AMAP TOGO. Tous droits reserves.
+            {currentYear} AMAP TOGO. Tous droits réservés.
           </p>
         </div>
       </div>

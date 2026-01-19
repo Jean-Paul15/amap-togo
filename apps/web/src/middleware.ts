@@ -22,20 +22,67 @@ const ADMIN_ROUTES = [
 ]
 
 // Mapping des routes vers les codes de ressources RBAC
+// Les codes doivent correspondre a la table ressources dans la BDD
 const ROUTE_RESOURCE_MAP: Record<string, string> = {
+  '/dashboard': 'dashboard',
   '/produits-admin': 'produits',
   '/categories': 'categories',
-  '/paniers-admin': 'paniers',
-  '/paniers-types': 'paniers',
+  '/paniers-admin': 'paniers_semaine',
+  '/paniers-types': 'paniers_types',
   '/commandes': 'commandes',
-  '/clients': 'clients',
+  '/clients': 'profils',
   '/roles': 'roles',
   '/diffusion': 'diffusion',
   '/utilisateurs': 'utilisateurs',
 }
 
-// Routes admin publiques (accessibles si connecte avec un role)
-const ADMIN_PUBLIC_ROUTES = ['/dashboard', '/unauthorized']
+// Route unauthorized (pas de verification RBAC, juste etre connecte)
+const NO_RBAC_ROUTES = ['/unauthorized']
+
+// Mapping inverse : ressource -> route
+const RESOURCE_ROUTE_MAP: Record<string, string> = {
+  'dashboard': '/dashboard',
+  'produits': '/produits-admin',
+  'categories': '/categories',
+  'paniers_semaine': '/paniers-admin',
+  'paniers_types': '/paniers-types',
+  'commandes': '/commandes',
+  'profils': '/clients',
+  'roles': '/roles',
+  'diffusion': '/diffusion',
+  'utilisateurs': '/utilisateurs',
+}
+
+// Ordre de priorite pour la redirection (routes les plus utiles en premier)
+const ROUTE_PRIORITY = [
+  'dashboard',
+  'commandes',
+  'produits',
+  'paniers_semaine',
+  'categories',
+  'profils',
+  'diffusion',
+  'roles',
+  'utilisateurs',
+  'paniers_types',
+]
+
+/**
+ * Trouve la premiere route accessible pour l'utilisateur
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function findFirstAccessibleRoute(permissions: any[]): string | null {
+  for (const resourceCode of ROUTE_PRIORITY) {
+    const hasAccess = permissions.some(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (p: any) => p.ressources?.code === resourceCode && p.peut_lire
+    )
+    if (hasAccess && RESOURCE_ROUTE_MAP[resourceCode]) {
+      return RESOURCE_ROUTE_MAP[resourceCode]
+    }
+  }
+  return null
+}
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -143,11 +190,14 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/unauthorized', request.url))
       }
 
-      // Dashboard et routes publiques admin : accessibles si connecte avec un role
-      if (ADMIN_PUBLIC_ROUTES.some(route => pathname.startsWith(route))) {
+      // Route unauthorized : accessible si connecte (meme sans permissions)
+      if (NO_RBAC_ROUTES.some(route => pathname.startsWith(route))) {
         return response
       }
 
+      // Recuperer toutes les permissions de l'utilisateur
+      const permissions = roleData?.permissions || []
+      
       // Trouver la ressource correspondant a cette route
       const routeKey = Object.keys(ROUTE_RESOURCE_MAP).find(
         key => pathname.startsWith(key)
@@ -157,7 +207,6 @@ export async function middleware(request: NextRequest) {
         const resourceCode = ROUTE_RESOURCE_MAP[routeKey]
 
         // Verifier si le role a la permission de lire cette ressource
-        const permissions = roleData?.permissions || []
         const hasAccess = permissions.some(
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (p: any) => p.ressources?.code === resourceCode && p.peut_lire
@@ -167,13 +216,27 @@ export async function middleware(request: NextRequest) {
           return response
         }
 
-        // Pas d'acces : rediriger vers dashboard ou unauthorized
-        return NextResponse.redirect(new URL('/dashboard', request.url))
+        // Pas d'acces : chercher une page accessible
+        const accessibleRoute = findFirstAccessibleRoute(permissions)
+        
+        if (accessibleRoute) {
+          // Rediriger vers la page accessible avec un toast d'erreur
+          const url = request.nextUrl.clone()
+          url.pathname = accessibleRoute
+          url.searchParams.set('access_denied', '1')
+          return NextResponse.redirect(url)
+        }
+        
+        // Aucune page accessible : rediriger vers unauthorized
+        return NextResponse.redirect(new URL('/unauthorized', request.url))
       }
+      
+      // Route admin non mappee : rediriger vers unauthorized par securite
+      return NextResponse.redirect(new URL('/unauthorized', request.url))
     }
 
     return response
-  } catch (error) {
+  } catch {
     // En cas d'erreur, rediriger vers l'accueil pour les routes admin
     if (isAdminRoute) {
       const url = request.nextUrl.clone()

@@ -116,8 +116,8 @@ export default function RolesListPage() {
               <div className="w-16 h-16 rounded-full bg-gray-50 flex items-center justify-center mx-auto mb-4">
                 <Shield className="w-8 h-8 text-gray-300" />
               </div>
-              <p className="text-sm font-medium text-gray-500">Aucun role</p>
-              <p className="text-xs text-gray-400 mt-1">Creez votre premier role</p>
+              <p className="text-sm font-medium text-gray-500">Aucun rôle</p>
+              <p className="text-xs text-gray-400 mt-1">Créez votre premier rôle</p>
             </div>
           ) : (
             roles.map((role) => (
