@@ -54,4 +54,6 @@ next-env.d.ts
 /sql/
 /AGENTS.md
 /CLAUDE.md
+/docs/
 /DATABASE_SCHEMA.json
+.DESGN_PRINCIPLES.md
