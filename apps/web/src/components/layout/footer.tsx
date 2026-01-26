@@ -29,18 +29,41 @@ export function Footer() {
             <h3 className="font-semibold text-foreground">Navigation</h3>
             <ul className="space-y-2">
               <li>
-                <FooterLink href="/produits">Nos produits</FooterLink>
+                <FooterLink href="/">Accueil</FooterLink>
+              </li>
+              <li>
+                <FooterLink href="/produits">Produits</FooterLink>
               </li>
               <li>
                 <FooterLink href="/paniers">Paniers AMAP</FooterLink>
               </li>
               <li>
-                <FooterLink href="/contact">Contact</FooterLink>
+                <FooterLink href="/a-propos">À propos</FooterLink>
+              </li>
+            </ul>
+          </div>
+
+          {/* Informations légales */}
+          <div className="space-y-4">
+            <h3 className="font-semibold text-foreground">Informations</h3>
+            <ul className="space-y-2">
+              <li>
+                <FooterLink href="/informations">Informations</FooterLink>
               </li>
               <li>
-                <FooterLink href="/mentions-legales">
-                  Mentions légales
-                </FooterLink>
+                <FooterLink href="/faq">FAQ</FooterLink>
+              </li>
+              <li>
+                <FooterLink href="/mentions-legales">Mentions légales</FooterLink>
+              </li>
+              <li>
+                <FooterLink href="/politique-confidentialite">Confidentialité</FooterLink>
+              </li>
+              <li>
+                <FooterLink href="/conditions-generales">CGV</FooterLink>
+              </li>
+              <li>
+                <FooterLink href="/parametres-cookies">Cookies</FooterLink>
               </li>
             </ul>
           </div>
@@ -50,7 +73,7 @@ export function Footer() {
             <h3 className="font-semibold text-foreground">Contact</h3>
             <ul className="space-y-3">
               <ContactItem icon={MapPin}>
-                Adidogomé (près de l'OTR), Lomé - Togo
+                Adidogomé, Lomé - Togo
               </ContactItem>
               <ContactItem icon={Phone}>
                 +228 92 71 95 96
@@ -58,19 +81,9 @@ export function Footer() {
               <ContactItem icon={Mail}>
                 amap.togo@gmail.com
               </ContactItem>
-            </ul>
-          </div>
-
-          {/* Horaires */}
-          <div className="space-y-4">
-            <h3 className="font-semibold text-foreground">Livraisons</h3>
-            <ul className="space-y-3">
               <ContactItem icon={Clock}>
-                Mercredi à partir de 11h30
+                Livraisons : Mercredi 11h30
               </ContactItem>
-              <li className="text-sm text-muted-foreground">
-                Point de retrait : Ancien Centre Mytro Nunya, Adidogomé
-              </li>
             </ul>
           </div>
         </div>

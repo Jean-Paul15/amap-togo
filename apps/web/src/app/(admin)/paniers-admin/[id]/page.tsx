@@ -102,7 +102,7 @@ export default function PanierDetailPage({ params }: PageProps) {
     return (
       <div className="text-center py-20">
         <p className="text-gray-500 mb-4">Panier non trouve</p>
-        <Link href="/paniers" className="text-green-600 hover:underline">Retour</Link>
+        <Link href="/paniers-admin" className="text-green-600 hover:underline">Retour</Link>
       </div>
     )
   }
@@ -115,7 +115,7 @@ export default function PanierDetailPage({ params }: PageProps) {
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link href="/paniers" className="p-2 hover:bg-gray-100 rounded-lg">
+          <Link href="/paniers-admin" className="p-2 hover:bg-gray-100 rounded-lg">
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </Link>
           <div>
@@ -128,7 +128,7 @@ export default function PanierDetailPage({ params }: PageProps) {
         </div>
           <div className="flex gap-2">
             <Link
-              href={`/paniers/${id}/edit`}
+              href={`/paniers-admin/${id}/edit`}
               className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50"
             >
               <Edit className="w-4 h-4" />

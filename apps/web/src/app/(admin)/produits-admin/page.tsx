@@ -8,11 +8,12 @@ export const dynamic = 'force-dynamic'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { supabaseClient } from '@/lib/supabase'
-import { Plus, Search, Edit, AlertTriangle, Package, Trash2 } from 'lucide-react'
+import { Plus, Search, Edit, AlertTriangle, Package, Trash2, FileText } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { InlineEditCell } from '@/components/admin/produits/inline-edit-cell'
 import { InlineImageEdit } from '@/components/admin/produits/inline-image-edit'
 import { StatusToggle } from '@/components/admin/produits/status-toggle'
+import { ExportProduitDialog } from '@/components/admin/produits/export-dialog'
 import { useToast } from '@/components/ui/toast'
 
 interface Categorie {
@@ -40,6 +41,7 @@ export default function ProduitsListPage() {
   const [categories, setCategories] = useState<Categorie[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+  const [exportDialogOpen, setExportDialogOpen] = useState(false)
 
   useEffect(() => {
     async function fetchData() {
@@ -147,13 +149,22 @@ export default function ProduitsListPage() {
               {produits.length} produits - Cliquez sur une valeur pour la modifier
             </p>
           </div>
-          <Link
-            href="/produits-admin/create"
-            className="inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-green-600 text-white text-sm font-semibold rounded-lg sm:rounded-xl hover:bg-green-700 transition-all shadow-sm w-full sm:w-auto"
-          >
-            <Plus className="w-4 h-4" />
-            Nouveau produit
-          </Link>
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+            <button
+              onClick={() => setExportDialogOpen(true)}
+              className="inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-lg sm:rounded-xl hover:bg-blue-700 transition-all shadow-sm w-full sm:w-auto"
+            >
+              <FileText className="w-4 h-4" />
+              Exporter Excel
+            </button>
+            <Link
+              href="/produits-admin/create"
+              className="inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 bg-green-600 text-white text-sm font-semibold rounded-lg sm:rounded-xl hover:bg-green-700 transition-all shadow-sm w-full sm:w-auto"
+            >
+              <Plus className="w-4 h-4" />
+              Nouveau produit
+            </Link>
+          </div>
         </div>
 
         {/* Recherche */}
@@ -392,6 +403,13 @@ export default function ProduitsListPage() {
             )}
           </div>
         </div>
+
+        {/* Dialog export */}
+        <ExportProduitDialog
+          isOpen={exportDialogOpen}
+          onClose={() => setExportDialogOpen(false)}
+          totalProduits={produits.length}
+        />
       </div>
   )
 }

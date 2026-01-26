@@ -4,6 +4,8 @@ import './globals.css'
 import { QueryProvider, AuthProvider } from '@/providers'
 import { ProductsProvider } from '@/components/providers/products-provider'
 import { ToastProvider } from '@/components/ui/toast'
+import { CookieBanner } from '@/components/cookies/cookie-banner'
+import { GoogleAnalytics } from '@/components/analytics/google-analytics'
 import { getProductsData } from '@/lib/ssr/get-products'
 import { getAuthData } from '@/lib/ssr/get-auth'
 
@@ -78,6 +80,7 @@ export default async function RootLayout({
   return (
     <html lang="fr" className={inter.variable}>
       <body className={`${inter.className} antialiased`}>
+        <GoogleAnalytics />
         <QueryProvider>
           <AuthProvider
             initialUser={authData.user}
@@ -89,6 +92,7 @@ export default async function RootLayout({
             >
               <ToastProvider>
                 {children}
+                <CookieBanner />
               </ToastProvider>
             </ProductsProvider>
           </AuthProvider>

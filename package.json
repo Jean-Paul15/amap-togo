@@ -16,13 +16,16 @@
     "packages/*"
   ],
   "devDependencies": {
+    "@types/node": "^22.10.5",
     "turbo": "^2.3.3",
-    "typescript": "^5.7.2",
-    "@types/node": "^22.10.5"
+    "typescript": "^5.7.2"
   },
   "packageManager": "pnpm@8.15.9",
   "engines": {
     "node": ">=20.0.0",
     "pnpm": ">=8.0.0"
+  },
+  "dependencies": {
+    "xlsx": "^0.18.5"
   }
 }
