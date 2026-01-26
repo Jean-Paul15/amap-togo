@@ -110,6 +110,7 @@ export interface Database {
         Args: {
           p_nom: string
           p_prenom: string
+          p_email?: string | null
           p_telephone: string
           p_quartier: string
           p_adresse?: string | null
