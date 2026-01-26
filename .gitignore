@@ -48,6 +48,9 @@ next-env.d.ts
 # Turbo
 .turbo
 
+# Documentation
+docs/
+
 # Documentation et fichiers de travail IA
 /features/
 /guides/
