@@ -1,6 +1,7 @@
 // Page d'accueil AMAP TOGO
 // Server Component avec donnees pre-chargees
 
+import type { Metadata } from 'next'
 import { 
   HeroSection, 
   ProduitsSection, 
@@ -8,6 +9,15 @@ import {
   ValuesSection 
 } from '@/components/home'
 import { createClientServer } from '@amap-togo/database/server'
+
+export const metadata: Metadata = {
+  title: 'AMAP TOGO - Produits Bio et Locaux',
+  description: 'Association pour le Maintien d\'une Agriculture Paysanne au Togo. Produits bio et locaux livrés à Lomé. Paniers hebdomadaires.',
+  robots: {
+    index: true,
+    follow: true,
+  },
+}
 
 /**
  * Page d'accueil avec sections :

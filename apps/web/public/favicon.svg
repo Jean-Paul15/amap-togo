@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Fond vert AMAP -->
+  <rect width="64" height="64" fill="#2D5A27" rx="12"/>
+  
+  <!-- Feuille stylisée représentant l'agriculture biologique -->
+  <g transform="translate(32, 32)">
+    <!-- Tige -->
+    <line x1="0" y1="0" x2="0" y2="12" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+    
+    <!-- Feuilles -->
+    <path d="M -8,-4 Q -12,-8 -10,-14 Q -8,-10 -6,-14 Q -4,-10 -2,-14 Q 0,-10 2,-14 Q 4,-10 6,-14 Q 8,-10 10,-14 Q 12,-8 8,-4 Q 0,-2 0,0 Z" fill="#fff" opacity="0.95"/>
+    
+    <!-- Lettres "A" stylisée pour AMAP -->
+    <text x="0" y="8" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="#2D5A27" text-anchor="middle" dominant-baseline="central">A</text>
+  </g>
+</svg>
