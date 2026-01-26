@@ -102,11 +102,17 @@ export function AuthProvider({
   const supabaseRef = useRef<ReturnType<typeof createClientBrowser> | null>(null)
   const hasHydrated = useRef(false)
 
+  // Instance partagee du client Supabase
   const getSupabase = () => {
     if (!supabaseRef.current) {
       supabaseRef.current = createClientBrowser()
     }
     return supabaseRef.current
+  }
+
+  // Exposer l'instance pour les autres composants
+  if (typeof window !== 'undefined') {
+    (window as unknown as { __supabaseClient?: ReturnType<typeof createClientBrowser> }).__supabaseClient = getSupabase()
   }
 
   const refreshProfile = async () => {
@@ -127,19 +133,28 @@ export function AuthProvider({
   const signOut = async () => {
     try {
       const supabase = getSupabase()
-      await supabase.auth.signOut({ scope: 'local' })
+      
+      // Reset state immediatement pour feedback rapide
       setUser(null)
       setProfile(null)
       
-      // Redirection robuste
+      // Deconnexion Supabase (ne pas attendre si ca bloque)
+      const signOutPromise = supabase.auth.signOut({ scope: 'local' })
+      
+      // Timeout de 2 secondes pour eviter blocage mobile
+      const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 2000))
+      
+      await Promise.race([signOutPromise, timeoutPromise])
+      
+      // Redirection apres deconnexion
       if (typeof window !== 'undefined') {
-        window.location.href = '/'
+        window.location.replace('/')
       }
     } catch (error) {
-      console.error('Erreur déconnexion:', error)
-      // Forcer la redirection même en cas d'erreur
+      console.error('Erreur deconnexion:', error)
+      // Forcer la redirection meme en cas d'erreur
       if (typeof window !== 'undefined') {
-        window.location.href = '/'
+        window.location.replace('/')
       }
     }
   }

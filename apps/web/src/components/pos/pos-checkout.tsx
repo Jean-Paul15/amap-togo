@@ -111,7 +111,11 @@ export function POSCheckout() {
     setError(null)
 
     try {
-      const supabase = createClientBrowser()
+      // Utiliser l'instance partagee si disponible (evite conflit cookies mobile)
+      const windowWithClient = typeof window !== 'undefined' 
+        ? (window as unknown as { __supabaseClient?: ReturnType<typeof createClientBrowser> })
+        : null
+      const supabase = windowWithClient?.__supabaseClient || createClientBrowser()
       
       // Preparer les items pour le RPC (JSONB)
       const orderItems = items.map((item) => ({
