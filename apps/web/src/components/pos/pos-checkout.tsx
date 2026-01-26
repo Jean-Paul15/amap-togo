@@ -172,24 +172,31 @@ export function POSCheckout() {
         }))
         savedTotalRef.current = totalPrice
 
-        // Generer et telecharger la facture
-        generateFacture({
-          numeroCommande: result.numero,
-          dateCommande: new Date(),
-          client: {
-            nom: deliveryInfo.nom,
-            telephone: deliveryInfo.telephone,
-            quartier: deliveryInfo.quartier,
-            adresse: deliveryInfo.adresse || undefined,
-          },
-          items: savedItemsRef.current,
-          total: savedTotalRef.current,
-          methodePaiement: paymentMethod,
-        })
-
+        // Confirmer la commande AVANT de generer la facture
+        // Evite que l'echec du PDF sur mobile bloque la confirmation
         setOrderNumber(result.numero)
         setStep('confirm')
         clearCart()
+
+        // Generer et telecharger la facture (dans un try-catch separe)
+        try {
+          generateFacture({
+            numeroCommande: result.numero,
+            dateCommande: new Date(),
+            client: {
+              nom: deliveryInfo.nom,
+              telephone: deliveryInfo.telephone,
+              quartier: deliveryInfo.quartier,
+              adresse: deliveryInfo.adresse || undefined,
+            },
+            items: savedItemsRef.current,
+            total: savedTotalRef.current,
+            methodePaiement: paymentMethod,
+          })
+        } catch (pdfError) {
+          // La facture n'a pas pu etre generee (mobile), mais la commande est OK
+          console.warn('Facture non generee:', pdfError)
+        }
       } else {
         setError(result?.error || 'Erreur lors de la commande')
       }

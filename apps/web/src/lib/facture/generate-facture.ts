@@ -128,9 +128,29 @@ export function generateFacture(data: FactureData): void {
   doc.text('Merci pour votre commande!', 105, pageHeight - 20, { align: 'center' })
   doc.text('AMAP TOGO - Agriculture durable pour tous', 105, pageHeight - 15, { align: 'center' })
 
-  // Telecharger le PDF
+  // Telecharger le PDF (compatible mobile)
   const filename = `facture_${data.numeroCommande}_${formatDateFilename(data.dateCommande)}.pdf`
-  doc.save(filename)
+  
+  try {
+    // Methode 1: Blob + lien cliquable (meilleure compatibilite mobile)
+    const pdfBlob = doc.output('blob')
+    const blobUrl = URL.createObjectURL(pdfBlob)
+    const link = document.createElement('a')
+    link.href = blobUrl
+    link.download = filename
+    link.style.display = 'none'
+    document.body.appendChild(link)
+    link.click()
+    
+    // Nettoyage apres un delai
+    setTimeout(() => {
+      document.body.removeChild(link)
+      URL.revokeObjectURL(blobUrl)
+    }, 100)
+  } catch {
+    // Fallback: methode classique jsPDF
+    doc.save(filename)
+  }
 }
 
 function drawTableHeader(doc: jsPDF, yPos: number): void {
