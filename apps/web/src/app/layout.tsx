@@ -47,12 +47,20 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'fr_TG',
-    url: process.env.NEXT_PUBLIC_SITE_URL || 'https://amaptogo.org',
+    url: process.env.NEXT_PUBLIC_SITE_URL || 'https://www.fermagroecologie.org',
     siteName: 'AMAP TOGO',
     title: 'AMAP TOGO - Produits Bio et Locaux',
     description: 
       'Produits agricoles bio et locaux au Togo. ' +
       'Paniers hebdomadaires livrés à Lomé.',
+    images: [
+      {
+        url: (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.fermagroecologie.org') + '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'AMAP TOGO - Produits Bio et Locaux',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
@@ -62,6 +70,9 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+  },
+  alternates: {
+    canonical: process.env.NEXT_PUBLIC_SITE_URL || 'https://www.fermagroecologie.org',
   },
   icons: {
     icon: '/favicon.svg',

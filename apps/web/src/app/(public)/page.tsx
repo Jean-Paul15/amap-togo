@@ -11,11 +11,26 @@ import {
 import { createClientServer } from '@amap-togo/database/server'
 
 export const metadata: Metadata = {
-  title: 'AMAP TOGO - Produits Bio et Locaux',
-  description: 'Association pour le Maintien d\'une Agriculture Paysanne au Togo. Produits bio et locaux livrés à Lomé. Paniers hebdomadaires.',
+  title: 'AMAP TOGO - Produits Bio et Locaux au Togo',
+  description: 'AMAP TOGO : produits agricoles bio et locaux au Togo. Paniers hebdomadaires, livraison à Lomé. Tomates, légumes frais, fruits de saison. Biologique sans pesticides. Rejoignez notre communauté solidaire.',
+  keywords: [
+    'AMAP TOGO',
+    'produits bio',
+    'agriculture biologique',
+    'Togo',
+    'Lomé',
+    'produits locaux',
+    'panier hebdomadaire',
+    'légumes bio',
+    'fruits frais',
+    'commerce équitable',
+  ],
   robots: {
     index: true,
     follow: true,
+  },
+  alternates: {
+    canonical: process.env.NEXT_PUBLIC_SITE_URL || 'https://www.fermagroecologie.org',
   },
 }
 
