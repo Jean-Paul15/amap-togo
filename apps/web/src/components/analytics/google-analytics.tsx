@@ -69,6 +69,6 @@ declare global {
       target: string,
       config?: Record<string, string>
     ) => void
-    dataLayer: Record<string, any>[]
+    dataLayer: Record<string, unknown>[]
   }
 }

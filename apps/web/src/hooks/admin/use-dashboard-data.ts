@@ -109,7 +109,7 @@ export function useDashboardData(): DashboardData {
         loading: false,
         error: null,
       })
-    } catch (error) {
+    } catch {
       setData((prev) => ({
         ...prev,
         loading: false,

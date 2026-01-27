@@ -54,7 +54,7 @@ export function GoogleTagManager() {
  * pushEvent({ event: 'purchase', value: 150 })
  */
 export function useGTM() {
-  const pushEvent = (data: Record<string, any>) => {
+  const pushEvent = (data: Record<string, unknown>) => {
     if (typeof window !== 'undefined' && window.dataLayer) {
       window.dataLayer.push(data)
     }

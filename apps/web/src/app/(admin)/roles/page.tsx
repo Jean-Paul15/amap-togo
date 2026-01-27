@@ -69,7 +69,7 @@ export default function RolesListPage() {
       if (error) throw error
       setRoles((prev) => prev.filter((r) => r.id !== id))
       toast.success('Rôle supprimé')
-    } catch (error) {
+    } catch {
       toast.error('Erreur lors de la suppression')
     }
   }

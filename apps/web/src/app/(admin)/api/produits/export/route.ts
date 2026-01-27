@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
 
     const commandeIds = commandes?.map((c) => c.id) || []
 
-    let commandesStats: Record<string, number> = {}
+    const commandesStats: Record<string, number> = {}
 
     if (commandeIds.length > 0) {
       const { data: lignes, error: lignesError } = await supabase
