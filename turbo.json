@@ -9,7 +9,8 @@
     "NEXT_PUBLIC_ADMIN_URL",
     "NEXT_PUBLIC_COOKIE_DOMAIN",
     "RESEND_API_KEY",
-    "RESEND_FROM_EMAIL"
+    "RESEND_FROM_EMAIL",
+    "NEXT_PUBLIC_GTM_ID"
   ],
   "tasks": {
     "build": {
@@ -23,7 +24,8 @@
         "NEXT_PUBLIC_ADMIN_URL",
         "NEXT_PUBLIC_COOKIE_DOMAIN",
         "RESEND_API_KEY",
-        "RESEND_FROM_EMAIL"
+        "RESEND_FROM_EMAIL",
+        "NEXT_PUBLIC_GTM_ID"
       ]
     },
     "dev": {
@@ -37,7 +39,8 @@
         "NEXT_PUBLIC_ADMIN_URL",
         "NEXT_PUBLIC_COOKIE_DOMAIN",
         "RESEND_API_KEY",
-        "RESEND_FROM_EMAIL"
+        "RESEND_FROM_EMAIL",
+        "NEXT_PUBLIC_GTM_ID"
       ]
     },
     "lint": {

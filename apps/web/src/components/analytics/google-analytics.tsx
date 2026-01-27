@@ -1,4 +1,10 @@
-/* Composant Google Analytics avec consentement RGPD */
+/* ⚠️ FICHIER ARCHIVÉ - Google Analytics est maintenant géré via Google Tag Manager
+ * Ce composant n'est plus utilisé dans le layout.
+ * Pour activer/modifier GA, configure-le dans l'interface GTM : https://tagmanager.google.com
+ * 
+ * Composant Google Analytics (Legacy - Intégration Directe)
+ * Conservé pour référence uniquement
+ */
 
 'use client'
 
@@ -63,6 +69,6 @@ declare global {
       target: string,
       config?: Record<string, string>
     ) => void
-    dataLayer: unknown[]
+    dataLayer: Record<string, any>[]
   }
 }
