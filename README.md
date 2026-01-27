@@ -26,14 +26,19 @@ amap-togo/
 ## Installation
 
 ```bash
-# Prerequis: Node.js 18+, pnpm
+# Prérequis: Node.js 18+, pnpm
 
 pnpm install
 
 # Configurer l'environnement
-cp apps/web/.env.example apps/web/.env.local
-# Remplir les variables Supabase
+cp .env.example .env
+# Remplir les variables Supabase et Resend dans .env
 
+# ⚠️ IMPORTANT : Nouvelles variables
+# Si vous ajoutez une variable dans .env, ajoutez-la aussi dans turbo.json
+# (globalEnv, tasks.build.env, tasks.dev.env) pour éviter les erreurs Vercel
+
+pnpm sync-env    # Synchronise .env vers apps/
 pnpm dev
 # -> http://localhost:3000
 ```
