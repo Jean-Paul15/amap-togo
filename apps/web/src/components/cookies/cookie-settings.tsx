@@ -4,6 +4,7 @@
 
 import { useState } from 'react'
 import { setCookieConsent, getCookieConsent } from '@/lib/cookies'
+import { updateGTMConsent } from '@/components/analytics/google-tag-manager'
 import type { CookieConsent } from '@/lib/cookies'
 
 interface CookieSettingsProps {
@@ -21,6 +22,7 @@ export function CookieSettings({ onClose }: CookieSettingsProps) {
 
   const handleSave = () => {
     setCookieConsent(consent)
+    updateGTMConsent(consent.analytics, consent.marketing) // Synchroniser avec GTM
     onClose?.()
   }
 

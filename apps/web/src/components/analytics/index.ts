@@ -1,2 +1,2 @@
 // Export des composants analytics
-export { GoogleTagManager, useGTM } from './google-tag-manager'
+export { GoogleTagManager, useGTM, updateGTMConsent } from './google-tag-manager'

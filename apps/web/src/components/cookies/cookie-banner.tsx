@@ -9,6 +9,7 @@ import {
   setCookieConsent,
   hasCookieConsent,
 } from '@/lib/cookies'
+import { updateGTMConsent } from '@/components/analytics/google-tag-manager'
 import type { CookieConsent } from '@/lib/cookies'
 
 export function CookieBanner() {
@@ -33,6 +34,7 @@ export function CookieBanner() {
       marketing: true,
     }
     setCookieConsent(newConsent)
+    updateGTMConsent(true, true) // Mettre à jour GTM avec le consentement
     setConsent(newConsent)
     setShown(false)
   }
@@ -44,12 +46,14 @@ export function CookieBanner() {
       marketing: false,
     }
     setCookieConsent(newConsent)
+    updateGTMConsent(false, false) // Mettre à jour GTM avec le refus
     setConsent(newConsent)
     setShown(false)
   }
 
   const handleSavePreferences = () => {
     setCookieConsent(consent)
+    updateGTMConsent(consent.analytics, consent.marketing) // Mettre à jour GTM
     setShown(false)
   }
 

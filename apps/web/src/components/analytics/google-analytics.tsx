@@ -62,13 +62,4 @@ export function GoogleAnalytics() {
   )
 }
 
-declare global {
-  interface Window {
-    gtag: (
-      command: string,
-      target: string,
-      config?: Record<string, string>
-    ) => void
-    dataLayer: Record<string, unknown>[]
-  }
-}
+// Les types Window sont maintenant définis dans google-tag-manager.tsx

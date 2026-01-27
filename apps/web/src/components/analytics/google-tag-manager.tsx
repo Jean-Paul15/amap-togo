@@ -1,15 +1,44 @@
-// Composant Google Tag Manager
-// Script d'analyse et de suivi des événements
+// Composant Google Tag Manager avec Consent Mode v2
+// Script d'analyse conforme RGPD
 
 'use client'
 
 import Script from 'next/script'
+import { getCookieConsent } from '@/lib/cookies'
 
 const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID
 
 /**
- * Composant Google Tag Manager
- * Charge le script GTM et initialise le dataLayer
+ * Met à jour le consentement dans GTM/GA4
+ * Appelé par le CookieBanner quand l'utilisateur fait son choix
+ */
+export function updateGTMConsent(analytics: boolean, marketing: boolean): void {
+  if (typeof window === 'undefined' || !window.dataLayer) return
+
+  window.dataLayer.push({
+    event: 'consent_update',
+    analytics_storage: analytics ? 'granted' : 'denied',
+    ad_storage: marketing ? 'granted' : 'denied',
+    ad_user_data: marketing ? 'granted' : 'denied',
+    ad_personalization: marketing ? 'granted' : 'denied',
+  })
+
+  // Mise à jour via gtag si disponible (pour GA4)
+  if (typeof window.gtag === 'function') {
+    window.gtag('consent', 'update', {
+      analytics_storage: analytics ? 'granted' : 'denied',
+      ad_storage: marketing ? 'granted' : 'denied',
+      ad_user_data: marketing ? 'granted' : 'denied',
+      ad_personalization: marketing ? 'granted' : 'denied',
+    })
+  }
+}
+
+/**
+ * Composant Google Tag Manager avec Consent Mode v2
+ * - Initialise le consentement en mode "denied" par défaut
+ * - Vérifie le consentement existant au chargement
+ * - GTM se charge mais ne tracke rien sans consentement
  */
 export function GoogleTagManager() {
   // Ne pas charger en développement ou si GTM_ID absent
@@ -17,9 +46,39 @@ export function GoogleTagManager() {
     return null
   }
 
+  // Vérifier le consentement existant (côté client uniquement)
+  const existingConsent = typeof window !== 'undefined' ? getCookieConsent() : null
+  const analyticsGranted = existingConsent?.analytics ? 'granted' : 'denied'
+  const marketingGranted = existingConsent?.marketing ? 'granted' : 'denied'
+
   return (
     <>
-      {/* Script GTM dans le head */}
+      {/* Script Consent Mode v2 - Configuration par défaut */}
+      <Script
+        id="gtm-consent-default"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            
+            // Consentement par défaut : tout refusé (RGPD compliant)
+            gtag('consent', 'default', {
+              'analytics_storage': '${analyticsGranted}',
+              'ad_storage': '${marketingGranted}',
+              'ad_user_data': '${marketingGranted}',
+              'ad_personalization': '${marketingGranted}',
+              'wait_for_update': 500
+            });
+            
+            // Définir la région (UE = consentement requis)
+            gtag('set', 'ads_data_redaction', true);
+            gtag('set', 'url_passthrough', true);
+          `,
+        }}
+      />
+
+      {/* Script GTM principal */}
       <Script
         id="google-tag-manager"
         strategy="afterInteractive"
@@ -63,4 +122,10 @@ export function useGTM() {
   return { pushEvent }
 }
 
-
+// Déclaration TypeScript pour gtag
+declare global {
+  interface Window {
+    dataLayer: Record<string, unknown>[]
+    gtag: (...args: unknown[]) => void
+  }
+}
