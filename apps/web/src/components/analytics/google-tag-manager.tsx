@@ -62,7 +62,7 @@ export function GoogleTagManager() {
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             
-            // Consentement par défaut : tout refusé (RGPD compliant)
+            // Consentement par défaut
             gtag('consent', 'default', {
               'analytics_storage': '${analyticsGranted}',
               'ad_storage': '${marketingGranted}',
@@ -70,6 +70,17 @@ export function GoogleTagManager() {
               'ad_personalization': '${marketingGranted}',
               'wait_for_update': 500
             });
+            
+            // Si consentement déjà accordé, envoyer l'événement consent_update
+            if ('${analyticsGranted}' === 'granted') {
+              window.dataLayer.push({
+                event: 'consent_update',
+                analytics_storage: 'granted',
+                ad_storage: '${marketingGranted}',
+                ad_user_data: '${marketingGranted}',
+                ad_personalization: '${marketingGranted}'
+              });
+            }
             
             // Définir la région (UE = consentement requis)
             gtag('set', 'ads_data_redaction', true);
