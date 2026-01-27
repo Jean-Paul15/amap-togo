@@ -4,6 +4,7 @@
 import Link from 'next/link'
 import { MapPin, Phone, Mail, Clock } from 'lucide-react'
 import { Logo } from './logo'
+import { COMPANY, CONTACT } from '@amap-togo/utils'
 
 /**
  * Footer avec coordonnees et liens utiles
@@ -73,16 +74,16 @@ export function Footer() {
             <h3 className="font-semibold text-foreground">Contact</h3>
             <ul className="space-y-3">
               <ContactItem icon={MapPin}>
-                Adidogomé, Lomé - Togo
+                {CONTACT.address}
               </ContactItem>
               <ContactItem icon={Phone}>
-                +228 92 71 95 96
+                {CONTACT.primaryPhone}
               </ContactItem>
               <ContactItem icon={Mail}>
-                amap.togo@gmail.com
+                {CONTACT.email}
               </ContactItem>
               <ContactItem icon={Clock}>
-                Livraisons : Mercredi 11h30
+                Livraisons : {CONTACT.deliveryDay}
               </ContactItem>
             </ul>
           </div>
@@ -91,7 +92,7 @@ export function Footer() {
         {/* Copyright */}
         <div className="mt-12 pt-8 border-t border-border">
           <p className="text-sm text-muted-foreground text-center">
-            {currentYear} AMAP TOGO. Tous droits réservés.
+            {currentYear} {COMPANY.name}. Tous droits réservés.
           </p>
         </div>
       </div>

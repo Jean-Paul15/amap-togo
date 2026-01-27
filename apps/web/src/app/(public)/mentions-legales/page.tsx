@@ -1,6 +1,7 @@
 /* Page mentions légales */
 
 import { Metadata } from 'next'
+import { COMPANY, CONTACT } from '@amap-togo/utils'
 
 export const metadata: Metadata = {
   title: 'Mentions légales',
@@ -26,10 +27,10 @@ export default function MentionsLegalesPage() {
               1. Éditeur du site
             </h2>
             <div className="bg-gray-50 p-4 rounded-lg space-y-2">
-              <p className="font-semibold">AMAP TOGO</p>
-              <p>Association pour le Maintien d'une Agriculture Paysanne</p>
-              <p className="text-sm">Localité : Lomé, Togo</p>
-              <p className="text-sm">Email : contact@amaptogo.org</p>
+              <p className="font-semibold">{COMPANY.name}</p>
+              <p>{COMPANY.fullName}</p>
+              <p className="text-sm">Localité : {COMPANY.city}, {CONTACT.country}</p>
+              <p className="text-sm">Email : {CONTACT.contactEmail}</p>
             </div>
           </section>
 
@@ -40,7 +41,7 @@ export default function MentionsLegalesPage() {
             </h2>
             <p>
               Le contenu du site (textes, images, logo, etc.) est la propriété
-              exclusive d'AMAP TOGO ou utilisé avec autorisation.
+              exclusive d'{COMPANY.name} ou utilisé avec autorisation.
             </p>
             <p className="mt-3">
               Toute reproduction, même partielle, est interdite sans

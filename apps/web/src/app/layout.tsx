@@ -7,6 +7,7 @@ import { ToastProvider } from '@/components/ui/toast'
 import { CookieBanner } from '@/components/cookies/cookie-banner'
 import { GoogleTagManager } from '@/components/analytics'
 import { Analytics } from '@vercel/analytics/next'
+import { StructuredBreadcrumbs, StructuredOrganization } from '@/components/seo/structured-data'
 import { getProductsData } from '@/lib/ssr/get-products'
 import { getAuthData } from '@/lib/ssr/get-auth'
 
@@ -46,7 +47,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'fr_TG',
-    url: 'https://amaptogo.org',
+    url: process.env.NEXT_PUBLIC_SITE_URL || 'https://amaptogo.org',
     siteName: 'AMAP TOGO',
     title: 'AMAP TOGO - Produits Bio et Locaux',
     description: 
@@ -84,6 +85,10 @@ export default async function RootLayout({
 
   return (
     <html lang="fr" className={inter.variable}>
+      <head>
+        <StructuredOrganization />
+        <StructuredBreadcrumbs />
+      </head>
       <body className={`${inter.className} antialiased`}>
         <GoogleTagManager />
         <Analytics />

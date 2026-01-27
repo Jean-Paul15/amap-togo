@@ -2,7 +2,7 @@
 // Cree et telecharge une facture pour une commande
 
 import { jsPDF } from 'jspdf'
-import { formatPrice } from '@amap-togo/utils'
+import { formatPrice, COMPANY, CONTACT } from '@amap-togo/utils'
 
 export interface FactureItem {
   nom: string
@@ -41,18 +41,18 @@ export function generateFacture(data: FactureData): void {
   doc.setFontSize(20)
   doc.setFont('helvetica', 'bold')
   doc.setTextColor(45, 90, 39) // Vert AMAP
-  doc.text('AMAP TOGO', MARGIN_LEFT, yPos)
+  doc.text(COMPANY.name, MARGIN_LEFT, yPos)
 
   yPos += 8
   doc.setFontSize(10)
   doc.setFont('helvetica', 'normal')
   doc.setTextColor(100, 100, 100)
-  doc.text('Produits agricoles bio et locaux', MARGIN_LEFT, yPos)
+  doc.text(COMPANY.description, MARGIN_LEFT, yPos)
 
   yPos += 5
-  doc.text('Adidogome, Lome - Togo', MARGIN_LEFT, yPos)
+  doc.text(CONTACT.address, MARGIN_LEFT, yPos)
   yPos += 5
-  doc.text('Tel: +228 90 00 00 00', MARGIN_LEFT, yPos)
+  doc.text(`Tel: ${CONTACT.primaryPhone}`, MARGIN_LEFT, yPos)
 
   // Titre FACTURE
   yPos += 15

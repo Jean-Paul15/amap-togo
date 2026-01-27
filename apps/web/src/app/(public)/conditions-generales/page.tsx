@@ -2,6 +2,7 @@
 
 import { Metadata } from 'next'
 import Link from 'next/link'
+import { COMPANY, CONTACT } from '@amap-togo/utils'
 
 export const metadata: Metadata = {
   title: 'Conditions générales de vente',
@@ -27,8 +28,8 @@ export default function CGVPage() {
               1. Objet
             </h2>
             <p>
-              AMAP TOGO propose la vente de produits agricoles bio et locaux.
-              Ces conditions générales régissent les relations entre AMAP TOGO
+              {COMPANY.name} propose la vente de produits agricoles bio et locaux.
+              Ces conditions générales régissent les relations entre {COMPANY.name}
               (vendeur) et l'acheteur.
             </p>
           </section>
@@ -244,17 +245,17 @@ export default function CGVPage() {
               13. Contact
             </h2>
             <div className="bg-gray-50 p-4 rounded-lg">
-              <p className="font-semibold">AMAP TOGO</p>
+              <p className="font-semibold">{COMPANY.name}</p>
               <p className="text-sm">
                 Email :{' '}
                 <a
-                  href="mailto:contact@amaptogo.org"
+                  href={`mailto:${CONTACT.contactEmail}`}
                   className="text-green-600 hover:underline"
                 >
-                  contact@amaptogo.org
+                  {CONTACT.contactEmail}
                 </a>
               </p>
-              <p className="text-sm">Localité : Lomé, Togo</p>
+              <p className="text-sm">Localité : {CONTACT.city}, {CONTACT.country}</p>
             </div>
           </section>
 

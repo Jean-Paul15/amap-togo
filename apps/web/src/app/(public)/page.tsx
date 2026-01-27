@@ -27,14 +27,17 @@ export const metadata: Metadata = {
  * - Valeurs (bio, local, solidaire)
  */
 export default async function HomePage() {
-  // Recupere les produits disponibles cette semaine
-  const produits = await getProduitsSemaine()
+  // Recupere les produits et paniers de la semaine
+  const [produits, paniers] = await Promise.all([
+    getProduitsSemaine(),
+    getPaniersSemaine(),
+  ])
 
   return (
     <>
       <HeroSection />
       <ProduitsSection produits={produits} />
-      <PaniersSection />
+      <PaniersSection paniers={paniers} />
       <ValuesSection />
     </>
   )
@@ -61,6 +64,29 @@ async function getProduitsSemaine() {
     return data || []
   } catch {
     // En cas d'erreur (Supabase non configure), retourne tableau vide
+    return []
+  }
+}
+
+/** Recupere les types de paniers actifs */
+async function getPaniersSemaine() {
+  try {
+    const supabase = await createClientServer()
+
+    const { data, error } = await supabase
+      .from('paniers_types')
+      .select('*')
+      .eq('actif', true)
+      .order('prix', { ascending: true })
+
+    if (error) {
+      console.error('Erreur chargement paniers:', error)
+      return []
+    }
+
+    return data || []
+  } catch {
+    // En cas d'erreur, retourne tableau vide
     return []
   }
 }

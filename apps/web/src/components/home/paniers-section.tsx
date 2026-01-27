@@ -1,5 +1,5 @@
 // Section des paniers AMAP
-// Affiche les 3 types de paniers avec prix et animations
+// Affiche les types de paniers depuis la base de donnees avec animations
 
 'use client'
 
@@ -8,10 +8,13 @@ import Link from 'next/link'
 import { ArrowRight, ShoppingBag, Check } from 'lucide-react'
 import { motion, useInView } from 'framer-motion'
 import { formatPrice } from '@amap-togo/utils'
+import type { PanierType } from '@amap-togo/database'
 
-/** Définition d'un type de panier */
-interface PanierInfo {
-  type: string
+interface PanierSectionProps {
+  paniers: PanierType[]
+}
+
+interface PanierCardProps {
   nom: string
   prix: number
   description: string
@@ -19,36 +22,23 @@ interface PanierInfo {
   populaire?: boolean
 }
 
-const paniers: PanierInfo[] = [
-  {
-    type: 'petit',
-    nom: 'Petit panier classique',
-    prix: 4500,
-    description: 'Idéal pour 1 à 2 personnes, une sélection de légumes frais.',
-    contenuExemple: ['Tomates', 'Oignons', 'Gombo', 'Piment'],
-  },
-  {
-    type: 'grand',
-    nom: 'Grand panier classique',
-    prix: 8000,
-    description: 'Pour les familles, une grande variété de légumes et fruits.',
-    contenuExemple: ['Tomates', 'Carottes', 'Choux', 'Bananes', 'Ignames'],
-    populaire: true,
-  },
-  {
-    type: 'local',
-    nom: 'Panier 100% local',
-    prix: 4000,
-    description: 'Uniquement des produits traditionnels togolais.',
-    contenuExemple: ['Ademe', 'Gboma', 'Gombo', 'Gari'],
-  },
-]
+const descriptions: Record<string, string> = {
+  petit: 'Idéal pour 1 à 2 personnes, une sélection de légumes frais.',
+  grand: 'Pour les familles, une grande variété de légumes et fruits.',
+  local: 'Uniquement des produits traditionnels togolais.',
+}
+
+const contenuExemples: Record<string, string[]> = {
+  petit: ['Tomates', 'Oignons', 'Gombo', 'Piment'],
+  grand: ['Tomates', 'Carottes', 'Choux', 'Bananes', 'Ignames'],
+  local: ['Ademe', 'Gboma', 'Gombo', 'Gari'],
+}
 
 /**
- * Section présentant les 3 types de paniers AMAP
+ * Section présentant les types de paniers AMAP
  * Design moderne avec animations au scroll
  */
-export function PaniersSection() {
+export function PaniersSection({ paniers }: PanierSectionProps) {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
 
@@ -117,9 +107,15 @@ export function PaniersSection() {
           animate={isInView ? 'visible' : 'hidden'}
           className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto"
         >
-          {paniers.map((panier) => (
-            <motion.div key={panier.type} variants={cardVariants}>
-              <PanierCard {...panier} />
+          {paniers.map((panier, idx) => (
+            <motion.div key={panier.id} variants={cardVariants}>
+              <PanierCard 
+                nom={panier.nom}
+                prix={panier.prix}
+                description={descriptions[panier.type] || panier.description || panier.nom}
+                contenuExemple={contenuExemples[panier.type] || []}
+                populaire={idx === 1}
+              />
             </motion.div>
           ))}
         </motion.div>
@@ -149,7 +145,8 @@ export function PaniersSection() {
 }
 
 /** Carte d'un type de panier avec animations */
-function PanierCard({ nom, prix, description, contenuExemple, populaire }: PanierInfo) {
+/** Carte d'un type de panier avec animations */
+function PanierCard({ nom, prix, description, contenuExemple, populaire }: PanierCardProps) {
   return (
     <motion.div
       whileHover={{ y: -8, scale: 1.02 }}

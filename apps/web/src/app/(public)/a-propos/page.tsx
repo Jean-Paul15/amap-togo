@@ -13,6 +13,7 @@ import {
   Sprout,
   Handshake
 } from 'lucide-react'
+import { COMPANY, CONTACT } from '@amap-togo/utils'
 import {
   MissionCard,
   ActivityCard,
@@ -68,9 +69,9 @@ function HistoireSection() {
 
           <div className="space-y-6 text-foreground/80 leading-relaxed">
             <p>
-              AMAP TOGO a été créée en <strong>2011 par Simon TODZRO</strong>, avec une vision claire :
+              AMAP TOGO a été créée en <strong>{COMPANY.registeredAs} par {COMPANY.founder}</strong>, avec une vision claire :
               créer un partenariat local et solidaire entre les producteurs biologiques et les consommateurs.
-              Nos activités dans la région d'Amlame ont débuté dès <strong>2007</strong>.
+              Nos activités dans la région d'Amlame ont débuté dès <strong>{COMPANY.founded}</strong>.
             </p>
 
             <p>
@@ -199,7 +200,7 @@ function ActivitesSection() {
             />
             <ActivityCard
               title="Point de retrait"
-              description="Retrait des paniers à l'Ancien Centre Mytro Nunya, Adidogomé, chaque mercredi à partir de 11h30."
+              description={`Retrait des paniers à l'${CONTACT.address}, chaque ${CONTACT.deliveryDay}.`}
             />
             <ActivityCard
               title="Ateliers de cuisine"
