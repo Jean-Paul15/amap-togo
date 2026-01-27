@@ -43,14 +43,14 @@ export function RecipientsList({
 
   return (
     <div className="bg-card border border-border rounded-xl overflow-hidden">
-      {/* En-tete */}
-      <div className="p-4 border-b border-border bg-muted/30">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-semibold text-foreground flex items-center gap-2">
+      {/* En-tête */}
+      <div className="p-3 sm:p-4 border-b border-border bg-muted/30">
+        <div className="flex items-center justify-between mb-2 sm:mb-3">
+          <h3 className="font-semibold text-foreground flex items-center gap-2 text-sm sm:text-base">
             <Users className="w-4 h-4" />
             Destinataires
           </h3>
-          <span className="text-sm text-muted-foreground">
+          <span className="text-xs sm:text-sm text-muted-foreground">
             {emails.length} email(s)
           </span>
         </div>
@@ -68,7 +68,7 @@ export function RecipientsList({
         </div>
 
         {/* Filtres source */}
-        <div className="flex gap-2 mt-3">
+        <div className="flex gap-1.5 sm:gap-2 mt-2 sm:mt-3 flex-wrap">
           <FilterButton
             active={filterSource === 'all'}
             onClick={() => setFilterSource('all')}
@@ -93,10 +93,10 @@ export function RecipientsList({
       </div>
 
       {/* Actions */}
-      <div className="flex items-center justify-between px-4 py-2 border-b border-border bg-muted/10">
+      <div className="flex items-center justify-between px-3 sm:px-4 py-2 border-b border-border bg-muted/10">
         <button
           onClick={allSelected ? onDeselectAll : onSelectAll}
-          className="text-sm text-primary hover:underline flex items-center gap-1"
+          className="text-xs sm:text-sm text-primary hover:underline flex items-center gap-1"
         >
           {allSelected ? (
             <>
@@ -116,7 +116,7 @@ export function RecipientsList({
       </div>
 
       {/* Liste */}
-      <div className="max-h-[400px] overflow-y-auto">
+      <div className="max-h-[300px] sm:max-h-[400px] overflow-y-auto">
         {isLoading ? (
           <div className="p-8 text-center">
             <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
@@ -133,7 +133,7 @@ export function RecipientsList({
               <li key={entry.email}>
                 <button
                   onClick={() => onToggle(entry.email)}
-                  className="w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/50 transition-colors text-left"
+                  className="w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 hover:bg-muted/50 active:bg-muted transition-colors text-left"
                 >
                   <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${
                     selectedEmails.includes(entry.email)
