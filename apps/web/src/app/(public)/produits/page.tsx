@@ -6,10 +6,33 @@ import { ProductCatalog } from '@/components/produits/product-catalog'
 import { createClientServer } from '@amap-togo/database/server'
 
 export const metadata: Metadata = {
-  title: 'Nos Produits',
+  title: 'Nos Produits | AMAP TOGO',
   description: 
-    'Decouvrez notre selection de produits bio et locaux. ' +
-    'Legumes, fruits, cereales et produits transformes du Togo.',
+    'Découvrez notre sélection de produits bio et locaux. ' +
+    'Légumes, fruits, céréales et produits transformés du Togo. 100% biologique, commerce équitable.',
+  keywords: [
+    'produits bio',
+    'légumes frais',
+    'fruits',
+    'Togo',
+    'Lomé',
+    'commerce équitable',
+  ],
+  robots: {
+    index: true,
+    follow: true,
+  },
+  alternates: {
+    canonical: (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.fermagroecologie.org') + '/produits',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'fr_TG',
+    url: (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.fermagroecologie.org') + '/produits',
+    siteName: 'AMAP TOGO',
+    title: 'Nos Produits Bio et Locaux | AMAP TOGO',
+    description: 'Découvrez notre sélection de produits bio et locaux au Togo.',
+  },
 }
 
 /**
