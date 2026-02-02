@@ -23,7 +23,7 @@ const paymentMethods: PaymentMethodConfig[] = [
     icon: Banknote,
   },
   {
-    id: 'mixx',
+    id: 'tmoney',
     label: 'T-Money',
     description: 'Paiement mobile Togocel',
     image: '/images/payment/tmoney.png',

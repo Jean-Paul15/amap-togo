@@ -14,7 +14,7 @@ import { POSPaymentMethod } from './pos-payment-method'
 import { POSPaymentInstructions } from './pos-payment-instructions'
 import { POSOrderConfirmation } from './pos-order-confirmation'
 
-export type PaymentMethodType = 'especes' | 'mixx' | 'flooz'
+export type PaymentMethodType = 'especes' | 'tmoney' | 'flooz'
 
 interface DeliveryInfo {
   nom: string

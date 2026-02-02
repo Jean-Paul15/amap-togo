@@ -130,7 +130,7 @@ export function generateFacture(data: FactureData): void {
 
   // Telecharger le PDF (compatible mobile)
   const filename = `facture_${data.numeroCommande}_${formatDateFilename(data.dateCommande)}.pdf`
-  
+
   try {
     // Methode 1: Blob + lien cliquable (meilleure compatibilite mobile)
     const pdfBlob = doc.output('blob')
@@ -141,7 +141,7 @@ export function generateFacture(data: FactureData): void {
     link.style.display = 'none'
     document.body.appendChild(link)
     link.click()
-    
+
     // Nettoyage apres un delai
     setTimeout(() => {
       document.body.removeChild(link)
@@ -197,7 +197,7 @@ function formatDateFilename(date: Date): string {
 function formatMethodePaiement(methode: string): string {
   const labels: Record<string, string> = {
     especes: 'Especes a la livraison',
-    mixx: 'Mixx By Yas',
+    tmoney: 'T-Money',
     flooz: 'Flooz',
     credit: 'Credit AMAP',
   }

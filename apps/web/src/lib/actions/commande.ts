@@ -33,7 +33,7 @@ const createOrderSchema = z.object({
   quartier: z.string().min(2, 'Quartier requis'),
   adresse: z.string().optional(),
   notes: z.string().optional(),
-  methode_paiement: z.enum(['especes', 'mixx', 'flooz', 'credit']),
+  methode_paiement: z.enum(['especes', 'tmoney', 'flooz', 'credit']),
   items: z.array(cartItemSchema).min(1, 'Panier vide'),
 })
 
@@ -54,15 +54,15 @@ export async function createOrder(
   try {
     // Validation des donnees
     const data = createOrderSchema.parse(input)
-    
+
     const supabaseTyped = await createClientServer()
     // Cast pour contourner les types generes incomplets
     const supabase = supabaseTyped as unknown as SupabaseClientDynamic
-    
+
     // Verifier l'authentification
     const { data: authData, error: authError } = await supabase.auth.getUser()
     const user = authData?.user
-    
+
     if (authError || !user) {
       return { success: false, error: 'Vous devez etre connecte' }
     }
