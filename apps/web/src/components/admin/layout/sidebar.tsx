@@ -17,7 +17,8 @@ import {
   Leaf,
   ExternalLink,
   Shield,
-  UserCog
+  UserCog,
+  TrendingUp,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/hooks/use-auth'
@@ -35,13 +36,14 @@ interface SidebarProps {
 // Navigation complete - routes du groupe (admin)
 const navItems: NavItem[] = [
   { name: 'Tableau de bord', href: '/dashboard', icon: LayoutDashboard },
+  { name: 'Gestion', href: '/gestion', icon: TrendingUp },
   { name: 'Produits', href: '/produits-admin', icon: Package },
   { name: 'Catégories', href: '/categories', icon: Layers },
   { name: 'Paniers', href: '/paniers-admin', icon: ShoppingBag },
   { name: 'Types paniers', href: '/paniers-types', icon: ShoppingBag },
   { name: 'Commandes', href: '/commandes', icon: ShoppingCart },
   { name: 'Clients', href: '/clients', icon: Users },
-  { name: 'Emails', href: '/diffusion', icon: Mail },
+  { name: 'Emails', href: '/emails', icon: Mail },
   { name: 'Rôles', href: '/roles', icon: Shield },
   { name: 'Utilisateurs', href: '/utilisateurs', icon: UserCog },
 ]

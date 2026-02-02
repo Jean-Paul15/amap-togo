@@ -24,9 +24,9 @@ const paymentMethods: PaymentMethodConfig[] = [
   },
   {
     id: 'mixx',
-    label: 'Mixx By Yas',
-    description: 'Paiement mobile',
-    image: '/images/payment/mixx.png',
+    label: 'T-Money',
+    description: 'Paiement mobile Togocel',
+    image: '/images/payment/tmoney.png',
   },
   {
     id: 'flooz',

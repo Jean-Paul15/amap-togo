@@ -18,9 +18,14 @@ if (!fs.existsSync(rootEnv)) {
 const envContent = fs.readFileSync(rootEnv, 'utf8')
 
 apps.forEach((app) => {
-  const appEnvPath = path.join(__dirname, '..', app, '.env')
-  fs.writeFileSync(appEnvPath, envContent)
-  console.log(`✓ Synchronise ${app}/.env`)
+  const appDir = path.join(__dirname, '..', app)
+  if (fs.existsSync(appDir)) {
+    const appEnvPath = path.join(appDir, '.env')
+    fs.writeFileSync(appEnvPath, envContent)
+    console.log(`✓ Synchronise ${app}/.env`)
+  } else {
+    console.warn(`! Dossier ${app} introuvable, ignoré`)
+  }
 })
 
 console.log('\nTous les fichiers .env ont ete synchronises depuis la racine')

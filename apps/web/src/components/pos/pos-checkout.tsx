@@ -11,6 +11,7 @@ import { generateFacture } from '@/lib/facture'
 import type { FactureItem } from '@/lib/facture'
 import { POSDeliveryForm } from './pos-delivery-form'
 import { POSPaymentMethod } from './pos-payment-method'
+import { POSPaymentInstructions } from './pos-payment-instructions'
 import { POSOrderConfirmation } from './pos-order-confirmation'
 
 export type PaymentMethodType = 'especes' | 'mixx' | 'flooz'
@@ -73,7 +74,7 @@ export function POSCheckout() {
   const [step, setStep] = useState<'form' | 'confirm'>('form')
   const [orderNumber, setOrderNumber] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-  
+
   // Initialiser avec les donnees sauvegardees
   const [deliveryInfo, setDeliveryInfo] = useState<DeliveryInfo>(() => {
     const saved = getSavedDeliveryInfo()
@@ -97,7 +98,7 @@ export function POSCheckout() {
   const totalPrice = getTotalPrice()
 
   // Validation du formulaire - telephone doit avoir 8 chiffres
-  const isFormValid = 
+  const isFormValid =
     deliveryInfo.nom.trim() !== '' &&
     deliveryInfo.prenom.trim() !== '' &&
     deliveryInfo.telephone.trim().length === 8 &&
@@ -112,11 +113,11 @@ export function POSCheckout() {
 
     try {
       // Utiliser l'instance partagee si disponible (evite conflit cookies mobile)
-      const windowWithClient = typeof window !== 'undefined' 
+      const windowWithClient = typeof window !== 'undefined'
         ? (window as unknown as { __supabaseClient?: ReturnType<typeof createClientBrowser> })
         : null
       const supabase = windowWithClient?.__supabaseClient || createClientBrowser()
-      
+
       // Preparer les items pour le RPC (JSONB)
       const orderItems = items.map((item) => ({
         id: item.id,
@@ -205,7 +206,7 @@ export function POSCheckout() {
   // Re-telecharger la facture
   const handleDownloadFacture = () => {
     if (!orderNumber) return
-    
+
     generateFacture({
       numeroCommande: orderNumber,
       dateCommande: new Date(),
@@ -269,6 +270,12 @@ export function POSCheckout() {
         <POSPaymentMethod
           selected={paymentMethod}
           onSelect={setPaymentMethod}
+        />
+
+        {/* Instructions de paiement (T-Money / Flooz) */}
+        <POSPaymentInstructions
+          method={paymentMethod}
+          amount={totalPrice}
         />
 
         {/* Message d'erreur */}
