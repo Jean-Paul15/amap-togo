@@ -60,8 +60,16 @@ export function ProduitsSection({ produits }: ProduitsSectionProps) {
   }
 
   return (
-    <section ref={ref} className="py-16 sm:py-20 lg:py-28 bg-gradient-to-b from-white via-green-50/30 to-white">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-12">
+    <section ref={ref} className="py-16 sm:py-20 lg:py-28 bg-[#0a1f12] relative overflow-hidden">
+
+      {/* Fond atmosphérique */}
+      <div className="absolute top-0 left-0 w-full h-[200px] bg-gradient-to-b from-[#0a1f12] to-transparent z-10" />
+
+      {/* Orbes d'ambiance */}
+      <div className="absolute right-0 top-1/4 w-96 h-96 bg-green-500/10 rounded-full blur-[100px]" />
+      <div className="absolute left-0 bottom-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-[100px]" />
+
+      <div className="container mx-auto px-4 sm:px-6 lg:px-12 relative z-10">
         {/* En-tête avec animation */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -73,16 +81,16 @@ export function ProduitsSection({ produits }: ProduitsSectionProps) {
             initial={{ scale: 0 }}
             animate={isInView ? { scale: 1 } : { scale: 0 }}
             transition={{ duration: 0.5, type: 'spring', stiffness: 200 }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-medium mb-4"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 text-green-300 rounded-full text-sm font-medium mb-4"
           >
             <Sparkles className="w-4 h-4" strokeWidth={2.5} />
             <span>Fraîcheur garantie</span>
           </motion.div>
 
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-            Produits de la semaine
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">
+            Produits de la <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400">semaine</span>
           </h2>
-          <p className="mt-4 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="mt-4 text-base sm:text-lg text-gray-400 max-w-2xl mx-auto">
             Découvrez notre sélection de produits frais disponibles cette semaine.
           </p>
         </motion.div>
@@ -105,6 +113,7 @@ export function ProduitsSection({ produits }: ProduitsSectionProps) {
                 <ProductCard
                   produit={produit}
                   onAddToCart={handleAddToCart}
+                  variant="glass"
                 />
               </motion.div>
             ))}
@@ -113,7 +122,7 @@ export function ProduitsSection({ produits }: ProduitsSectionProps) {
           <motion.p
             initial={{ opacity: 0 }}
             animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-            className="text-center text-muted-foreground py-12"
+            className="text-center text-gray-500 py-12"
           >
             Aucun produit disponible pour le moment.
           </motion.p>
@@ -132,12 +141,12 @@ export function ProduitsSection({ produits }: ProduitsSectionProps) {
               className="
                 inline-flex items-center gap-2
                 px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl
-                bg-gradient-to-r from-green-500 to-emerald-600
+                bg-white/10 backdrop-blur-md border border-white/20
                 text-white
                 font-semibold text-sm sm:text-base
-                hover:from-green-600 hover:to-emerald-700
+                hover:bg-white/20 hover:border-white/40
                 transition-all duration-300
-                shadow-lg shadow-green-500/30
+                shadow-xl shadow-black/20
               "
             >
               Voir tous les produits

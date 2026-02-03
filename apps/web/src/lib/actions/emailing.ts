@@ -1,82 +1,71 @@
 'use server'
 
-import { Resend } from 'resend'
+import nodemailer from 'nodemailer'
 import { createClientServer } from '@amap-togo/database/server'
 import { revalidatePath } from 'next/cache'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+const SMTP_HOST = process.env.SMTP_HOST || 'smtp.gmail.com'
+const SMTP_PORT = parseInt(process.env.SMTP_PORT || '465')
+const SMTP_USER = process.env.SMTP_USER
+const SMTP_PASS = process.env.SMTP_APP_PASSWORD
+const SMTP_FROM = process.env.SMTP_FROM || `AMAP Togo <${SMTP_USER}>`
 
-// Config de l'expéditeur (à vérifier avec le domaine du client)
-const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'AMAP Togo <onboarding@resend.dev>'
+// Configuration du transporteur SMTP
+const transporter = nodemailer.createTransport({
+    host: SMTP_HOST,
+    port: SMTP_PORT,
+    secure: true, // true pour 465, false pour les autres ports
+    auth: {
+        user: SMTP_USER,
+        pass: SMTP_PASS,
+    },
+})
 
-export async function sendEmailAction({ to, subject, html }: { to: string[], subject: string, html: string }) {
+export interface SendEmailParams {
+    to: string | string[]
+    subject: string
+    html: string
+    from?: string
+    replyTo?: string
+}
+
+/**
+ * Envoie un email via SMTP (Gmail)
+ */
+export async function sendEmail({
+    to,
+    subject,
+    html,
+    from,
+    replyTo
+}: SendEmailParams) {
     try {
-        if (!process.env.RESEND_API_KEY) {
-            return { success: false, error: 'Clé API Resend manquante' }
+        if (!SMTP_USER || !SMTP_PASS) {
+            console.warn('⚠️ SMTP non configuré : email non envoyé')
+            return { success: false, error: 'Configuration SMTP manquante' }
         }
 
-        const isOnboarding = FROM_EMAIL.includes('onboarding@resend.dev')
-        const adminEmail = process.env.ADMIN_EMAIL || 'amap.togo@gmail.com'
+        console.log(`📧 Envoi email à : ${Array.isArray(to) ? to.join(', ') : to}`)
 
-        if (isOnboarding) {
-            // Mode TEST : On envoie tout à l'admin pour éviter les erreurs Resend
-            // et on liste les vrais destinataires dans le corps du mail
+        const info = await transporter.sendMail({
+            from: from || SMTP_FROM,
+            to: typeof to === 'string' ? to : to.join(','),
+            replyTo: replyTo,
+            subject: subject,
+            html: html,
+        })
 
-            // On fait un seul envoi global au lieu de loops pour éviter le spam de l'admin
-            const allRecipients = to.join(', ')
-
-            const testHtml = `
-                <div style="background: #f3f4f6; padding: 10px; border: 1px dashed #666; margin-bottom: 20px;">
-                    <strong>MODE TEST - AMAP TOGO</strong><br/>
-                    <em>Ceci est une simulation car le domaine n'est pas encore vérifié.</em><br/><br/>
-                    <strong>Destinataires prévus (${to.length}) :</strong><br/>
-                    <small>${allRecipients}</small>
-                </div>
-                <hr/>
-                ${html}
-            `
-
-            const { error } = await resend.emails.send({
-                from: FROM_EMAIL,
-                to: [adminEmail],
-                subject: `[TEST] ${subject}`,
-                html: testHtml,
-            })
-
-            if (error) {
-                console.error('Erreur Resend Test:', error)
-                return { success: false, error: error.message }
-            }
-
-            return { success: true }
-        }
-
-        // Mode PROD (Domaine vérifié)
-        const chunks = []
-        for (let i = 0; i < to.length; i += 50) {
-            chunks.push(to.slice(i, i + 50))
-        }
-
-        for (const chunk of chunks) {
-            const { error } = await resend.emails.send({
-                from: FROM_EMAIL,
-                to: [adminEmail], // L'admin reçoit toujours une copie
-                bcc: chunk, // Les clients en copie cachée
-                subject: subject,
-                html: html,
-            })
-
-            if (error) {
-                console.error('Erreur Resend chunk:', error)
-            }
-        }
-
-        return { success: true }
-    } catch (error: any) {
-        console.error('Erreur sendEmailAction:', error)
-        return { success: false, error: error.message }
+        console.log('✅ Email envoyé:', info.messageId)
+        return { success: true, id: info.messageId }
+    } catch (error) {
+        console.error('❌ Erreur envoi email:', error)
+        return { success: false, error: 'Erreur lors de l\'envoi' }
     }
 }
+
+// ============================================================================
+// HELPER FUNCTIONS (Restaurées)
+// ============================================================================
 
 export async function getMailingContacts() {
     const supabase = await createClientServer()
@@ -145,4 +134,16 @@ export async function getAllRecipients() {
     })
 
     return Array.from(unique.values())
+}
+
+// Fonction de compatibilité pour l'ancien code (si utilisé ailleurs)
+export async function sendEmailAction(encodedParams: any) {
+    // Si l'appel vient du frontend avec un objet simple
+    // Adapter selon le format attendu par sendEmail
+    const { to, subject, html } = encodedParams
+    return sendEmail({
+        to,
+        subject,
+        html
+    })
 }

@@ -6,6 +6,8 @@
 import { Header, Footer } from '@/components/layout'
 import { ScrollEffects } from '@/components/layout/scroll-effects'
 import { POSModal } from '@/components/pos'
+import { ChatWidget } from '@/components/chat/chat-widget'
+
 
 export default function PublicLayout({
   children,
@@ -24,6 +26,8 @@ export default function PublicLayout({
       <Footer />
       {/* Modal POS global pour les ventes rapides */}
       <POSModal />
+      <ChatWidget />
+
     </div>
   )
 }

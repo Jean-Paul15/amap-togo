@@ -46,6 +46,7 @@ const values: Value[] = [
  * Section valeurs avec 3 piliers
  * Bio, local, solidaire avec animations modernes
  */
+
 export function ValuesSection() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
@@ -75,10 +76,10 @@ export function ValuesSection() {
   }
 
   return (
-    <section ref={ref} className="py-16 sm:py-20 lg:py-28 relative overflow-hidden bg-gradient-to-b from-white via-gray-50 to-white">
+    <section ref={ref} className="py-16 sm:py-20 lg:py-28 relative overflow-hidden bg-[#0a1f12]">
       {/* Éléments décoratifs */}
-      <div className="absolute top-1/4 left-0 w-72 h-72 bg-green-200/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-1/4 right-0 w-72 h-72 bg-emerald-200/10 rounded-full blur-3xl" />
+      <div className="absolute top-1/4 left-0 w-72 h-72 bg-blue-500/5 rounded-full blur-[100px]" />
+      <div className="absolute bottom-1/4 right-0 w-72 h-72 bg-yellow-500/5 rounded-full blur-[100px]" />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-12 relative z-10">
         <motion.div
@@ -91,19 +92,19 @@ export function ValuesSection() {
             initial={{ scale: 0 }}
             animate={isInView ? { scale: 1 } : { scale: 0 }}
             transition={{ duration: 0.5, type: 'spring', stiffness: 200 }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 rounded-full text-sm font-medium mb-4"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 text-green-300 rounded-full text-sm font-medium mb-4"
           >
             <Heart className="w-4 h-4" strokeWidth={2.5} fill="currentColor" />
             <span>Nos valeurs</span>
           </motion.div>
 
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">
             Nos{' '}
-            <span className="bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-400">
               engagements
             </span>
           </h2>
-          <p className="mt-4 text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="mt-4 text-base sm:text-lg text-gray-400 max-w-2xl mx-auto">
             AMAP TOGO s'engage pour une agriculture paysanne
             et une alimentation saine au Togo.
           </p>
@@ -138,31 +139,31 @@ function ValueCard({ icon: Icon, title, description, color, index }: Value & { i
       transition={{ duration: 0.3 }}
       className="relative group"
     >
-      <div className="text-center bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-shadow duration-300 h-full border border-gray-100">
+      <div className="text-center bg-white/5 backdrop-blur-md rounded-2xl p-8 shadow-xl border border-white/10 hover:border-white/20 hover:bg-white/10 transition-all duration-300 h-full">
         {/* Icône animée */}
         <motion.div
           whileHover={{ rotate: 360, scale: 1.1 }}
           transition={{ duration: 0.6 }}
           className={`
             w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-6
-            bg-gradient-to-br ${color}
-            rounded-2xl
+            bg-gradient-to-br from-white/10 to-white/5
+            rounded-2xl border border-white/10
             flex items-center justify-center
-            shadow-lg shadow-green-500/30
-            group-hover:shadow-xl group-hover:shadow-green-500/40
+            shadow-lg
+            group-hover:shadow-green-500/20
             transition-all duration-300
           `}
         >
-          <Icon className="w-8 h-8 sm:w-10 sm:h-10 text-white" strokeWidth={2} />
+          <Icon className="w-8 h-8 sm:w-10 sm:h-10 text-white" strokeWidth={1.5} />
         </motion.div>
 
         {/* Titre */}
-        <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-4">
+        <h3 className="text-xl sm:text-2xl font-bold text-white mb-4">
           {title}
         </h3>
 
         {/* Description */}
-        <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+        <p className="text-sm sm:text-base text-gray-400 leading-relaxed">
           {description}
         </p>
 
@@ -188,7 +189,7 @@ function ValueCard({ icon: Icon, title, description, color, index }: Value & { i
           initial={{ width: 0 }}
           whileInView={{ width: '100%' }}
           transition={{ duration: 1, delay: 0.5 + index * 0.2 }}
-          className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-green-500 to-emerald-600 rounded-b-2xl"
+          className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-green-500 to-emerald-600 rounded-b-2xl opacity-50"
         />
       </div>
     </motion.div>

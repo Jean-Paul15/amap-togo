@@ -19,6 +19,7 @@ import {
   Shield,
   UserCog,
   TrendingUp,
+  Image,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/hooks/use-auth'
@@ -44,6 +45,7 @@ const navItems: NavItem[] = [
   { name: 'Commandes', href: '/commandes', icon: ShoppingCart },
   { name: 'Clients', href: '/clients', icon: Users },
   { name: 'Emails', href: '/emails', icon: Mail },
+  { name: 'Galerie', href: '/gallery', icon: Image },
   { name: 'Rôles', href: '/roles', icon: Shield },
   { name: 'Utilisateurs', href: '/utilisateurs', icon: UserCog },
 ]

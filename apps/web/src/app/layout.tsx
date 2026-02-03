@@ -11,7 +11,7 @@ import { StructuredBreadcrumbs, StructuredOrganization } from '@/components/seo/
 import { getProductsData } from '@/lib/ssr/get-products'
 import { getAuthData } from '@/lib/ssr/get-auth'
 
-const inter = Inter({ 
+const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-inter',
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     default: 'AMAP TOGO - Produits Bio et Locaux',
     template: '%s | AMAP TOGO',
   },
-  description: 
+  description:
     'Association pour le Maintien d\'une Agriculture Paysanne au Togo. ' +
     'Produits bio et locaux livrés à Lomé. Paniers hebdomadaires.',
   keywords: [
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     url: process.env.NEXT_PUBLIC_SITE_URL || 'https://www.fermagroecologie.org',
     siteName: 'AMAP TOGO',
     title: 'AMAP TOGO - Produits Bio et Locaux',
-    description: 
+    description:
       'Produits agricoles bio et locaux au Togo. ' +
       'Paniers hebdomadaires livrés à Lomé.',
     images: [
@@ -100,7 +100,7 @@ export default async function RootLayout({
         <StructuredOrganization />
         <StructuredBreadcrumbs />
       </head>
-      <body className={`${inter.className} antialiased`}>
+      <body className={`${inter.className} antialiased`} suppressHydrationWarning>
         <GoogleTagManager />
         <Analytics />
         <QueryProvider>
