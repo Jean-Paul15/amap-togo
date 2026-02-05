@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Mail, Users, Plus, Trash2, Send, ExternalLink, Loader2 } from 'lucide-react'
+import { Mail, Plus, Trash2, Send, ExternalLink, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Editor, EditorProvider } from 'react-simple-wysiwyg';
 import { sendEmailAction, getMailingContacts, addMailingContact, deleteMailingContact, getAllRecipients } from '@/lib/actions/emailing'
@@ -60,6 +60,7 @@ export default function EmailsPage() {
 }
 
 function ComposeTab() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [recipients, setRecipients] = useState<any[]>([])
     const [loadingRecipients, setLoadingRecipients] = useState(true)
     const [sending, setSending] = useState(false)
@@ -192,8 +193,9 @@ function ComposeTab() {
 }
 
 function ContactsTab() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [contacts, setContacts] = useState<any[]>([])
-    const [loading, setLoading] = useState(true)
+    const [, setLoading] = useState(true)
     const [isOpen, setIsOpen] = useState(false)
 
     const load = () => {

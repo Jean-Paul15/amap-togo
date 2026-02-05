@@ -1,4 +1,3 @@
-import { createClientServer } from '@amap-togo/database/server'
 import { Metadata } from 'next'
 import { getGalleryMedia } from '@/lib/actions/gallery'
 import { CultureGallery } from '@/components/gallery/culture-gallery'

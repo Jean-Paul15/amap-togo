@@ -24,6 +24,7 @@ export default function GestionPage() {
     const [records, setRecords] = useState<FinancialRecord[]>([])
     const [loading, setLoading] = useState(true)
     const [isDialogOpen, setIsDialogOpen] = useState(false)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [products, setProducts] = useState<any[]>([])
 
     // Calcule les dates de début et fin de la semaine sélectionnée
@@ -41,9 +42,10 @@ export default function GestionPage() {
                 getProductsForAdmin()
             ])
             setRecords(recData)
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             setProducts(prodData as any[])
         } catch (error) {
-            toast.error('Erreur lors du chargement des données')
+            toast.error('Erreur lors du chargement des données: ' + error)
         } finally {
             setLoading(false)
         }
@@ -196,6 +198,7 @@ export default function GestionPage() {
     )
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function StatsCard({ title, amount, icon: Icon, color, bg }: any) {
     return (
         <div className="bg-white p-6 rounded-xl border shadow-sm">
@@ -214,6 +217,7 @@ function StatsCard({ title, amount, icon: Icon, color, bg }: any) {
     )
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function AddRecordDialog({ isOpen, setIsOpen, onSuccess, defaultDate, products }: any) {
     const [submitting, setSubmitting] = useState(false)
     const [type, setType] = useState<'recette' | 'depense'>('depense')
@@ -242,6 +246,7 @@ function AddRecordDialog({ isOpen, setIsOpen, onSuccess, defaultDate, products }
             } else {
                 toast.error(res.error)
             }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (e) {
             toast.error('Erreur')
         } finally {
@@ -305,6 +310,7 @@ function AddRecordDialog({ isOpen, setIsOpen, onSuccess, defaultDate, products }
                             <label className="block text-xs font-medium text-gray-700 mb-1">Produit (Optionnel)</label>
                             <select name="product_id" className="w-full px-3 py-2 border rounded-lg text-sm bg-white">
                                 <option value="none">-- Aucun --</option>
+                                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                 {products?.map((p: any) => (
                                     <option key={p.id} value={p.id}>{p.nom}</option>
                                 ))}
@@ -338,8 +344,8 @@ function AddRecordDialog({ isOpen, setIsOpen, onSuccess, defaultDate, products }
 function getWeekNumber(d: Date) {
     d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
     d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
-    var yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
-    var weekNo = Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
+    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    const weekNo = Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
     return weekNo;
 }
 

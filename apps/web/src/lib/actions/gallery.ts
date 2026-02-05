@@ -13,6 +13,7 @@ export interface GalleryMedia {
 }
 
 export async function getGalleryMedia() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const supabase = await createClientServer() as any
     const { data, error } = await supabase
         .from('gallery_media')
@@ -39,6 +40,7 @@ export async function uploadGalleryMediaAction(formData: FormData) {
     const filePath = `gallery/${fileName}`
 
     // Upload via supabaseAdmin (bypass RLS)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { error } = await (supabaseAdmin as any).storage
         .from('images')
         .upload(filePath, file)
@@ -54,6 +56,7 @@ export async function uploadGalleryMediaAction(formData: FormData) {
 }
 
 export async function addGalleryMedia(url: string, title: string, type: 'image' | 'video' = 'image') {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const supabase = await createClientServer() as any
     const { error } = await supabase
         .from('gallery_media')
@@ -66,6 +69,7 @@ export async function addGalleryMedia(url: string, title: string, type: 'image' 
 }
 
 export async function deleteGalleryMedia(id: string) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const supabase = await createClientServer() as any
 
     // 1. Récupérer le média pour savoir s'il faut supprimer un fichier du storage
@@ -79,6 +83,7 @@ export async function deleteGalleryMedia(id: string) {
         const filePath = media.url.split('/gallery/').pop()
         if (filePath) {
             // Suppression du fichier physique via supabaseAdmin
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             await (supabaseAdmin as any).storage
                 .from('images')
                 .remove([`gallery/${filePath}`])

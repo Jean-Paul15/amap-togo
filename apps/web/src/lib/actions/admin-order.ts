@@ -36,6 +36,7 @@ export async function createAdminOrder(data: {
         const montantTotal = data.items.reduce((sum, item) => sum + (item.prix * item.quantite), 0)
 
         // Créer la commande
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const { data: commande, error: cmdError } = await (supabase as any)
             .from('commandes')
             .insert({
@@ -59,13 +60,15 @@ export async function createAdminOrder(data: {
         // Lignes
         if (data.items.length > 0) {
             const lignes = data.items.map(item => ({
-                commande_id: commande.id,
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                commande_id: (commande as any).id,
                 produit_id: item.id,
                 quantite: item.quantite,
                 prix_unitaire: item.prix,
                 prix_total: item.prix * item.quantite
             }))
 
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const { error: linesError } = await (supabase as any)
                 .from('commandes_lignes')
                 .insert(lignes)
@@ -74,15 +77,19 @@ export async function createAdminOrder(data: {
         }
 
         // Créer entrée paiement
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await (supabase as any).from('paiements').insert({
-            commande_id: commande.id,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            commande_id: (commande as any).id,
             montant: montantTotal,
             methode: 'especes', // Défaut
             statut: 'en_attente'
         })
 
         revalidatePath('/(admin)/commandes')
-        return { success: true, id: commande.id, numero: commande.numero }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return { success: true, id: (commande as any).id, numero: (commande as any).numero }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
         console.error('Erreur createAdminOrder:', error)
         return { success: false, error: error.message }

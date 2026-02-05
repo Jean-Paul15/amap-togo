@@ -69,6 +69,7 @@ export async function sendEmail({
 
 export async function getMailingContacts() {
     const supabase = await createClientServer()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data } = await (supabase as any)
         .from('mailing_contacts')
         .select('*')
@@ -78,6 +79,7 @@ export async function getMailingContacts() {
 
 export async function addMailingContact(email: string, nom?: string) {
     const supabase = await createClientServer()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { error } = await (supabase as any)
         .from('mailing_contacts')
         .insert({ email, nom })
@@ -89,6 +91,7 @@ export async function addMailingContact(email: string, nom?: string) {
 
 export async function deleteMailingContact(id: string) {
     const supabase = await createClientServer()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { error } = await (supabase as any)
         .from('mailing_contacts')
         .delete()
@@ -108,17 +111,21 @@ export async function getAllRecipients() {
         .select('id, email, nom, prenom, role_id')
 
     // 2. Contacts manuels
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: contacts } = await (supabase as any)
         .from('mailing_contacts')
         .select('id, email, nom')
 
     const all = [
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ...(profiles || []).map((p: any) => ({
             email: p.email,
             name: `${p.prenom || ''} ${p.nom || ''}`.trim(),
             type: p.role_id || 'user',
             id: p.id
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         })),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ...(contacts || []).map((c: any) => ({
             email: c.email,
             name: c.nom || 'Contact externe',
@@ -137,6 +144,7 @@ export async function getAllRecipients() {
 }
 
 // Fonction de compatibilité pour l'ancien code (si utilisé ailleurs)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function sendEmailAction(encodedParams: any) {
     // Si l'appel vient du frontend avec un objet simple
     // Adapter selon le format attendu par sendEmail

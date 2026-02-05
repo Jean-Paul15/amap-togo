@@ -1,13 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Play } from 'lucide-react'
 import Image from 'next/image'
 import type { GalleryMedia } from '@/lib/actions/gallery'
 
 export function CultureGallery({ initialMedia }: { initialMedia: GalleryMedia[] }) {
-    const [selectedId, setSelectedId] = useState<string | null>(null)
+    const [, setSelectedId] = useState<string | null>(null)
 
     return (
         <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">

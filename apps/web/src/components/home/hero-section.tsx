@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion, useScroll, useTransform } from 'framer-motion'
-import { ArrowRight, Leaf, Truck, Users, Sun, Sparkles, Star } from 'lucide-react'
+import { ArrowRight, Leaf, Truck, Star } from 'lucide-react'
 import { Button } from '@amap-togo/ui'
 
 /**
@@ -17,7 +17,6 @@ export function HeroSection() {
 
   // Parallax et disparitions
   const y1 = useTransform(scrollY, [0, 500], [0, 150])
-  const y2 = useTransform(scrollY, [0, 500], [0, -80])
   const opacity = useTransform(scrollY, [0, 300], [1, 0])
   const scale = useTransform(scrollY, [0, 500], [1, 1.1])
 

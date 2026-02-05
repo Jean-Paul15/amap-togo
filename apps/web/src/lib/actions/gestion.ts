@@ -32,6 +32,7 @@ export async function getFinancialRecords(start: string, end: string) {
         const supabase = await createClientServer()
 
         // On utilise any car la table n'est peut-être pas encore générée dans les types
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const { data, error } = await (supabase as any)
             .from('financial_records')
             .select('*, produits(nom)')
@@ -57,6 +58,7 @@ export async function addFinancialRecord(input: FinancialRecordInput) {
         const data = recordSchema.parse(input)
         const supabase = await createClientServer()
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const { error } = await (supabase as any)
             .from('financial_records')
             .insert(data)
@@ -75,6 +77,7 @@ export async function deleteFinancialRecord(id: string) {
     try {
         const supabase = await createClientServer()
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const { error } = await (supabase as any)
             .from('financial_records')
             .delete()

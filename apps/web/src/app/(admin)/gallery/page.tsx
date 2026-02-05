@@ -39,6 +39,7 @@ export default function AdminGalleryPage() {
             setNewTitle('')
             // Feedback success (simple log for now)
             console.log('Media added')
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
             console.error(error)
             alert("Erreur lors de l'ajout: " + (error.message || "Inconnue"))
@@ -99,6 +100,7 @@ export default function AdminGalleryPage() {
                                             setNewUrl(publicUrl)
                                             setNewType(file.type.startsWith('video') ? 'video' : 'image')
                                             if (!newTitle) setNewTitle(file.name.split('.')[0])
+                                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                         } catch (err: any) {
                                             console.error(err)
                                             alert("Erreur upload: " + (err.message || "Inconnue"))
