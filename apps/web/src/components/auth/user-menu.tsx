@@ -6,7 +6,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { LogOut, ChevronDown, LayoutDashboard, X } from 'lucide-react'
+import { LogOut, ChevronDown, LayoutDashboard, X, Settings } from 'lucide-react'
 import { useUser } from '@/hooks/use-user'
 import { useAuth } from '@/hooks/use-auth'
 
@@ -68,10 +68,18 @@ export function UserMenu() {
           <LayoutDashboard className="w-5 h-5" />
           Tableau de bord
         </a>
+        <a
+          href="/settings"
+          onClick={() => setIsOpen(false)}
+          className="flex items-center gap-3 px-4 py-3 text-sm text-foreground font-medium hover:bg-muted transition-colors"
+        >
+          <Settings className="w-5 h-5" />
+          Paramètres
+        </a>
       </div>
       <div className="border-t border-border py-2">
         <button
-          onClick={async (e) => { 
+          onClick={async (e) => {
             e.preventDefault()
             e.stopPropagation()
             setIsOpen(false)

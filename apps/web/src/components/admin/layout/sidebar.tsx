@@ -20,7 +20,9 @@ import {
   UserCog,
   TrendingUp,
   Image,
+  Settings,
 } from 'lucide-react'
+
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/hooks/use-auth'
 
@@ -48,7 +50,9 @@ const navItems: NavItem[] = [
   { name: 'Galerie', href: '/gallery', icon: Image },
   { name: 'Rôles', href: '/roles', icon: Shield },
   { name: 'Utilisateurs', href: '/utilisateurs', icon: UserCog },
+  { name: 'Paramètres', href: '/settings', icon: Settings },
 ]
+
 
 /**
  * Sidebar moderne bleu fonce avec support mobile

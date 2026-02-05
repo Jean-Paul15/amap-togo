@@ -3,23 +3,14 @@
 import nodemailer from 'nodemailer'
 import { createClientServer } from '@amap-togo/database/server'
 import { revalidatePath } from 'next/cache'
+import { getSystemSettings } from '@/lib/actions/settings'
 
-const SMTP_HOST = process.env.SMTP_HOST || 'smtp.gmail.com'
-const SMTP_PORT = parseInt(process.env.SMTP_PORT || '465')
-const SMTP_USER = process.env.SMTP_USER
-const SMTP_PASS = process.env.SMTP_APP_PASSWORD
-const SMTP_FROM = process.env.SMTP_FROM || `AMAP Togo <${SMTP_USER}>`
-
-// Configuration du transporteur SMTP
-const transporter = nodemailer.createTransport({
-    host: SMTP_HOST,
-    port: SMTP_PORT,
-    secure: true, // true pour 465, false pour les autres ports
-    auth: {
-        user: SMTP_USER,
-        pass: SMTP_PASS,
-    },
-})
+// Valeurs par défaut (fallback env)
+const DEFAULT_SMTP_HOST = process.env.SMTP_HOST || 'smtp.gmail.com'
+const DEFAULT_SMTP_PORT = parseInt(process.env.SMTP_PORT || '465')
+const DEFAULT_SMTP_USER = process.env.SMTP_USER
+const DEFAULT_SMTP_PASS = process.env.SMTP_APP_PASSWORD
+const DEFAULT_SMTP_FROM = process.env.SMTP_FROM
 
 export interface SendEmailParams {
     to: string | string[]
@@ -31,6 +22,7 @@ export interface SendEmailParams {
 
 /**
  * Envoie un email via SMTP (Gmail)
+ * Utilise les paramètres DB si disponibles, sinon ENV
  */
 export async function sendEmail({
     to,
@@ -40,15 +32,39 @@ export async function sendEmail({
     replyTo
 }: SendEmailParams) {
     try {
-        if (!SMTP_USER || !SMTP_PASS) {
+        // 1. Récupérer conf dynamique
+        const settings = await getSystemSettings()
+
+        const smtpUser = settings['smtp_user'] || DEFAULT_SMTP_USER
+        const smtpPass = settings['smtp_password'] || DEFAULT_SMTP_PASS
+
+        // Host/Port pourraient aussi être dynamiques si besoin, pour l'instant on garde env ou default
+        const smtpHost = DEFAULT_SMTP_HOST
+        const smtpPort = DEFAULT_SMTP_PORT
+
+        if (!smtpUser || !smtpPass) {
             console.warn('⚠️ SMTP non configuré : email non envoyé')
             return { success: false, error: 'Configuration SMTP manquante' }
         }
 
+        // 2. Créer transporteur à la volée
+        const transporter = nodemailer.createTransport({
+            host: smtpHost,
+            port: smtpPort,
+            secure: true,
+            auth: {
+                user: smtpUser,
+                pass: smtpPass,
+            },
+        })
+
         console.log(`📧 Envoi email à : ${Array.isArray(to) ? to.join(', ') : to}`)
 
+        // 3. Envoyer
+        const smtpFrom = from || DEFAULT_SMTP_FROM || `AMAP Togo <${smtpUser}>`
+
         const info = await transporter.sendMail({
-            from: from || SMTP_FROM,
+            from: smtpFrom,
             to: typeof to === 'string' ? to : to.join(','),
             replyTo: replyTo,
             subject: subject,
@@ -155,3 +171,4 @@ export async function sendEmailAction(encodedParams: any) {
         html
     })
 }
+

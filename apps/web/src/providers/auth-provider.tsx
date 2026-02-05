@@ -15,6 +15,7 @@ export interface UserProfile {
   telephone: string | null
   role_id: string | null
   role_nom: string | null
+  avatar_url: string | null
 }
 
 export interface AuthContextValue {
@@ -41,7 +42,7 @@ async function fetchProfile(
     const { data, error } = await supabase
       .from('profils')
       .select(`
-        id, nom, prenom, email, telephone, role_id,
+        id, nom, prenom, email, telephone, role_id, avatar_url,
         roles:role_id (nom)
       `)
       .eq('id', userId)
@@ -59,12 +60,13 @@ async function fetchProfile(
       email: string
       telephone: string | null
       role_id: string | null
+      avatar_url: string | null
       roles: { nom: string } | { nom: string }[] | null
     }
     const profil = data as ProfilData
     const rolesData = profil.roles
-    const roleName = Array.isArray(rolesData) 
-      ? rolesData[0]?.nom 
+    const roleName = Array.isArray(rolesData)
+      ? rolesData[0]?.nom
       : rolesData?.nom
 
     return {
@@ -75,7 +77,9 @@ async function fetchProfile(
       telephone: profil.telephone,
       role_id: profil.role_id,
       role_nom: roleName || null,
+      avatar_url: profil.avatar_url,
     }
+
   } catch (err) {
     console.error('Exception fetch profil:', err)
     return null
@@ -91,10 +95,10 @@ interface AuthProviderProps {
 /**
  * Provider d'authentification avec hydratation SSR
  */
-export function AuthProvider({ 
-  children, 
-  initialUser, 
-  initialProfile 
+export function AuthProvider({
+  children,
+  initialUser,
+  initialProfile
 }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null)
   const [profile, setProfile] = useState<UserProfile | null>(null)
@@ -133,19 +137,19 @@ export function AuthProvider({
   const signOut = async () => {
     try {
       const supabase = getSupabase()
-      
+
       // Reset state immediatement pour feedback rapide
       setUser(null)
       setProfile(null)
-      
+
       // Deconnexion Supabase (ne pas attendre si ca bloque)
       const signOutPromise = supabase.auth.signOut({ scope: 'local' })
-      
+
       // Timeout de 2 secondes pour eviter blocage mobile
       const timeoutPromise = new Promise((resolve) => setTimeout(resolve, 2000))
-      
+
       await Promise.race([signOutPromise, timeoutPromise])
-      
+
       // Redirection apres deconnexion
       if (typeof window !== 'undefined') {
         window.location.replace('/')
@@ -176,7 +180,7 @@ export function AuthProvider({
 
       // Toujours verifier l'etat reel cote client
       const { data: { user: authUser } } = await supabase.auth.getUser()
-      
+
       if (authUser) {
         setUser(authUser)
         const userProfile = await fetchProfile(supabase, authUser.id)
@@ -188,7 +192,7 @@ export function AuthProvider({
         setUser(null)
         setProfile(null)
       }
-      
+
       setLoading(false)
     }
 
