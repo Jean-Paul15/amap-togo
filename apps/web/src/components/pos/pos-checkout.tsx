@@ -5,7 +5,6 @@
 
 import { useState, useRef } from 'react'
 import { formatPrice } from '@amap-togo/utils'
-import { createClientBrowser } from '@amap-togo/database/browser'
 import { useCartStore } from '@/stores/cart-store'
 import { generateFacture } from '@/lib/facture'
 import type { FactureItem } from '@/lib/facture'
@@ -112,50 +111,29 @@ export function POSCheckout() {
     setError(null)
 
     try {
-      // Utiliser l'instance partagee si disponible (evite conflit cookies mobile)
-      const windowWithClient = typeof window !== 'undefined'
-        ? (window as unknown as { __supabaseClient?: ReturnType<typeof createClientBrowser> })
-        : null
-      const supabase = windowWithClient?.__supabaseClient || createClientBrowser()
+      // Import dynamique de l'action serveur (compatible client component)
+      const { createAdminOrder } = await import('@/lib/actions/admin-order')
 
-      // Preparer les items pour le RPC (JSONB)
-      const orderItems = items.map((item) => ({
-        id: item.id,
-        type: item.type,
-        quantite: item.quantite,
-        prix: item.prix,
-      }))
+      const result = await createAdminOrder({
+        clientId: null,
+        clientInfo: {
+          nom: deliveryInfo.nom,
+          prenom: deliveryInfo.prenom,
+          email: deliveryInfo.email,
+          telephone: deliveryInfo.telephone,
+          quartier: deliveryInfo.quartier,
+          adresse: deliveryInfo.adresse,
+        },
+        items: items.map(item => ({
+          id: item.id,
+          quantite: item.quantite,
+          prix: item.prix
+        })),
+        notes: deliveryInfo.notes,
+        paymentMethod: paymentMethod
+      })
 
-      // Parametres pour le RPC
-      const rpcParams = {
-        p_nom: deliveryInfo.nom,
-        p_prenom: deliveryInfo.prenom,
-        p_email: deliveryInfo.email || null,
-        p_telephone: deliveryInfo.telephone,
-        p_quartier: deliveryInfo.quartier,
-        p_adresse: deliveryInfo.adresse || null,
-        p_notes: deliveryInfo.notes || null,
-        p_methode_paiement: paymentMethod,
-        p_items: orderItems,
-      }
-
-      // Appeler le RPC pour commande anonyme
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data, error: rpcError } = await (supabase.rpc as any)(
-        'create_anonymous_order',
-        rpcParams
-      )
-
-      // Parser le resultat JSONB
-      const result = data as { success?: boolean; numero?: string; error?: string } | null
-
-      if (rpcError) {
-        console.error('Erreur RPC:', rpcError)
-        setError('Erreur lors de la commande')
-        return
-      }
-
-      if (result?.success && result?.numero) {
+      if (result.success && result.numero) {
         // Sauvegarder les infos de livraison pour la prochaine fois
         saveDeliveryInfo(deliveryInfo)
         // Sauvegarder les items avant de vider le panier
@@ -193,7 +171,7 @@ export function POSCheckout() {
           console.warn('Facture non generee:', pdfError)
         }
       } else {
-        setError(result?.error || 'Erreur lors de la commande')
+        setError(result.error || 'Erreur lors de la commande')
       }
     } catch (err) {
       console.error('Erreur commande:', err)

@@ -24,10 +24,11 @@ export async function getUsersForAdmin() {
 
 export async function createAdminOrder(data: {
     clientId: string | null
-    clientInfo?: { nom: string; prenom: string; telephone: string; quartier: string; adresse?: string }
+    clientInfo?: { nom: string; prenom: string; telephone: string; quartier: string; adresse?: string; email?: string }
     items: { id: string; quantite: number; prix: number }[]
     notes?: string
     whatsappText?: string
+    paymentMethod?: 'especes' | 'tmoney' | 'flooz'
 }) {
     const supabase = await createClientServer()
 
@@ -49,8 +50,9 @@ export async function createAdminOrder(data: {
                 adresse_livraison: data.clientInfo?.adresse,
                 quartier_livraison: data.clientInfo?.quartier,
                 telephone_livraison: data.clientInfo?.telephone,
-                // Pour les clients anonymes, on stocke souvent dans une colonne JSON ou sépare, 
-                // ici on assume qu'on utilise les colonnes existantes ou client_id
+                email_livraison: data.clientInfo?.email, // Ajout email si disponible
+                prenom_livraison: data.clientInfo?.prenom, // Ajout prénom
+                nom_livraison: data.clientInfo?.nom, // Ajout nom
             })
             .select()
             .single()
@@ -82,7 +84,7 @@ export async function createAdminOrder(data: {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             commande_id: (commande as any).id,
             montant: montantTotal,
-            methode: 'especes', // Défaut
+            methode: data.paymentMethod || 'especes',
             statut: 'en_attente'
         })
 
