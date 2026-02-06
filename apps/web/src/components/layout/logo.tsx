@@ -24,7 +24,7 @@ export function Logo({ className = '', url }: LogoProps) {
           src={url || "/favicon.svg"}
           alt="AMAP TOGO"
           fill
-          className="object-contain"
+          className="object-contain mix-blend-multiply"
           priority
         />
       </div>
