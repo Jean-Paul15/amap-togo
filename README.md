@@ -5,7 +5,7 @@ Plateforme e-commerce pour l'Association pour le Maintien d'une Agriculture Pays
 ## Fonctionnalites
 
 - Catalogue de produits bio et locaux
-- Paniers AMAP hebdomadaires
+- Paniers AMAP hebdomadaire
 - Point de vente (POS) pour les vendeurs
 - Back-office de gestion (commandes, stocks, clients)
 - Systeme RBAC (gestion des roles et permissions)
