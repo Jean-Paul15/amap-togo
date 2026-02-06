@@ -11,6 +11,7 @@ export interface UserProfile {
   telephone: string | null
   role_id: string | null
   role_nom: string | null
+  avatar_url: string | null
 }
 
 export interface AuthData {
@@ -37,16 +38,16 @@ export async function getAuthData(): Promise<AuthData> {
     const { data: profil } = await supabase
       .from('profils')
       .select(`
-        id, nom, prenom, email, telephone, role_id,
+        id, nom, prenom, email, telephone, role_id, avatar_url,
         roles:role_id (nom)
       `)
       .eq('id', user.id)
       .single()
 
     if (!profil) {
-      return { 
-        user: { id: user.id, email: user.email || '' }, 
-        profile: null 
+      return {
+        user: { id: user.id, email: user.email || '' },
+        profile: null
       }
     }
 
@@ -57,12 +58,13 @@ export async function getAuthData(): Promise<AuthData> {
       email: string
       telephone: string | null
       role_id: string | null
+      avatar_url: string | null
       roles: { nom: string } | { nom: string }[] | null
     }
     const profilData = profil as ProfilData
     const rolesData = profilData.roles
-    const roleName = Array.isArray(rolesData) 
-      ? rolesData[0]?.nom 
+    const roleName = Array.isArray(rolesData)
+      ? rolesData[0]?.nom
       : rolesData?.nom
 
     return {
@@ -75,6 +77,7 @@ export async function getAuthData(): Promise<AuthData> {
         telephone: profilData.telephone,
         role_id: profilData.role_id,
         role_nom: roleName || null,
+        avatar_url: profilData.avatar_url,
       },
     }
   } catch (err) {

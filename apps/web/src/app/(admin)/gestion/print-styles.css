@@ -1,0 +1,74 @@
+/* Print styles for financial reports */
+@media print {
+  /* Hide non-essential elements */
+  .print\\:hidden {
+    display: none !important;
+  }
+
+  /* Page setup */
+  @page {
+    size: A4;
+    margin: 1.5cm;
+  }
+
+  body {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* Ensure white background for cards */
+  .bg-white {
+    background-color: white !important;
+  }
+
+  /* Ensure borders are visible */
+  .border {
+    border: 1px solid #e5e7eb !important;
+  }
+
+  /* Keep colors for stats cards */
+  .bg-green-50 {
+    background-color: #f0fdf4 !important;
+  }
+
+  .bg-red-50 {
+    background-color: #fef2f2 !important;
+  }
+
+  .bg-blue-50 {
+    background-color: #eff6ff !important;
+  }
+
+  .bg-purple-50 {
+    background-color: #faf5ff !important;
+  }
+
+  /* Prevent page breaks inside elements */
+  .bg-white,
+  .rounded-xl,
+  table tr {
+    page-break-inside: avoid;
+  }
+
+  /* Add page breaks before major sections */
+  .grid.grid-cols-1.lg\\:grid-cols-2 {
+    page-break-before: avoid;
+  }
+
+  /* Ensure table fits on page */
+  table {
+    font-size: 10pt;
+  }
+
+  /* Add header to each page */
+  .space-y-6::before {
+    content: "AMAP TOGO - Rapport Financier";
+    display: block;
+    text-align: center;
+    font-size: 18pt;
+    font-weight: bold;
+    margin-bottom: 1cm;
+    padding-bottom: 0.5cm;
+    border-bottom: 2px solid #000;
+  }
+}

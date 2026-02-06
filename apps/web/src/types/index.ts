@@ -7,6 +7,7 @@ export interface DashboardStats {
   commandesEnAttente: number
   totalClients: number
   chiffreAffaires: number
+  totalVisiteurs: number
 }
 
 export interface VenteJour {

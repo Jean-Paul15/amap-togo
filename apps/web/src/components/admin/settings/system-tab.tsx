@@ -1,9 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Mail, Loader2, Save, Server, Eye, EyeOff } from 'lucide-react'
+import { Mail, Loader2, Save, Server, Eye, EyeOff, Palette } from 'lucide-react'
 import { toast } from 'sonner'
 import { getSystemSettings, updateSystemSettings } from '@/lib/actions/settings'
+import { ImageUpload } from '@/components/ui/image-upload'
 
 export function SystemTab() {
     const [loading, setLoading] = useState(true)
@@ -12,14 +13,24 @@ export function SystemTab() {
 
     const [settings, setSettings] = useState({
         smtp_user: '',
-        smtp_password: ''
+        smtp_password: '',
+        site_logo_url: '',
+        site_hero_url: '',
+        site_bg_color: '#0a1f12', // Vert foncé par défaut
+        site_bg_image_url: '',
+        site_bg_video_url: ''
     })
 
     useEffect(() => {
         getSystemSettings().then(data => {
             setSettings({
                 smtp_user: data['smtp_user'] || '',
-                smtp_password: data['smtp_password'] || ''
+                smtp_password: data['smtp_password'] || '',
+                site_logo_url: data['site_logo_url'] || '',
+                site_hero_url: data['site_hero_url'] || '',
+                site_bg_color: data['site_bg_color'] || '#0a1f12',
+                site_bg_image_url: data['site_bg_image_url'] || '',
+                site_bg_video_url: data['site_bg_video_url'] || ''
             })
             setLoading(false)
         })
@@ -29,7 +40,14 @@ export function SystemTab() {
         e.preventDefault()
         setSaving(true)
 
-        const res = await updateSystemSettings(settings)
+        // On ne sauvegarde que les champs texte ici, les images sont gérées par ImageUpload direct
+        const textSettings = {
+            smtp_user: settings.smtp_user,
+            smtp_password: settings.smtp_password,
+            site_bg_color: settings.site_bg_color
+        }
+
+        const res = await updateSystemSettings(textSettings)
 
         if (res.success) {
             toast.success('Configuration enregistrée')
@@ -48,8 +66,9 @@ export function SystemTab() {
     }
 
     return (
-        <div className="max-w-2xl">
-            <div className="bg-white p-6 rounded-xl border">
+        <div className="max-w-4xl grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Colonne Gauche: SMTP (Existant) */}
+            <div className="bg-white p-6 rounded-xl border h-fit">
                 <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
                     <Mail className="w-5 h-5 text-emerald-600" />
                     Configuration Emailing (SMTP)
@@ -109,6 +128,91 @@ export function SystemTab() {
                         </button>
                     </div>
                 </form>
+            </div>
+
+            {/* Colonne Droite: Identité Visuelle */}
+            <div className="space-y-6">
+                <div className="bg-white p-6 rounded-xl border">
+                    <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
+                        <Palette className="w-5 h-5 text-purple-600" />
+                        Identité Visuelle
+                    </h3>
+                    <p className="text-sm text-gray-500 mb-6">
+                        Personnalisez les visuels principaux du site.
+                    </p>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-6">
+                        <ImageUpload
+                            label="Logo du site"
+                            settingKey="site_logo_url"
+                            currentImageUrl={settings.site_logo_url}
+                            aspectRatio="square"
+                        />
+
+                        <ImageUpload
+                            label="Image d'accueil (Hero)"
+                            settingKey="site_hero_url"
+                            currentImageUrl={settings.site_hero_url}
+                            aspectRatio="video"
+                        />
+                    </div>
+                </div>
+
+                {/* Nouvelle section: Arrière-plan de l'accueil */}
+                <div className="bg-white p-6 rounded-xl border">
+                    <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
+                        <Palette className="w-5 h-5 text-indigo-600" />
+                        Arrière-plan de l'accueil
+                    </h3>
+                    <p className="text-sm text-gray-500 mb-6">
+                        Choisissez une couleur, une image ou une vidéo pour l'arrière-plan de la page d'accueil.
+                    </p>
+
+                    <div className="space-y-6">
+                        {/* Color Picker */}
+                        <div>
+                            <label className="block text-sm font-medium mb-2">Couleur de fond</label>
+                            <div className="flex gap-3 items-center">
+                                <input
+                                    type="color"
+                                    value={settings.site_bg_color}
+                                    onChange={e => setSettings({ ...settings, site_bg_color: e.target.value })}
+                                    className="w-16 h-10 rounded border cursor-pointer"
+                                />
+                                <input
+                                    type="text"
+                                    value={settings.site_bg_color}
+                                    onChange={e => setSettings({ ...settings, site_bg_color: e.target.value })}
+                                    className="flex-1 px-3 py-2 border rounded-lg font-mono text-sm"
+                                    placeholder="#0a1f12"
+                                />
+                            </div>
+                            <p className="text-xs text-gray-500 mt-1">
+                                Utilisé si aucune image/vidéo n'est définie
+                            </p>
+                        </div>
+
+                        {/* Background Image */}
+                        <ImageUpload
+                            label="Image de fond (optionnel)"
+                            settingKey="site_bg_image_url"
+                            currentImageUrl={settings.site_bg_image_url}
+                            aspectRatio="video"
+                        />
+
+                        {/* Background Video */}
+                        <ImageUpload
+                            label="Vidéo de fond (optionnel)"
+                            settingKey="site_bg_video_url"
+                            currentImageUrl={settings.site_bg_video_url}
+                            aspectRatio="video"
+                        />
+
+                        <div className="text-xs text-gray-500 bg-gray-50 p-3 rounded border">
+                            <strong>Priorité d'affichage :</strong> Vidéo → Image → Couleur
+                        </div>
+                    </div>
+                </div>
             </div>
 
             {/* Zone de test potentielle */}

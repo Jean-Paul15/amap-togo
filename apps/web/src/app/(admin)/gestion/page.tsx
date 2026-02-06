@@ -1,24 +1,41 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { startOfWeek, endOfWeek, format, parseISO } from 'date-fns'
+import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear, format, parseISO } from 'date-fns'
 import { fr } from 'date-fns/locale'
-import { Calendar as CalendarIcon, TrendingUp, TrendingDown, DollarSign, Plus, Trash2, Loader2, X } from 'lucide-react'
+import { Calendar as CalendarIcon, TrendingUp, TrendingDown, DollarSign, Plus, Trash2, Loader2, X, Download, FileText, ShoppingCart, Package } from 'lucide-react'
 import { toast } from 'sonner'
 import { getFinancialRecords, addFinancialRecord, deleteFinancialRecord, type FinancialRecord } from '@/lib/actions/gestion'
 import * as Dialog from '@radix-ui/react-dialog'
 import { cn } from '@/lib/utils'
+import './print-styles.css'
 
 import { getProductsForAdmin } from '@/lib/actions/admin-order'
 
+type PeriodType = 'day' | 'week' | 'month' | 'year'
+
 export default function GestionPage() {
-    // État pour la semaine sélectionnée (format YYYY-Www)
+    const [periodType, setPeriodType] = useState<PeriodType>('week')
+
+    // État pour la période sélectionnée
+    const [currentDay, setCurrentDay] = useState(() => {
+        return format(new Date(), 'yyyy-MM-dd')
+    })
+
     const [currentWeek, setCurrentWeek] = useState(() => {
         const now = new Date()
-        // Petit hack pour avoir le format YYYY-Www
         const year = now.getFullYear()
         const week = getWeekNumber(now)
         return `${year}-W${week.toString().padStart(2, '0')}`
+    })
+
+    const [currentMonth, setCurrentMonth] = useState(() => {
+        const now = new Date()
+        return format(now, 'yyyy-MM')
+    })
+
+    const [currentYear, setCurrentYear] = useState(() => {
+        return new Date().getFullYear().toString()
     })
 
     const [records, setRecords] = useState<FinancialRecord[]>([])
@@ -27,10 +44,44 @@ export default function GestionPage() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [products, setProducts] = useState<any[]>([])
 
-    // Calcule les dates de début et fin de la semaine sélectionnée
-    const weekDate = getDateFromWeek(currentWeek)
-    const startDate = startOfWeek(weekDate, { weekStartsOn: 1 }) // Lundi
-    const endDate = endOfWeek(weekDate, { weekStartsOn: 1 }) // Dimanche
+    // Calcule les dates de début et fin selon le type de période
+    const { startDate, endDate, periodLabel } = (() => {
+        if (periodType === 'day') {
+            const dayDate = new Date(currentDay)
+            return {
+                startDate: dayDate,
+                endDate: dayDate,
+                periodLabel: format(dayDate, 'EEEE d MMMM yyyy', { locale: fr })
+            }
+        } else if (periodType === 'week') {
+            const weekDate = getDateFromWeek(currentWeek)
+            const start = startOfWeek(weekDate, { weekStartsOn: 1 })
+            const end = endOfWeek(weekDate, { weekStartsOn: 1 })
+            return {
+                startDate: start,
+                endDate: end,
+                periodLabel: `${format(start, 'd MMM', { locale: fr })} - ${format(end, 'd MMM yyyy', { locale: fr })}`
+            }
+        } else if (periodType === 'month') {
+            const monthDate = new Date(currentMonth + '-01')
+            const start = startOfMonth(monthDate)
+            const end = endOfMonth(monthDate)
+            return {
+                startDate: start,
+                endDate: end,
+                periodLabel: format(monthDate, 'MMMM yyyy', { locale: fr })
+            }
+        } else {
+            const yearDate = new Date(parseInt(currentYear), 0, 1)
+            const start = startOfYear(yearDate)
+            const end = endOfYear(yearDate)
+            return {
+                startDate: start,
+                endDate: end,
+                periodLabel: currentYear
+            }
+        }
+    })()
 
     const loadData = async () => {
         setLoading(true)
@@ -53,12 +104,53 @@ export default function GestionPage() {
 
     useEffect(() => {
         loadData()
-    }, [currentWeek])
+    }, [currentDay, currentWeek, currentMonth, currentYear, periodType])
 
-    // Calculs
+    // Calculs de base
     const recettes = records.filter(r => r.type === 'recette').reduce((sum, r) => sum + r.montant, 0)
     const depenses = records.filter(r => r.type === 'depense').reduce((sum, r) => sum + r.montant, 0)
     const benefice = recettes - depenses
+
+    // Statistiques détaillées
+    const nbTransactions = records.length
+    const nbRecettes = records.filter(r => r.type === 'recette').length
+    const nbDepenses = records.filter(r => r.type === 'depense').length
+
+
+    // Breakdown par catégorie
+    const parCategorie = records.reduce((acc, r) => {
+        const cat = r.categorie || 'Sans catégorie'
+        if (!acc[cat]) {
+            acc[cat] = { recettes: 0, depenses: 0, total: 0 }
+        }
+        if (r.type === 'recette') {
+            acc[cat].recettes += r.montant
+        } else {
+            acc[cat].depenses += r.montant
+        }
+        acc[cat].total = acc[cat].recettes - acc[cat].depenses
+        return acc
+    }, {} as Record<string, { recettes: number; depenses: number; total: number }>)
+
+    // Breakdown par produit
+    const parProduit = records.reduce((acc, r) => {
+        const produit = r.produits?.nom || 'Sans produit'
+        if (!acc[produit]) {
+            acc[produit] = { recettes: 0, depenses: 0, count: 0 }
+        }
+        if (r.type === 'recette') {
+            acc[produit].recettes += r.montant
+        } else {
+            acc[produit].depenses += r.montant
+        }
+        acc[produit].count++
+        return acc
+    }, {} as Record<string, { recettes: number; depenses: number; count: number }>)
+
+    // Top 5 produits par recettes
+    const topProduits = Object.entries(parProduit)
+        .sort(([, a], [, b]) => b.recettes - a.recettes)
+        .slice(0, 5)
 
     const handleDelete = async (id: string) => {
         if (confirm('Êtes-vous sûr de vouloir supprimer cette ligne ?')) {
@@ -75,28 +167,110 @@ export default function GestionPage() {
     return (
         <div className="space-y-6">
             {/* Header & Controls */}
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold tracking-tight">Gestion Financière</h1>
-                    <p className="text-muted-foreground">Suivi des recettes et dépenses hebdomadaires</p>
+            <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <h1 className="text-2xl font-bold tracking-tight">Gestion Financière</h1>
+                        <p className="text-muted-foreground">Bilan détaillé des recettes et dépenses</p>
+                    </div>
+
+                    <button
+                        onClick={() => window.print()}
+                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors print:hidden"
+                    >
+                        <Download className="w-4 h-4" />
+                        Exporter en PDF
+                    </button>
                 </div>
 
-                <div className="flex items-center gap-3 bg-white p-2 rounded-lg border shadow-sm">
-                    <CalendarIcon className="w-5 h-5 text-gray-500" />
-                    <input
-                        type="week"
-                        value={currentWeek}
-                        onChange={(e) => setCurrentWeek(e.target.value)}
-                        className="border-none bg-transparent focus:ring-0 text-sm font-medium"
-                    />
-                    <span className="text-xs text-muted-foreground hidden sm:inline-block border-l pl-3">
-                        {format(startDate, 'd MMM', { locale: fr })} - {format(endDate, 'd MMM yyyy', { locale: fr })}
-                    </span>
+                {/* Period Selector */}
+                <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center print:hidden">
+                    {/* Period Type Tabs */}
+                    <div className="flex p-1 bg-gray-100 rounded-lg">
+                        <button
+                            onClick={() => setPeriodType('day')}
+                            className={cn(
+                                "px-4 py-2 text-sm font-medium rounded-md transition-all",
+                                periodType === 'day' ? "bg-white shadow text-gray-900" : "text-gray-600 hover:text-gray-900"
+                            )}
+                        >
+                            Jour
+                        </button>
+                        <button
+                            onClick={() => setPeriodType('week')}
+                            className={cn(
+                                "px-4 py-2 text-sm font-medium rounded-md transition-all",
+                                periodType === 'week' ? "bg-white shadow text-gray-900" : "text-gray-600 hover:text-gray-900"
+                            )}
+                        >
+                            Semaine
+                        </button>
+                        <button
+                            onClick={() => setPeriodType('month')}
+                            className={cn(
+                                "px-4 py-2 text-sm font-medium rounded-md transition-all",
+                                periodType === 'month' ? "bg-white shadow text-gray-900" : "text-gray-600 hover:text-gray-900"
+                            )}
+                        >
+                            Mois
+                        </button>
+                        <button
+                            onClick={() => setPeriodType('year')}
+                            className={cn(
+                                "px-4 py-2 text-sm font-medium rounded-md transition-all",
+                                periodType === 'year' ? "bg-white shadow text-gray-900" : "text-gray-600 hover:text-gray-900"
+                            )}
+                        >
+                            Année
+                        </button>
+                    </div>
+
+                    {/* Date Picker */}
+                    <div className="flex items-center gap-3 bg-white p-2 rounded-lg border shadow-sm">
+                        <CalendarIcon className="w-5 h-5 text-gray-500" />
+                        {periodType === 'day' && (
+                            <input
+                                type="date"
+                                value={currentDay}
+                                onChange={(e) => setCurrentDay(e.target.value)}
+                                className="border-none bg-transparent focus:ring-0 text-sm font-medium"
+                            />
+                        )}
+                        {periodType === 'week' && (
+                            <input
+                                type="week"
+                                value={currentWeek}
+                                onChange={(e) => setCurrentWeek(e.target.value)}
+                                className="border-none bg-transparent focus:ring-0 text-sm font-medium"
+                            />
+                        )}
+                        {periodType === 'month' && (
+                            <input
+                                type="month"
+                                value={currentMonth}
+                                onChange={(e) => setCurrentMonth(e.target.value)}
+                                className="border-none bg-transparent focus:ring-0 text-sm font-medium"
+                            />
+                        )}
+                        {periodType === 'year' && (
+                            <input
+                                type="number"
+                                value={currentYear}
+                                onChange={(e) => setCurrentYear(e.target.value)}
+                                min="2020"
+                                max="2030"
+                                className="border-none bg-transparent focus:ring-0 text-sm font-medium w-20"
+                            />
+                        )}
+                        <span className="text-xs text-muted-foreground hidden sm:inline-block border-l pl-3">
+                            {periodLabel}
+                        </span>
+                    </div>
                 </div>
             </div>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <StatsCard
                     title="Recettes"
                     amount={recettes}
@@ -118,6 +292,91 @@ export default function GestionPage() {
                     color={benefice >= 0 ? "text-blue-600" : "text-red-600"}
                     bg={benefice >= 0 ? "bg-blue-50" : "bg-red-50"}
                 />
+                <div className="bg-white p-6 rounded-xl border shadow-sm">
+                    <div className="flex justify-between items-start">
+                        <div>
+                            <p className="text-sm font-medium text-muted-foreground">Transactions</p>
+                            <h3 className="text-2xl font-bold mt-2 text-gray-900">
+                                {nbTransactions}
+                            </h3>
+                            <p className="text-xs text-gray-500 mt-1">
+                                {nbRecettes} recettes • {nbDepenses} dépenses
+                            </p>
+                        </div>
+                        <div className="p-2 rounded-lg bg-purple-50">
+                            <FileText className="w-5 h-5 text-purple-600" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Detailed Breakdowns */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Par Catégorie */}
+                <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
+                    <div className="p-4 border-b bg-gray-50/50">
+                        <h3 className="font-semibold flex items-center gap-2">
+                            <Package className="w-4 h-4" />
+                            Par Catégorie
+                        </h3>
+                    </div>
+                    <div className="p-4">
+                        {Object.keys(parCategorie).length === 0 ? (
+                            <p className="text-sm text-gray-500 text-center py-4">Aucune donnée</p>
+                        ) : (
+                            <div className="space-y-3">
+                                {Object.entries(parCategorie).map(([cat, data]) => (
+                                    <div key={cat} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <div className="flex-1">
+                                            <p className="font-medium text-sm">{cat}</p>
+                                            <p className="text-xs text-gray-500">
+                                                R: {data.recettes.toLocaleString()} • D: {data.depenses.toLocaleString()}
+                                            </p>
+                                        </div>
+                                        <span className={cn(
+                                            "font-semibold text-sm",
+                                            data.total >= 0 ? "text-green-600" : "text-red-600"
+                                        )}>
+                                            {data.total >= 0 ? '+' : ''}{data.total.toLocaleString()} FCFA
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Top Produits */}
+                <div className="bg-white rounded-xl border shadow-sm overflow-hidden">
+                    <div className="p-4 border-b bg-gray-50/50">
+                        <h3 className="font-semibold flex items-center gap-2">
+                            <ShoppingCart className="w-4 h-4" />
+                            Top 5 Produits
+                        </h3>
+                    </div>
+                    <div className="p-4">
+                        {topProduits.length === 0 ? (
+                            <p className="text-sm text-gray-500 text-center py-4">Aucune donnée</p>
+                        ) : (
+                            <div className="space-y-3">
+                                {topProduits.map(([produit, data], index) => (
+                                    <div key={produit} className="flex items-center gap-3">
+                                        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">
+                                            {index + 1}
+                                        </div>
+                                        <div className="flex-1">
+                                            <p className="font-medium text-sm">{produit}</p>
+                                            <p className="text-xs text-gray-500">{data.count} transactions</p>
+                                        </div>
+                                        <span className="font-semibold text-sm text-green-600">
+                                            {data.recettes.toLocaleString()} FCFA
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
             </div>
 
             {/* Table */}
@@ -246,7 +505,7 @@ function AddRecordDialog({ isOpen, setIsOpen, onSuccess, defaultDate, products }
             } else {
                 toast.error(res.error)
             }
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (e) {
             toast.error('Erreur')
         } finally {

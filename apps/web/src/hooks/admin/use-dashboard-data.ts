@@ -2,6 +2,7 @@
 // Recupere toutes les metriques en parallele
 
 import { useEffect, useState } from 'react'
+import { getPageViews } from '@/lib/actions/analytics'
 import { supabaseClient } from '@/lib/supabase'
 import type {
   VenteJour,
@@ -31,6 +32,7 @@ export function useDashboardData(): DashboardData {
       commandesEnAttente: 0,
       totalClients: 0,
       chiffreAffaires: 0,
+      totalVisiteurs: 0,
     },
     ventesSemaine: [],
     commandesParStatut: [],
@@ -39,6 +41,9 @@ export function useDashboardData(): DashboardData {
     error: null,
   })
 
+  // Client Supabase importé directement
+
+
   useEffect(() => {
     fetchDashboardData()
   }, [])
@@ -46,7 +51,7 @@ export function useDashboardData(): DashboardData {
   async function fetchDashboardData() {
     try {
       // Requetes en parallele pour les stats de base
-      const [produitsRes, stockFaibleRes, commandesAttenteRes, clientsRes] =
+      const [produitsRes, stockFaibleRes, commandesAttenteRes, clientsRes, visiteursCount] =
         await Promise.all([
           supabaseClient
             .from('produits')
@@ -64,6 +69,7 @@ export function useDashboardData(): DashboardData {
           supabaseClient
             .from('profils')
             .select('*', { count: 'exact', head: true }),
+          getPageViews(), // Server action pour les vues
         ])
 
       // Commandes de la semaine pour le graphique
@@ -102,6 +108,7 @@ export function useDashboardData(): DashboardData {
           commandesEnAttente: commandesAttenteRes.count || 0,
           totalClients: clientsRes.count || 0,
           chiffreAffaires,
+          totalVisiteurs: typeof visiteursCount === 'number' ? visiteursCount : 0,
         },
         ventesSemaine: ventesParJour,
         commandesParStatut,
@@ -109,7 +116,8 @@ export function useDashboardData(): DashboardData {
         loading: false,
         error: null,
       })
-    } catch {
+    } catch (err) {
+      console.error('Erreur dashboard:', err)
       setData((prev) => ({
         ...prev,
         loading: false,

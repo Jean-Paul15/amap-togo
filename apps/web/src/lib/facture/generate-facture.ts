@@ -2,7 +2,12 @@
 // Cree et telecharge une facture pour une commande
 
 import { jsPDF } from 'jspdf'
-import { formatPrice, COMPANY, CONTACT } from '@amap-togo/utils'
+import { COMPANY, CONTACT } from '@amap-togo/utils'
+
+// Fonction locale pour formater les prix (evite les problemes d'encodage)
+function formatPricePDF(amount: number): string {
+  return `${amount.toLocaleString('fr-FR')} FCFA`
+}
 
 export interface FactureItem {
   nom: string
@@ -112,7 +117,7 @@ export function generateFacture(data: FactureData): void {
   doc.setFont('helvetica', 'bold')
   doc.text('TOTAL:', 130, yPos)
   doc.setTextColor(45, 90, 39)
-  doc.text(formatPrice(data.total), MARGIN_RIGHT, yPos, { align: 'right' })
+  doc.text(formatPricePDF(data.total), MARGIN_RIGHT, yPos, { align: 'right' })
 
   // Methode de paiement
   yPos += 10
@@ -176,8 +181,8 @@ function drawTableRow(doc: jsPDF, item: FactureItem, yPos: number): number {
   const nomTronque = item.nom.length > 40 ? item.nom.substring(0, 40) + '...' : item.nom
   doc.text(nomTronque, MARGIN_LEFT + 2, yPos)
   doc.text(String(item.quantite), 120, yPos)
-  doc.text(formatPrice(item.prixUnitaire), 145, yPos)
-  doc.text(formatPrice(item.prixTotal), MARGIN_RIGHT, yPos, { align: 'right' })
+  doc.text(formatPricePDF(item.prixUnitaire), 145, yPos)
+  doc.text(formatPricePDF(item.prixTotal), MARGIN_RIGHT, yPos, { align: 'right' })
 
   return yPos + LINE_HEIGHT
 }

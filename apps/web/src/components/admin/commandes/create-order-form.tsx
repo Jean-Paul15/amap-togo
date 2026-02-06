@@ -113,7 +113,7 @@ export function CreateOrderForm() {
             } else {
                 toast.error(res.error)
             }
-        } catch (e) {
+        } catch {
             toast.error('Erreur')
         } finally {
             setLoading(false)

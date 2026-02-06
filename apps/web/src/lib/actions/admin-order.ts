@@ -40,7 +40,7 @@ export async function createAdminOrder(data: {
         const { data: commande, error: cmdError } = await (supabase as any)
             .from('commandes')
             .insert({
-                client_id: data.clientId,
+                client_id: data.clientId || null, // Convertir chaîne vide en null
                 montant_total: montantTotal,
                 statut: 'en_attente',
                 statut_paiement: 'en_attente',
@@ -89,9 +89,64 @@ export async function createAdminOrder(data: {
         revalidatePath('/(admin)/commandes')
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return { success: true, id: (commande as any).id, numero: (commande as any).numero }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
         console.error('Erreur createAdminOrder:', error)
         return { success: false, error: error.message }
     }
 }
+
+/**
+ * Update order status and auto-sync to financial system if confirmed
+ */
+export async function updateOrderStatus(orderId: string, newStatus: string) {
+    const supabase = await createClientServer()
+
+    try {
+        // Get order details before update
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data: order, error: fetchError } = await (supabase as any)
+            .from('commandes')
+            .select('*, financial_record_id')
+            .eq('id', orderId)
+            .single()
+
+        if (fetchError) throw fetchError
+
+        // Update order status
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { error: updateError } = await (supabase as any)
+            .from('commandes')
+            .update({ statut: newStatus })
+            .eq('id', orderId)
+
+        if (updateError) throw updateError
+
+        // Auto-sync to financial system if confirmed and not already synced
+        if ((newStatus === 'confirmee' || newStatus === 'livree') && !order.financial_record_id) {
+            // Import sync function
+            const { syncOrderToFinancial } = await import('./order-financial-sync')
+            const syncResult = await syncOrderToFinancial(orderId)
+
+            if (syncResult.error) {
+                console.warn('Failed to auto-sync order to financial:', syncResult.error)
+                // Don't fail the status update if sync fails
+            }
+        }
+
+        // If order is cancelled and was synced, create reversal
+        if (newStatus === 'annulee' && order.financial_record_id) {
+            const { unsyncOrder } = await import('./order-financial-sync')
+            await unsyncOrder(orderId, true)
+        }
+
+        revalidatePath('/(admin)/commandes')
+        revalidatePath('/gestion')
+
+        return { success: true }
+    } catch (error: any) {
+        console.error('Error updating order status:', error)
+        return { success: false, error: error.message }
+    }
+}
+

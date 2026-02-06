@@ -3,14 +3,14 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
-import type { 
-  SendEmailsPayload, 
-  CampaignSendResult, 
-  EmailSendResult 
+import type {
+  SendEmailsPayload,
+  CampaignSendResult,
+  EmailSendResult
 } from '@/types/resend.types'
 
-// Initialisation Resend avec clé API
-const resend = new Resend(process.env.RESEND_API_KEY)
+// Initialisation Resend avec clé API (ou fallback pour le build)
+const resend = new Resend(process.env.RESEND_API_KEY || 're_123456789')
 
 // Email expéditeur configuré en env
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'AMAP Togo <contact@amaptogo.org>'
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
 
     // Envoi séquentiel pour respecter les rate limits
     const details: EmailSendResult[] = []
-    
+
     for (const email of recipients) {
       const result = await sendSingleEmail(email, subject, htmlContent)
       details.push(result)

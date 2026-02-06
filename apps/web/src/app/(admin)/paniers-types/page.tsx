@@ -83,33 +83,40 @@ export default function PaniersTypesPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!formData.nom || !formData.prix) return
+    if (!formData.nom) return
 
     setSaving(true)
     try {
       const data = {
         type: formData.type,
         nom: formData.nom,
-        prix: parseInt(formData.prix),
+        prix: formData.prix ? parseInt(formData.prix) : 0,
         description: formData.description || null,
         actif: formData.actif,
       }
 
       if (editingId) {
         const { error } = await supabaseClient.from('paniers_types').update(data).eq('id', editingId)
-        if (error) throw error
+        if (error) {
+          console.error('Update error:', error)
+          throw error
+        }
         toast.success('Type de panier modifié')
       } else {
         const { error } = await supabaseClient.from('paniers_types').insert(data)
-        if (error) throw error
+        if (error) {
+          console.error('Insert error:', error)
+          throw error
+        }
         toast.success('Type de panier créé')
       }
 
       resetForm()
       fetchTypes()
-    } catch (error) {
-      console.error('Erreur:', error)
-      toast.error('Erreur lors de l\'enregistrement')
+    } catch (error: any) {
+      console.error('Erreur complète:', error)
+      const errorMessage = error?.message || 'Erreur inconnue'
+      toast.error(`Erreur: ${errorMessage}`)
     } finally {
       setSaving(false)
     }
@@ -133,158 +140,157 @@ export default function PaniersTypesPage() {
   }
 
   return (
-      <div className="space-y-5">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-xl font-semibold text-gray-900">Types de paniers</h1>
-            <p className="text-sm text-gray-500">{types.length} types</p>
-          </div>
-          <button
-            onClick={() => { setIsCreating(true); setEditingId(null) }}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800"
-          >
-            <Plus className="w-4 h-4" />
-            Nouveau
-          </button>
+    <div className="space-y-5">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-semibold text-gray-900">Types de paniers</h1>
+          <p className="text-sm text-gray-500">{types.length} types</p>
         </div>
-
-        {/* Formulaire */}
-        {(isCreating || editingId) && (
-          <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-200 p-4">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1">Type</label>
-                <select
-                  value={formData.type}
-                  onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                  className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg"
-                >
-                  {TYPES_PANIER.map((t) => (
-                    <option key={t.value} value={t.value}>{t.label}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1">Nom</label>
-                <input
-                  type="text"
-                  value={formData.nom}
-                  onChange={(e) => setFormData({ ...formData, nom: e.target.value })}
-                  className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg"
-                  placeholder="Panier Famille"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1">Prix (FCFA)</label>
-                <input
-                  type="number"
-                  value={formData.prix}
-                  onChange={(e) => setFormData({ ...formData, prix: e.target.value })}
-                  className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg"
-                  placeholder="5000"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1">Description</label>
-                <input
-                  type="text"
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg"
-                  placeholder="Description..."
-                />
-              </div>
-            </div>
-            <div className="flex items-center justify-between mt-4">
-              <label className="flex items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  checked={formData.actif}
-                  onChange={(e) => setFormData({ ...formData, actif: e.target.checked })}
-                  className="rounded"
-                />
-                Actif
-              </label>
-              <div className="flex gap-2">
-                <button type="button" onClick={resetForm} className="px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-lg">
-                  <X className="w-4 h-4" />
-                </button>
-                <button 
-                  type="submit" 
-                  disabled={saving}
-                  className="flex items-center gap-1 px-4 py-1.5 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 disabled:opacity-50"
-                >
-                  {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                  {editingId ? 'Modifier' : 'Créer'}
-                </button>
-              </div>
-            </div>
-          </form>
-        )}
-
-        {/* Liste */}
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          {loading ? (
-            <div className="p-4 space-y-2">
-              {[1, 2, 3].map((i) => <div key={i} className="h-12 bg-gray-50 rounded animate-pulse" />)}
-            </div>
-          ) : types.length === 0 ? (
-            <div className="p-12 text-center">
-              <ShoppingBag className="w-10 h-10 text-gray-300 mx-auto mb-2" />
-              <p className="text-sm text-gray-500">Aucun type de panier</p>
-            </div>
-          ) : (
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-100">
-                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Nom</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Type</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Prix</th>
-                  <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Statut</th>
-                  <th className="w-24"></th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-50">
-                {types.map((item) => (
-                  <tr key={item.id} className="hover:bg-gray-50/50">
-                    <td className="px-4 py-3">
-                      <span className="text-sm font-medium text-gray-900">{item.nom}</span>
-                      {item.description && (
-                        <p className="text-xs text-gray-400">{item.description}</p>
-                      )}
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className="text-sm text-gray-600 capitalize">{item.type}</span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className="text-sm font-medium text-green-600">{formatPrice(item.prix)}</span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className={cn(
-                        'px-2 py-0.5 text-xs font-medium rounded-full',
-                        item.actif ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-500'
-                      )}>
-                        {item.actif ? 'Actif' : 'Inactif'}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex gap-1">
-                        <button onClick={() => startEdit(item)} className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg">
-                          <Edit className="w-4 h-4" />
-                        </button>
-                        <button onClick={() => handleDelete(item.id)} className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg">
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
+        <button
+          onClick={() => { setIsCreating(true); setEditingId(null) }}
+          className="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-gray-800"
+        >
+          <Plus className="w-4 h-4" />
+          Nouveau
+        </button>
       </div>
+
+      {/* Formulaire */}
+      {(isCreating || editingId) && (
+        <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-200 p-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+              <label className="block text-xs font-medium text-gray-500 mb-1">Type</label>
+              <select
+                value={formData.type}
+                onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg"
+              >
+                {TYPES_PANIER.map((t) => (
+                  <option key={t.value} value={t.value}>{t.label}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-500 mb-1">Nom</label>
+              <input
+                type="text"
+                value={formData.nom}
+                onChange={(e) => setFormData({ ...formData, nom: e.target.value })}
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg"
+                placeholder="Panier Famille"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-500 mb-1">Prix (FCFA)</label>
+              <input
+                type="number"
+                value={formData.prix}
+                onChange={(e) => setFormData({ ...formData, prix: e.target.value })}
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg"
+                placeholder="5000"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-500 mb-1">Description</label>
+              <input
+                type="text"
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg"
+                placeholder="Description..."
+              />
+            </div>
+          </div>
+          <div className="flex items-center justify-between mt-4">
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={formData.actif}
+                onChange={(e) => setFormData({ ...formData, actif: e.target.checked })}
+                className="rounded"
+              />
+              Actif
+            </label>
+            <div className="flex gap-2">
+              <button type="button" onClick={resetForm} className="px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-lg">
+                <X className="w-4 h-4" />
+              </button>
+              <button
+                type="submit"
+                disabled={saving}
+                className="flex items-center gap-1 px-4 py-1.5 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 disabled:opacity-50"
+              >
+                {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                {editingId ? 'Modifier' : 'Créer'}
+              </button>
+            </div>
+          </div>
+        </form>
+      )}
+
+      {/* Liste */}
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        {loading ? (
+          <div className="p-4 space-y-2">
+            {[1, 2, 3].map((i) => <div key={i} className="h-12 bg-gray-50 rounded animate-pulse" />)}
+          </div>
+        ) : types.length === 0 ? (
+          <div className="p-12 text-center">
+            <ShoppingBag className="w-10 h-10 text-gray-300 mx-auto mb-2" />
+            <p className="text-sm text-gray-500">Aucun type de panier</p>
+          </div>
+        ) : (
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-gray-100">
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Nom</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Type</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Prix</th>
+                <th className="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Statut</th>
+                <th className="w-24"></th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {types.map((item) => (
+                <tr key={item.id} className="hover:bg-gray-50/50">
+                  <td className="px-4 py-3">
+                    <span className="text-sm font-medium text-gray-900">{item.nom}</span>
+                    {item.description && (
+                      <p className="text-xs text-gray-400">{item.description}</p>
+                    )}
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className="text-sm text-gray-600 capitalize">{item.type}</span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className="text-sm font-medium text-green-600">{formatPrice(item.prix)}</span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className={cn(
+                      'px-2 py-0.5 text-xs font-medium rounded-full',
+                      item.actif ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-500'
+                    )}>
+                      {item.actif ? 'Actif' : 'Inactif'}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex gap-1">
+                      <button onClick={() => startEdit(item)} className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg">
+                        <Edit className="w-4 h-4" />
+                      </button>
+                      <button onClick={() => handleDelete(item.id)} className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </div>
   )
 }

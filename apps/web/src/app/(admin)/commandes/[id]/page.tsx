@@ -11,8 +11,8 @@ import Link from 'next/link'
 import { supabaseClient } from '@/lib/supabase'
 import { formatStatutPaiement } from '@amap-togo/utils'
 import { useToast } from '@/components/ui/toast'
-import { 
-  ArrowLeft, 
+import {
+  ArrowLeft,
   User,
   MapPin,
   Phone,
@@ -32,6 +32,7 @@ interface CommandeDetail {
   telephone_livraison: string | null
   notes: string | null
   created_at: string
+  financial_record_id: string | null
   client_id: string | null
   client_anonyme: { nom?: string; prenom?: string; telephone?: string; email?: string } | null
   client: { nom: string; prenom: string; email: string; telephone: string } | null
@@ -46,9 +47,9 @@ interface CommandeDetail {
     id: string
     quantite: number
     prix_unitaire: number
-    panier_semaine: { 
+    panier_semaine: {
       id: string
-      panier_type: { nom: string } | null 
+      panier_type: { nom: string } | null
     } | null
   }>
 }
@@ -92,7 +93,7 @@ export default function CommandeDetailPage() {
           .single()
 
         if (error) throw error
-        
+
         // Transformer les donnees pour gerer le format Supabase
         const formattedData = {
           ...data,
@@ -103,12 +104,12 @@ export default function CommandeDetailPage() {
           })),
           paniers: (data.paniers || []).map((panier: { panier_semaine: unknown[] | unknown }) => ({
             ...panier,
-            panier_semaine: Array.isArray(panier.panier_semaine) 
-              ? panier.panier_semaine[0] || null 
+            panier_semaine: Array.isArray(panier.panier_semaine)
+              ? panier.panier_semaine[0] || null
               : panier.panier_semaine,
           })),
         } as CommandeDetail
-        
+
         setCommande(formattedData)
       } catch (error) {
         console.error('Erreur:', error)
@@ -122,43 +123,51 @@ export default function CommandeDetailPage() {
     }
   }, [commandeId])
 
-  // Changer le statut
+  // Changer le statut avec synchronisation automatique
   const handleStatusChange = async (newStatus: string) => {
     if (!commande) return
     setUpdating(true)
 
     try {
-      const { error } = await supabaseClient
-        .from('commandes')
-        .update({ statut: newStatus })
-        .eq('id', commande.id)
+      // Import and use the new updateOrderStatus function
+      const { updateOrderStatus } = await import('@/lib/actions/admin-order')
+      const result = await updateOrderStatus(commande.id, newStatus)
 
-      if (error) throw error
-      setCommande({ ...commande, statut: newStatus })
-      toast.success('Statut mis à jour')
+      if (result.error) {
+        throw new Error(result.error)
+      }
+
+      // Refresh the order data to get updated financial_record_id
+      window.location.reload()
     } catch (error) {
       console.error('Erreur:', error)
-      toast.error('Erreur lors de la mise à jour')
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      toast.error(`Erreur: ${(error as any).message || 'Mise à jour impossible'}`)
     } finally {
       setUpdating(false)
     }
   }
 
-  // Annuler la commande
+  // Annuler la commande avec reversal financier
   const handleCancel = async () => {
     if (!commande || !confirm('Annuler cette commande ?')) return
     setUpdating(true)
 
     try {
-      const { error } = await supabaseClient
-        .from('commandes')
-        .update({ statut: 'annulee' })
-        .eq('id', commande.id)
+      // Import and use the new updateOrderStatus function
+      const { updateOrderStatus } = await import('@/lib/actions/admin-order')
+      const result = await updateOrderStatus(commande.id, 'annulee')
 
-      if (error) throw error
-      setCommande({ ...commande, statut: 'annulee' })
+      if (result.error) {
+        throw new Error(result.error)
+      }
+
+      // Refresh the order data
+      window.location.reload()
     } catch (error) {
       console.error('Erreur:', error)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      toast.error(`Erreur: ${(error as any).message || 'Annulation impossible'}`)
     } finally {
       setUpdating(false)
     }
@@ -182,17 +191,17 @@ export default function CommandeDetailPage() {
 
   if (loading) {
     return (
-        <div className="p-4 sm:p-6">
-          <p className="text-gray-500">Chargement...</p>
-        </div>
+      <div className="p-4 sm:p-6">
+        <p className="text-gray-500">Chargement...</p>
+      </div>
     )
   }
 
   if (!commande) {
     return (
-        <div className="p-4 sm:p-6">
-          <p className="text-gray-500">Commande introuvable</p>
-        </div>
+      <div className="p-4 sm:p-6">
+        <p className="text-gray-500">Commande introuvable</p>
+      </div>
     )
   }
 
@@ -200,194 +209,194 @@ export default function CommandeDetailPage() {
   const availableAction = statutActions.find((a) => a.from === commande.statut)
 
   return (
-      <div className="p-4 sm:p-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 sm:mb-6">
-          <div className="flex items-center gap-3 sm:gap-4">
-            <Link
-              href="/commandes"
-              className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg transition-colors"
+    <div className="p-4 sm:p-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 sm:mb-6">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <Link
+            href="/commandes"
+            className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5 text-gray-600" />
+          </Link>
+          <div>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
+              {commande.numero}
+            </h1>
+            <p className="text-xs sm:text-sm text-gray-500">
+              {formatDate(commande.created_at)}
+            </p>
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="flex items-center gap-2 sm:gap-3 ml-9 sm:ml-0">
+          {availableAction && commande.statut !== 'annulee' && (
+            <button
+              onClick={() => handleStatusChange(availableAction.to)}
+              disabled={updating}
+              className={cn(
+                'px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base text-white rounded-lg transition-colors disabled:opacity-50',
+                availableAction.color
+              )}
             >
-              <ArrowLeft className="w-5 h-5 text-gray-600" />
-            </Link>
-            <div>
-              <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
-                {commande.numero}
-              </h1>
-              <p className="text-xs sm:text-sm text-gray-500">
-                {formatDate(commande.created_at)}
+              {availableAction.label}
+            </button>
+          )}
+          {commande.statut === 'en_attente' && (
+            <button
+              onClick={handleCancel}
+              disabled={updating}
+              className="px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-50"
+            >
+              Annuler
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+        {/* Colonne principale */}
+        <div className="lg:col-span-2 space-y-4 sm:space-y-6">
+          {/* Articles */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">
+              Articles commandés
+            </h2>
+            <div className="divide-y divide-gray-100">
+              {/* Produits */}
+              {commande.lignes.map((ligne) => (
+                <div key={ligne.id} className="py-2.5 sm:py-3 flex items-center justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-gray-900 text-sm sm:text-base truncate">
+                      {ligne.produit?.nom || 'Produit inconnu'}
+                    </p>
+                    <p className="text-xs sm:text-sm text-gray-500">
+                      {ligne.quantite} x {formatPrice(ligne.prix_unitaire)}
+                      {ligne.produit?.unite && ` / ${ligne.produit.unite}`}
+                    </p>
+                  </div>
+                  <p className="font-medium text-gray-900 text-sm sm:text-base flex-shrink-0">
+                    {formatPrice(ligne.prix_total)}
+                  </p>
+                </div>
+              ))}
+
+              {/* Paniers AMAP */}
+              {commande.paniers && commande.paniers.length > 0 && (
+                <>
+                  {commande.paniers.map((panier) => {
+                    const panierNom = panier.panier_semaine?.panier_type?.nom || 'Panier AMAP'
+                    const prixTotal = panier.prix_unitaire * panier.quantite
+
+                    return (
+                      <div key={panier.id} className="py-2.5 sm:py-3 flex items-center justify-between gap-3">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="px-1.5 py-0.5 text-[10px] font-medium bg-green-100 text-green-700 rounded">
+                              PANIER
+                            </span>
+                            <p className="font-medium text-gray-900 text-sm sm:text-base truncate">
+                              {panierNom}
+                            </p>
+                          </div>
+                          <p className="text-xs sm:text-sm text-gray-500">
+                            {panier.quantite} x {formatPrice(panier.prix_unitaire)}
+                          </p>
+                        </div>
+                        <p className="font-medium text-gray-900 text-sm sm:text-base flex-shrink-0">
+                          {formatPrice(prixTotal)}
+                        </p>
+                      </div>
+                    )
+                  })}
+                </>
+              )}
+            </div>
+            <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-100 flex justify-between">
+              <span className="font-semibold text-gray-900 text-sm sm:text-base">Total</span>
+              <span className="font-bold text-base sm:text-lg text-gray-900">
+                {formatPrice(commande.montant_total)}
+              </span>
+            </div>
+          </div>
+
+          {/* Notes */}
+          {commande.notes && (
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
+              <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">
+                Notes
+              </h2>
+              <p className="text-sm sm:text-base text-gray-600">{commande.notes}</p>
+            </div>
+          )}
+        </div>
+
+        {/* Sidebar */}
+        <div className="space-y-4 sm:space-y-6">
+          {/* Client */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4 flex items-center gap-2">
+              <User className="w-4 h-4 sm:w-5 sm:h-5" />
+              Client
+            </h2>
+            <div className="space-y-2">
+              <p className="font-medium text-gray-900 text-sm sm:text-base">
+                {commande.client?.prenom || commande.client_anonyme?.prenom || ''} {commande.client?.nom || commande.client_anonyme?.nom || 'Client anonyme'}
+              </p>
+              <p className="text-xs sm:text-sm text-gray-500 flex items-center gap-2">
+                <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                {commande.client?.telephone || commande.client_anonyme?.telephone || commande.telephone_livraison || '-'}
               </p>
             </div>
           </div>
 
-          {/* Actions */}
-          <div className="flex items-center gap-2 sm:gap-3 ml-9 sm:ml-0">
-            {availableAction && commande.statut !== 'annulee' && (
-              <button
-                onClick={() => handleStatusChange(availableAction.to)}
-                disabled={updating}
-                className={cn(
-                  'px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base text-white rounded-lg transition-colors disabled:opacity-50',
-                  availableAction.color
-                )}
-              >
-                {availableAction.label}
-              </button>
-            )}
-            {commande.statut === 'en_attente' && (
-              <button
-                onClick={handleCancel}
-                disabled={updating}
-                className="px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-50"
-              >
-                Annuler
-              </button>
-            )}
+          {/* Livraison */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4 flex items-center gap-2">
+              <MapPin className="w-4 h-4 sm:w-5 sm:h-5" />
+              Livraison
+            </h2>
+            <div className="space-y-2 text-xs sm:text-sm text-gray-600">
+              <p>{commande.quartier_livraison}</p>
+              {commande.adresse_livraison && (
+                <p>{commande.adresse_livraison}</p>
+              )}
+            </div>
           </div>
-        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-          {/* Colonne principale */}
-          <div className="lg:col-span-2 space-y-4 sm:space-y-6">
-            {/* Articles */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
-              <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">
-                Articles commandés
-              </h2>
-              <div className="divide-y divide-gray-100">
-                {/* Produits */}
-                {commande.lignes.map((ligne) => (
-                  <div key={ligne.id} className="py-2.5 sm:py-3 flex items-center justify-between gap-3">
-                    <div className="min-w-0 flex-1">
-                      <p className="font-medium text-gray-900 text-sm sm:text-base truncate">
-                        {ligne.produit?.nom || 'Produit inconnu'}
-                      </p>
-                      <p className="text-xs sm:text-sm text-gray-500">
-                        {ligne.quantite} x {formatPrice(ligne.prix_unitaire)}
-                        {ligne.produit?.unite && ` / ${ligne.produit.unite}`}
-                      </p>
-                    </div>
-                    <p className="font-medium text-gray-900 text-sm sm:text-base flex-shrink-0">
-                      {formatPrice(ligne.prix_total)}
-                    </p>
-                  </div>
-                ))}
-                
-                {/* Paniers AMAP */}
-                {commande.paniers && commande.paniers.length > 0 && (
-                  <>
-                    {commande.paniers.map((panier) => {
-                      const panierNom = panier.panier_semaine?.panier_type?.nom || 'Panier AMAP'
-                      const prixTotal = panier.prix_unitaire * panier.quantite
-                      
-                      return (
-                        <div key={panier.id} className="py-2.5 sm:py-3 flex items-center justify-between gap-3">
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-2">
-                              <span className="px-1.5 py-0.5 text-[10px] font-medium bg-green-100 text-green-700 rounded">
-                                PANIER
-                              </span>
-                              <p className="font-medium text-gray-900 text-sm sm:text-base truncate">
-                                {panierNom}
-                              </p>
-                            </div>
-                            <p className="text-xs sm:text-sm text-gray-500">
-                              {panier.quantite} x {formatPrice(panier.prix_unitaire)}
-                            </p>
-                          </div>
-                          <p className="font-medium text-gray-900 text-sm sm:text-base flex-shrink-0">
-                            {formatPrice(prixTotal)}
-                          </p>
-                        </div>
-                      )
-                    })}
-                  </>
-                )}
-              </div>
-              <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-gray-100 flex justify-between">
-                <span className="font-semibold text-gray-900 text-sm sm:text-base">Total</span>
-                <span className="font-bold text-base sm:text-lg text-gray-900">
-                  {formatPrice(commande.montant_total)}
+          {/* Paiement */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4 flex items-center gap-2">
+              <CreditCard className="w-4 h-4 sm:w-5 sm:h-5" />
+              Paiement
+            </h2>
+            <div className="space-y-2.5 sm:space-y-3">
+              <div className="flex justify-between items-center">
+                <span className="text-xs sm:text-sm text-gray-500">Statut</span>
+                <span className={cn(
+                  'px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs font-medium rounded-full',
+                  commande.statut_paiement === 'paye'
+                    ? 'bg-green-100 text-green-700'
+                    : 'bg-yellow-100 text-yellow-700'
+                )}>
+                  {formatStatutPaiement(commande.statut_paiement)}
                 </span>
               </div>
-            </div>
-
-            {/* Notes */}
-            {commande.notes && (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
-                <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">
-                  Notes
-                </h2>
-                <p className="text-sm sm:text-base text-gray-600">{commande.notes}</p>
+              <div className="flex justify-between">
+                <span className="text-xs sm:text-sm text-gray-500">Payé</span>
+                <span className="text-sm sm:text-base font-medium">{formatPrice(commande.montant_paye)}</span>
               </div>
-            )}
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-4 sm:space-y-6">
-            {/* Client */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
-              <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4 flex items-center gap-2">
-                <User className="w-4 h-4 sm:w-5 sm:h-5" />
-                Client
-              </h2>
-              <div className="space-y-2">
-                <p className="font-medium text-gray-900 text-sm sm:text-base">
-                  {commande.client?.prenom || commande.client_anonyme?.prenom || ''} {commande.client?.nom || commande.client_anonyme?.nom || 'Client anonyme'}
-                </p>
-                <p className="text-xs sm:text-sm text-gray-500 flex items-center gap-2">
-                  <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                  {commande.client?.telephone || commande.client_anonyme?.telephone || commande.telephone_livraison || '-'}
-                </p>
-              </div>
-            </div>
-
-            {/* Livraison */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
-              <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4 flex items-center gap-2">
-                <MapPin className="w-4 h-4 sm:w-5 sm:h-5" />
-                Livraison
-              </h2>
-              <div className="space-y-2 text-xs sm:text-sm text-gray-600">
-                <p>{commande.quartier_livraison}</p>
-                {commande.adresse_livraison && (
-                  <p>{commande.adresse_livraison}</p>
-                )}
-              </div>
-            </div>
-
-            {/* Paiement */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
-              <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4 flex items-center gap-2">
-                <CreditCard className="w-4 h-4 sm:w-5 sm:h-5" />
-                Paiement
-              </h2>
-              <div className="space-y-2.5 sm:space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-xs sm:text-sm text-gray-500">Statut</span>
-                  <span className={cn(
-                    'px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs font-medium rounded-full',
-                    commande.statut_paiement === 'paye'
-                      ? 'bg-green-100 text-green-700'
-                      : 'bg-yellow-100 text-yellow-700'
-                  )}>
-                    {formatStatutPaiement(commande.statut_paiement)}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-xs sm:text-sm text-gray-500">Payé</span>
-                  <span className="text-sm sm:text-base font-medium">{formatPrice(commande.montant_paye)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-xs sm:text-sm text-gray-500">Reste</span>
-                  <span className="text-sm sm:text-base font-medium">
-                    {formatPrice(commande.montant_total - commande.montant_paye)}
-                  </span>
-                </div>
+              <div className="flex justify-between">
+                <span className="text-xs sm:text-sm text-gray-500">Reste</span>
+                <span className="text-sm sm:text-base font-medium">
+                  {formatPrice(commande.montant_total - commande.montant_paye)}
+                </span>
               </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
   )
 }

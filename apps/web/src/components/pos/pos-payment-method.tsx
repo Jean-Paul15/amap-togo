@@ -57,12 +57,23 @@ export function POSPaymentMethod({ selected, onSelect }: POSPaymentMethodProps) 
           const isSelected = selected === method.id
 
           return (
-            <button
+            <div
+              role="button"
+              tabIndex={0}
               key={method.id}
-              onClick={() => onSelect(method.id)}
+              onClick={(e) => {
+                e.preventDefault()
+                onSelect(method.id)
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  onSelect(method.id)
+                }
+              }}
               className={`
                 w-full flex items-center gap-3 p-3 rounded-lg
-                border transition-colors text-left
+                border transition-colors text-left cursor-pointer
                 ${isSelected
                   ? 'border-primary bg-accent'
                   : 'border-border bg-background hover:border-primary/50'
@@ -103,7 +114,7 @@ export function POSPaymentMethod({ selected, onSelect }: POSPaymentMethodProps) 
                   <div className="w-2.5 h-2.5 rounded-full bg-primary" />
                 )}
               </div>
-            </button>
+            </div>
           )
         })}
       </div>

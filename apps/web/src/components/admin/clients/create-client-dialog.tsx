@@ -53,7 +53,7 @@ export function CreateClientDialog({ onSuccess }: CreateClientDialogProps) {
                     description: result.error
                 })
             }
-        } catch (error) {
+        } catch {
             toast.error('Erreur inattendue')
         } finally {
             setSubmitting(false)

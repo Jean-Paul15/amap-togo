@@ -60,3 +60,5 @@ docs/
 /docs/
 /DATABASE_SCHEMA.json
 .DESGN_PRINCIPLES.md
+*.log
+WhatsApp Image*

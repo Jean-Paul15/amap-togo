@@ -12,7 +12,19 @@ import { Button } from '@amap-togo/ui'
  * - Illustration 3D centrale
  * - Particules et effets de profondeur
  */
-export function HeroSection() {
+interface HeroSectionProps {
+  imageUrl?: string
+  bgColor?: string
+  bgImageUrl?: string
+  bgVideoUrl?: string
+}
+
+export function HeroSection({
+  imageUrl,
+  bgColor = '#0a1f12',
+  bgImageUrl,
+  bgVideoUrl
+}: HeroSectionProps) {
   const { scrollY } = useScroll()
 
   // Parallax et disparitions
@@ -21,11 +33,40 @@ export function HeroSection() {
   const scale = useTransform(scrollY, [0, 500], [1, 1.1])
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-[#0a1f12] text-white">
+    <section
+      className="relative min-h-screen flex items-center overflow-hidden text-white"
+      style={{ backgroundColor: bgColor }}
+    >
 
-      {/* --- BACKGROUND IMMERSIF --- */}
-      {/* Image de fond texturée subtile (optionnelle, ici générée par CSS) */}
-      <div className="absolute inset-0 z-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-green-900/40 via-[#0a1f12] to-[#0a1f12]" />
+      {/* --- BACKGROUND DYNAMIQUE --- */}
+      {/* Vidéo de fond (priorité 1) */}
+      {bgVideoUrl && (
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover z-0 opacity-40"
+        >
+          <source src={bgVideoUrl} type="video/mp4" />
+        </video>
+      )}
+
+      {/* Image de fond (priorité 2) */}
+      {!bgVideoUrl && bgImageUrl && (
+        <div className="absolute inset-0 z-0">
+          <Image
+            src={bgImageUrl}
+            alt="Background"
+            fill
+            className="object-cover opacity-30"
+            priority
+          />
+        </div>
+      )}
+
+      {/* Overlay gradient (toujours présent) */}
+      <div className="absolute inset-0 z-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-green-900/40 via-transparent to-transparent" />
 
       {/* Orbes lumineux d'ambiance */}
       <div className="absolute top-[-20%] right-[-10%] w-[800px] h-[800px] bg-green-500/20 rounded-full blur-[150px] animate-pulse" />
@@ -148,13 +189,13 @@ export function HeroSection() {
                   repeat: Infinity,
                   ease: "easeInOut"
                 }}
-                className="relative z-20 w-[350px] h-[350px] sm:w-[500px] sm:h-[500px] drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
+                className="relative z-20 w-[350px] h-[350px] sm:w-[500px] sm:h-[500px] drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)] rounded-2xl overflow-hidden border-4 border-white/10"
               >
                 <Image
-                  src="/images/hero-basket-3d.png"
-                  alt="Panier Bio Magique"
+                  src={imageUrl || "/images/gallery/visuel-1.jpg"}
+                  alt="Panier AMAP Togo"
                   fill
-                  className="object-contain"
+                  className="object-cover"
                   priority
                 />
               </motion.div>

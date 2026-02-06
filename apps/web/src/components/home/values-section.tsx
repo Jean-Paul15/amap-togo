@@ -3,6 +3,7 @@
 
 'use client'
 
+import Image from 'next/image'
 import { useRef } from 'react'
 import { Leaf, MapPin, Users, Heart } from 'lucide-react'
 import { motion, useInView } from 'framer-motion'
@@ -13,6 +14,7 @@ interface Value {
   title: string
   description: string
   color: string
+  image?: string
 }
 
 const values: Value[] = [
@@ -23,6 +25,7 @@ const values: Value[] = [
       'Nos produits sont cultivés sans pesticides ni engrais chimiques, ' +
       'dans le respect de la terre et de votre santé.',
     color: 'from-green-500 to-emerald-600',
+    // image: '/images/gallery/visuel-2.jpg'
   },
   {
     icon: MapPin,
@@ -31,6 +34,7 @@ const values: Value[] = [
       'Du producteur à votre table, sans intermédiaire. ' +
       'Fraîcheur garantie et prix justes pour les agriculteurs.',
     color: 'from-blue-500 to-cyan-600',
+    // image: '/images/gallery/visuel-3.jpg'
   },
   {
     icon: Users,
@@ -39,6 +43,7 @@ const values: Value[] = [
       'En choisissant AMAP, vous soutenez directement les paysans togolais ' +
       'et participez à une économie locale et durable.',
     color: 'from-orange-500 to-red-600',
+    // image: '/images/gallery/visuel-4.jpg'
   },
 ]
 
@@ -132,20 +137,34 @@ export function ValuesSection() {
 }
 
 /** Carte pour une valeur avec animations au hover */
-function ValueCard({ icon: Icon, title, description, color, index }: Value & { index: number }) {
+function ValueCard({ icon: Icon, title, description, color, index, image }: Value & { index: number }) {
   return (
     <motion.div
       whileHover={{ y: -10, scale: 1.03 }}
       transition={{ duration: 0.3 }}
-      className="relative group"
+      className="relative group h-full"
     >
-      <div className="text-center bg-white/5 backdrop-blur-md rounded-2xl p-8 shadow-xl border border-white/10 hover:border-white/20 hover:bg-white/10 transition-all duration-300 h-full">
-        {/* Icône animée */}
+      <div className="relative text-center bg-white/5 backdrop-blur-md rounded-2xl p-8 shadow-xl border border-white/10 hover:border-white/20 hover:bg-white/10 transition-all duration-300 h-full overflow-hidden flex flex-col items-center">
+
+        {/* Image de fond subtile ou intégrée */}
+        {image && (
+          <div className="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity duration-500">
+            <Image
+              src={image}
+              alt={title}
+              fill
+              className="object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+            />
+          </div>
+        )}
+
+        {/* Icône animée - Added z-10 to keep it above image */}
         <motion.div
           whileHover={{ rotate: 360, scale: 1.1 }}
           transition={{ duration: 0.6 }}
           className={`
-            w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-6
+            relative z-10
+            w-16 h-16 sm:w-20 sm:h-20 mb-6
             bg-gradient-to-br from-white/10 to-white/5
             rounded-2xl border border-white/10
             flex items-center justify-center
@@ -154,16 +173,18 @@ function ValueCard({ icon: Icon, title, description, color, index }: Value & { i
             transition-all duration-300
           `}
         >
+          {/* Si image dispo, on peut aussi la mettre en petit rond ou garder l'icone */}
           <Icon className="w-8 h-8 sm:w-10 sm:h-10 text-white" strokeWidth={1.5} />
         </motion.div>
 
+
         {/* Titre */}
-        <h3 className="text-xl sm:text-2xl font-bold text-white mb-4">
+        <h3 className="relative z-10 text-xl sm:text-2xl font-bold text-white mb-4">
           {title}
         </h3>
 
         {/* Description */}
-        <p className="text-sm sm:text-base text-gray-400 leading-relaxed">
+        <p className="relative z-10 text-sm sm:text-base text-gray-400 leading-relaxed">
           {description}
         </p>
 

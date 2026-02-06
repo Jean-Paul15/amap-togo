@@ -6,7 +6,8 @@ import { Resend } from 'resend'
 import type { ResendEmailListResponse } from '@/types/resend.types'
 
 // Initialisation Resend
-const resend = new Resend(process.env.RESEND_API_KEY)
+// Initialisation Resend avec clé fallback pour le build
+const resend = new Resend(process.env.RESEND_API_KEY || 're_123456789')
 
 /**
  * GET /api/emails/history

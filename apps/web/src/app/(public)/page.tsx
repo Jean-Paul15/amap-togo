@@ -2,13 +2,15 @@
 // Server Component avec donnees pre-chargees
 
 import type { Metadata } from 'next'
-import { 
-  HeroSection, 
-  ProduitsSection, 
-  PaniersSection, 
-  ValuesSection 
+import {
+  HeroSection,
+  ProduitsSection,
+  PaniersSection,
+  ValuesSection
 } from '@/components/home'
+import { ListeProduitsSemaine } from '@/components/home/liste-produits-semaine'
 import { createClientServer } from '@amap-togo/database/server'
+import { PageViewTracker } from '@/components/analytics/page-view-tracker'
 
 export const metadata: Metadata = {
   title: 'AMAP TOGO - Produits Bio et Locaux au Togo',
@@ -41,19 +43,33 @@ export const metadata: Metadata = {
  * - Paniers AMAP
  * - Valeurs (bio, local, solidaire)
  */
+import { getSystemSettings } from '@/lib/actions/settings'
+
 export default async function HomePage() {
-  // Recupere les produits et paniers de la semaine
-  const [produits, paniers] = await Promise.all([
+  // Recupere les produits, paniers et settings
+  const [produits, paniers, settings] = await Promise.all([
     getProduitsSemaine(),
     getPaniersSemaine(),
+    getSystemSettings()
   ])
 
   return (
     <>
-      <HeroSection />
+      <HeroSection
+        imageUrl={settings['site_hero_url']}
+        bgColor={settings['site_bg_color'] || '#0a1f12'}
+        bgImageUrl={settings['site_bg_image_url']}
+        bgVideoUrl={settings['site_bg_video_url']}
+      />
       <ProduitsSection produits={produits} />
+      <section className="py-12 lg:py-16 bg-gray-50">
+        <div className="container mx-auto px-6 lg:px-12">
+          <ListeProduitsSemaine />
+        </div>
+      </section>
       <PaniersSection paniers={paniers} />
       <ValuesSection />
+      <PageViewTracker />
     </>
   )
 }
@@ -67,7 +83,7 @@ async function getProduitsSemaine() {
       .from('produits')
       .select('*')
       .eq('actif', true)
-      .eq('disponible_semaine', true)
+      .eq('en_vedette', true)
       .order('ordre', { ascending: true })
       .limit(8)
 

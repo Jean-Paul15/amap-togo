@@ -297,14 +297,20 @@ export function POSCheckout() {
         <button
           onClick={handleSubmit}
           disabled={!isFormValid || isSubmitting}
-          className="
-            w-full py-3 bg-primary text-primary-foreground
+          className={`
+            w-full py-3 
+            ${paymentMethod === 'especes' ? 'bg-primary' : 'bg-green-600 hover:bg-green-700'} 
+            text-primary-foreground
             rounded-lg font-medium
-            hover:bg-primary/90 transition-colors
+            transition-colors
             disabled:opacity-50 disabled:cursor-not-allowed
-          "
+          `}
         >
-          {isSubmitting ? 'Traitement...' : 'Confirmer la commande'}
+          {isSubmitting ? 'Traitement...' : (
+            paymentMethod === 'especes'
+              ? 'Confirmer la commande'
+              : `J'ai envoyé le paiement ${paymentMethod === 'tmoney' ? 'T-Money' : 'Flooz'}`
+          )}
         </button>
       </div>
     </div>

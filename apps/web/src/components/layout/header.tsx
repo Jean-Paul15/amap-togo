@@ -15,7 +15,7 @@ import { AuthButton } from '@/components/auth'
  * Structure : Logo (gauche) | Navigation (centre) | Actions (droite)
  * Header fixe avec shadow au scroll
  */
-export function Header() {
+export function Header({ logoUrl }: { logoUrl?: string }) {
   const [hasScrolled, setHasScrolled] = useState(false)
 
   // Detection du scroll pour ajouter le shadow
@@ -29,7 +29,7 @@ export function Header() {
   }, [])
 
   return (
-    <header 
+    <header
       className={`
         fixed top-0 left-0 right-0 z-40 
         bg-background/95 backdrop-blur-sm 
@@ -41,7 +41,7 @@ export function Header() {
       <div className="container mx-auto px-6 lg:px-12">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo - Gauche */}
-          <Logo />
+          <Logo url={logoUrl} />
 
           {/* Navigation desktop - Centre (cachee sur mobile) */}
           <NavLinks className="hidden md:flex absolute left-1/2 -translate-x-1/2" />
@@ -50,13 +50,13 @@ export function Header() {
           <div className="flex items-center gap-1 sm:gap-2">
             {/* Bouton POS - visible sur tous les ecrans */}
             <POSTrigger />
-            
+
             {/* Badge panier */}
             <CartBadge />
-            
+
             {/* Bouton Auth (connexion ou menu utilisateur) */}
             <AuthButton />
-            
+
             {/* Menu hamburger - visible uniquement sur mobile */}
             <NavMobile />
           </div>

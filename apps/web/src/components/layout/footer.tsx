@@ -5,11 +5,12 @@ import Link from 'next/link'
 import { MapPin, Phone, Mail, Clock } from 'lucide-react'
 import { Logo } from './logo'
 import { COMPANY, CONTACT } from '@amap-togo/utils'
+import { VisitorCountDisplay } from '@/components/analytics/visitor-count-display'
 
 /**
  * Footer avec coordonnees et liens utiles
  */
-export function Footer() {
+export function Footer({ logoUrl }: { logoUrl?: string }) {
   const currentYear = new Date().getFullYear()
 
   return (
@@ -18,7 +19,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           {/* Logo et description */}
           <div className="space-y-4">
-            <Logo />
+            <Logo url={logoUrl} />
             <p className="text-sm text-muted-foreground leading-relaxed">
               Association pour le Maintien d'une Agriculture Paysanne au Togo.
               Des produits bio et locaux, du producteur à votre table.
@@ -90,10 +91,11 @@ export function Footer() {
         </div>
 
         {/* Copyright */}
-        <div className="mt-12 pt-8 border-t border-border">
-          <p className="text-sm text-muted-foreground text-center">
+        <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-sm text-muted-foreground text-center md:text-left">
             {currentYear} {COMPANY.name}. Tous droits réservés.
           </p>
+          <VisitorCountDisplay />
         </div>
       </div>
     </footer>
@@ -101,12 +103,12 @@ export function Footer() {
 }
 
 /** Lien stylise pour le footer */
-function FooterLink({ 
-  href, 
-  children 
-}: { 
+function FooterLink({
+  href,
+  children
+}: {
   href: string
-  children: React.ReactNode 
+  children: React.ReactNode
 }) {
   return (
     <Link

@@ -11,6 +11,7 @@ export const navigationLinks = [
   { href: '/', label: 'Accueil' },
   { href: '/produits', label: 'Produits' },
   { href: '/paniers', label: 'Paniers AMAP' },
+  { href: '/actualites', label: 'Actualités' },
   { href: '/a-propos', label: 'À propos' },
 ] as const
 

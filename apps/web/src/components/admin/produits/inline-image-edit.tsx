@@ -96,7 +96,9 @@ export function InlineImageEdit({
       onUpdate(newUrl)
     } catch (err) {
       console.error('Erreur upload:', err)
-      setError('Erreur lors de l\'upload')
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const errorMessage = (err as any)?.message || 'Erreur lors de l\'upload'
+      setError(errorMessage)
     } finally {
       setUploading(false)
       // Reset l'input pour permettre de re-selectionner le meme fichier

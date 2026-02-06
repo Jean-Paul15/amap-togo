@@ -21,6 +21,8 @@ import {
   TrendingUp,
   Image,
   Settings,
+  Newspaper,
+  ClipboardList,
 } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
@@ -44,9 +46,11 @@ const navItems: NavItem[] = [
   { name: 'Catégories', href: '/categories', icon: Layers },
   { name: 'Paniers', href: '/paniers-admin', icon: ShoppingBag },
   { name: 'Types paniers', href: '/paniers-types', icon: ShoppingBag },
+  { name: 'Liste de la semaine', href: '/liste-semaine', icon: ClipboardList },
   { name: 'Commandes', href: '/commandes', icon: ShoppingCart },
   { name: 'Clients', href: '/clients', icon: Users },
   { name: 'Emails', href: '/emails', icon: Mail },
+  { name: 'Actualités', href: '/actualites-admin', icon: Newspaper },
   { name: 'Galerie', href: '/gallery', icon: Image },
   { name: 'Rôles', href: '/roles', icon: Shield },
   { name: 'Utilisateurs', href: '/utilisateurs', icon: UserCog },
