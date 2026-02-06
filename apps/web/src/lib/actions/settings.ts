@@ -5,9 +5,10 @@ import { supabaseAdmin } from '@/lib/supabase-admin'
 import { revalidatePath } from 'next/cache'
 
 export async function getSystemSettings() {
-    const supabase = await createClientServer()
+    // Utiliser supabaseAdmin pour contourner RLS et permettre l'affichage
+    // des parametres (logo, hero) meme pour les utilisateurs non connectes
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data } = await (supabase as any)
+    const { data } = await (supabaseAdmin as any)
         .from('system_settings')
         .select('*')
 
