@@ -45,14 +45,12 @@ export async function createAdminOrder(data: {
                 montant_total: montantTotal,
                 statut: 'en_attente',
                 statut_paiement: 'en_attente',
-                notes: data.whatsappText ? `[Import WhatsApp]\n${data.whatsappText}\n\n${data.notes || ''}` : data.notes,
+                notes: `Client: ${data.clientInfo?.prenom || ''} ${data.clientInfo?.nom || ''}\nEmail: ${data.clientInfo?.email || 'Non renseigné'}\n\n${data.whatsappText ? `[Import WhatsApp]\n${data.whatsappText}\n\n` : ''}${data.notes || ''}`,
                 // Si client anonyme
                 adresse_livraison: data.clientInfo?.adresse,
                 quartier_livraison: data.clientInfo?.quartier,
                 telephone_livraison: data.clientInfo?.telephone,
-                email_livraison: data.clientInfo?.email, // Ajout email si disponible
-                prenom_livraison: data.clientInfo?.prenom, // Ajout prénom
-                nom_livraison: data.clientInfo?.nom, // Ajout nom
+                // On stocke le reste dans les notes car les colonnes n'existent pas encore
             })
             .select()
             .single()

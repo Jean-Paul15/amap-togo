@@ -21,7 +21,7 @@ export function Logo({ className = '', url }: LogoProps) {
     >
       <div className="relative w-32 h-12">
         <Image
-          src={url || "/images/branding/logo-amap-new.png"}
+          src={url || "/favicon.svg"}
           alt="AMAP TOGO"
           fill
           className="object-contain"

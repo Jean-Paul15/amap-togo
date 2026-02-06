@@ -192,7 +192,7 @@ export function HeroSection({
                 className="relative z-20 w-[350px] h-[350px] sm:w-[500px] sm:h-[500px] drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)] rounded-2xl overflow-hidden border-4 border-white/10"
               >
                 <Image
-                  src={imageUrl || "/images/gallery/visuel-1.jpg"}
+                  src={imageUrl || "/images/hero-basket-3d.png"}
                   alt="Panier AMAP Togo"
                   fill
                   className="object-cover"
